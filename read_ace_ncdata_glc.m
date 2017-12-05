@@ -28,21 +28,22 @@ out.occultation = ncread(filein,'orbit');
 out.occultation = out.occultation';
 out.sr1ss0 = ncread(filein,'sunset_sunrise');
 out.sr1ss0 = out.sr1ss0';
-out.beta_angle = ncread(filein,'beta_angle_30km');
+out.beta_angle = ncread(filein,'beta_angle');
 out.beta_angle = out.beta_angle';
 %the date info is converted to a double so that the conversion to MJD works
 out.date_mjd = date2mjd(double(ncread(filein,'year')),double(ncread(filein,'month')),double(ncread(filein,'day')),double(ncread(filein,'hour')));
 out.date_mjd = out.date_mjd';
 out.gas = gasname;
 out.altitude_km = double(ncread(filein,'altitude'));
-out.lon = double(ncread(filein,'longitude'));
-out.lat = double(ncread(filein,'latitude'));
+out.lon = double(ncread(filein,'GLC_longitude'));
+out.lat = double(ncread(filein,'GLC_latitude'));
 out.temperature = double(ncread(filein,'temperature'));
-out.lat_tangent = double(ncread(filein,'latitude_30km'));
+out.lat_tangent = double(ncread(filein,'latitude'));
 out.lat_tangent = out.lat_tangent';
-out.lon_tangent = double(ncread(filein,'longitude_30km'));
+out.lon_tangent = double(ncread(filein,'longitude'));
 out.lon_tangent = out.lon_tangent';
 out.pressure_hPa = double(ncread(filein,'pressure')) * 1013.25; % convert from atm to hPa
+out.quality_flag = ncread(filein,'quality_flag');
 
 %% make the output file
 glcstruct_out = out;
