@@ -11,10 +11,11 @@ function [ tanstruct_out_flagged ] = apply_ace_flags(tanstruct_in)
 %           'read_ace_ncdata_for_mat.m'.
 %
 % *OUTPUT*
-%           data_structure_flagged: STRUCTURE - output has the same
-%           fields as the input, but with the flagged data removed.
+%           tanstruct_out_flagged: STRUCTURE - output has the same
+%           fields as the input, but with the flagged data removed or
+%           edited.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% NJR - 10/2017
+% NJR - 11/2017
 
 %% Remove flagged values
 datain = tanstruct_in;
@@ -48,10 +49,14 @@ if isfield(out,'lon')
    out.lon(:,badj) = [];
    out.lat(:,badj) = [];
 end
-%% Change -999 values (they have a flag of 9) to NaNs
-[badI] = find(out.quality_flags == 9);
+
+%% Change any other values with flags > 2 to NaNs
+[badI] = find(out.quality_flags > 1);
 out.vmr(badI) = nan;
 out.vmr_error(badI) = nan;
+% remove any columns that are only nans now
+goodcol = find(nansum(out.vmr) ~= 0);
+out = reduce_tanstruct_by_rowindex(out, goodcol);
 
 %%
 tanstruct_out_flagged = out;
