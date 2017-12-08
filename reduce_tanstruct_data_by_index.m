@@ -45,6 +45,8 @@ if isvector(ygas)
         end
     end
     if isfield(gasout,'lon') % when there is glc data included in tanstruct
+        gasout.lon = nan(datasize);
+        gasout.lat = nan(datasize);
         gasout.lon(ygas) = gasin.lon(ygas);
         gasout.lat(ygas) = gasin.lat(ygas);
     end

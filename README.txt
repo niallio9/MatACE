@@ -1,9 +1,9 @@
 matACE v1 README - NJR 11/2017
 
 These are a group of matlab functions that can be used to read and
-manipulate ACE-FTS data. There are also some functions for reading using
-the ACE DMP information. The ACE data netcdf files and ACE DMP files are
-available online.
+manipulate ACE-FTS data. There are also some functions for reading and 
+using the ACE DMP information. The ACE data netcdf files and ACE DMP files 
+are available online.
 
 The trace species geolocation data for ace occultations are read into
 separate matlab structures, and can be merged together afterwards

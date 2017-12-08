@@ -18,8 +18,9 @@ tic
 %% Things that may be changed often
 if nargin < 2
     home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
-    home_mac = '/Users/niall/Dropbox/climatology/nryan/';
-    climdirectory = strcat(home_mac,'matclim/');
+    home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
+    home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
+    climdirectory = strcat(home_windows,'matclim/');
 else
     climdirectory = out_directory;
 end

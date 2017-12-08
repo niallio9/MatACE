@@ -25,7 +25,7 @@ function [ tanstruct_out ] = subset_ace_by_lat( tanstruct_in, start_lat, end_lat
 
 %% Check if the structure has latitude and longitude information
 if ~isfield(tanstruct_in,'lat')
-    error('there is no ''lat'' field in the input. You can add the lat/lon information with ''add_ace_glc.m'' ')
+    error('there is no ''lat'' field in the input. You can add the lat/lon information with ''merge_ace_glc.m'' ')
 end
 
 %% Define some things

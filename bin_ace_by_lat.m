@@ -29,7 +29,7 @@ end
 gas = tanstruct_in;
 latbnds = lat_bounds;
 llat = length(latbnds) - 1;
-if isfield(gas,'pressure_hPa') % this is because the altitude or pressure fields can be empty after subsetting data that has been interpolated 
+if isfield(gas,'pressure_hPa') % from old version. no need to change 
     if isempty(gas.pressure_hPa)
         lalt = length(gas.altitude_km(:,1));
     else
@@ -74,9 +74,9 @@ for i = 1:llat
             %nan ones
 %             j
 %             ~isnan(gas_lati.vmr(j,:))
-            obs_lon =  gas_lati.lon(~isnan(gas_lati.vmr(j,:)));
-            obs_lat =  gas_lati.lat(~isnan(gas_lati.vmr(j,:)));
-            obs_date =  gas_lati.date_mjd(~isnan(gas_lati.vmr(j,:))); % dhould be the same times for the dmp anyway
+            obs_lon =  gas_lati.lon(j, ~isnan(gas_lati.vmr(j,:))); 
+            obs_lat =  gas_lati.lat(j, ~isnan(gas_lati.vmr(j,:)));
+            obs_date =  gas_lati.date_mjd(~isnan(gas_lati.vmr(j,:)));
             gaslatbin.obs_location{j,i} = [obs_lon;obs_lat;obs_date];
         end
     end
