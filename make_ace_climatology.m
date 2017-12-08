@@ -20,7 +20,7 @@ if nargin < 2
     home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
     home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
     home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
-    climdirectory = strcat(home_windows,'matclim/');
+    climdirectory = strcat(home_linux,'matclim/');
 else
     climdirectory = out_directory;
 end
@@ -48,9 +48,12 @@ if isdir(climdirectory)
     fprintf('\nApplying the data flags...\n')
     [ gas ] = apply_ace_flags(gas);
     
+    %% Replace erroneaous GLC latitude data with the tangent latitude
+    [ gas ] = filter_ace_bad_lat(gas, 10); % using a limit of 10 for the difference in GLC and tangent altitudes. This is a bit ad hoc.
+    
     %% Interpolate the data and dmps to the model pressure grid (defined above)
     % fprintf('\nInterpolating the gas data to the pre-defined pressure grid...')
-    [ gas ] = interpolate_ace_to_pgrid( gas, pgrid );
+    [ gas ] = interpolate_ace_to_pgrid( gas, pgrid ); % this also filters out bad pressure measurements (ones with values of zero).
     % fprintf('Done\n')
     
     %% Loop through the months and create climatologies for each.
