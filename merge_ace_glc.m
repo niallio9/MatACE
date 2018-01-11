@@ -1,7 +1,9 @@
 function [ tanstruct_out ] = merge_ace_glc( tanstruct_in, glcstruct_in)
 %A function to read ACE GLC data files, according to the occultations of
 %the input, and add the latitude and longitutde information to the input
-%structure. The input ACE data should use the original ACE 1km-grid.
+%structure. The input ACE data should use the original ACE 1km-grid. The
+%tangent latitude and longitude are used when there is no information in
+%the GLC file.
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
@@ -17,6 +19,7 @@ function [ tanstruct_out ] = merge_ace_glc( tanstruct_in, glcstruct_in)
 %           longitude.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 11/2017
+% NJR - 01/2018
 tic
 %% Only do if the lat and lon info isnt already there
 if ~isfield(tanstruct_in,'lat')
@@ -58,7 +61,14 @@ if ~isfield(tanstruct_in,'lat')
     end
     % fill in the rest with the tangent values
     for i = 1:lorbit
-        if sum(ismember(i,ygas)) == 0 % if the index does not appear in the intersection (if that orbit is not founf in the glc data)
+        if sum(ismember(i,ygas)) == 0 % if the index does not appear in the intersection (if that orbit is not found in the glc data)
+            lonout(:,i) = repmat(gas.lon_tangent(i),lalt,1);
+            latout(:,i) = repmat(gas.lat_tangent(i),lalt,1);
+        end
+    end
+    % fill in the nan columns with the tangent values
+    for i = 1:lorbit
+        if nansum(latout(:,i)) == 0
             lonout(:,i) = repmat(gas.lon_tangent(i),lalt,1);
             latout(:,i) = repmat(gas.lat_tangent(i),lalt,1);
         end
