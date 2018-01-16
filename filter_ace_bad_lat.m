@@ -25,7 +25,7 @@ sizelat = size(gasout.lat(:,1)); % should be 150 levels for the ace measurement
 
 %% find the paces where the limit is broken and replace the data
 diflat = gasin.lat - gasin.lat_tangent; % find the difference between the glc and tangent latitudes
-[~,jbad] = find(diflat >= latlim); % get the row indices of where the limit is broken
+[~,jbad] = find(abs(diflat) >= latlim); % get the row indices of where the limit is broken
 jbad = unique(jbad); % remove duplicates of the row indices
 gasout.lat(:,jbad) = repmat(gasout.lat_tangent(jbad),sizelat); % replace the GLC latitudes with the tangent latitude at all altitude levels
 %%
