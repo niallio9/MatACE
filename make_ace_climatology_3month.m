@@ -1,6 +1,6 @@
 function [ ] = make_ace_climatology_3month( tanstruct, out_directory)
 %A function to create zonally averaged climatologies of ACE measurements,
-%by calendar month.
+%by 3-monthly periods. 'make_ace_climatology.m' is called here.
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.

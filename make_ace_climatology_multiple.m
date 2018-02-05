@@ -9,12 +9,14 @@ function [ ] = make_ace_climatology_multiple( clim_type, varargin )
 %           clim_type: STRING - the type of climatology that you would like
 %           to make. Currently, the options are
 %           month:       a climatology averaged by calendar month. Produces
-%                        12 files.
+%                        12 files. Calls 'make_ace_climatology_month.m'.
 %           3month:      a climatology averaged by 3-month periods of DJF,
-%                        MAM, JJA, and SON. Produces 4 files.
+%                        MAM, JJA, and SON. Produces 4 files. Calls
+%                        'make_ace_climatology_3month.m'.
 %           serialmonth: a climatology of each unique calendar month in the
 %                        data. Produces as many files as there are unique
-%                        calendar months in the data.
+%                        calendar months in the data. Calls
+%                        'make_ace_climatology_serialmonth.m'.
 %
 %           varargin: STRING - the name of the gas for which you want to
 %                calculate a climatology. The directory containing the .nc
