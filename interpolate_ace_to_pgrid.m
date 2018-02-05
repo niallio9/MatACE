@@ -74,7 +74,9 @@ gasout.altitude_km = nan(lgrid,lorbit);
 gasout.pressure_hPa = pgrid;
 if isfield(gas,'pressure_hPa')
     if length(gas.pressure_hPa(1,:)) == 1 || length(gas.altitude_km(1,:)) > 1
-        warning('It seems like this structure has already been interpolated');
+        if length(gas.occultation) ~=1
+            warning('It seems like this structure has already been interpolated');
+        end
     end
 end
 if isfield(gas,'lat')
@@ -82,7 +84,7 @@ if isfield(gas,'lat')
     gasout.lat = nan(lgrid,lorbit);
 end
 %% Interpolate the fields of the ace structure
-fprintf('\nInterpolating the ACE data...\n')
+fprintf('\nInterpolating the ACE data...')
 logpgridi = logpgrid(:,1); % set this initially outside the loop so it doesn't have to reset each time if pgrid is a vector
 logpacei = logpace(:,1);
 for i = 1:lorbit
@@ -136,7 +138,7 @@ for i = 1:lorbit
         end
     end
 end
-fprintf('Done\n')
+fprintf('done')
 tanstruct_out = gasout;
 end
 

@@ -49,7 +49,7 @@ if ~isfield(tanstruct_in,'lat')
     [~,ygas,yglc] = intersect(gasorbit',glcorbit','rows'); % the indices of where the orbits/occultations match
     
     %The glc files are of the form: ace.ss1234a.txt or ace.ss12345a.txt
-    fprintf('\nReading and adding the GLC data for the given occultations...\n')
+    fprintf('\nReading and adding the GLC data for the given occultations...')
     %fill in the glc data
     for i = 1:length(ygas)
         if sum(ismember(i,ygas)) > 1
