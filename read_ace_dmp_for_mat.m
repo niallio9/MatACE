@@ -29,7 +29,7 @@ end
 matdirectory = 'F:\ACE\dmp3.5';
 
 %%STANDARD
-savename = 'ACE_v3p5_6_DMP2p0';
+savename = 'ACE_v3p6_DMPv2p0';
 
 %%
 if isdir(matdirectory) 

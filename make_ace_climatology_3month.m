@@ -1,11 +1,12 @@
 function [ ] = make_ace_climatology_3month( tanstruct, out_directory)
-%A function to create zonally averaged climatologies of ACE measurements,
-%by 3-monthly periods. 'make_ace_climatology.m' is called here.
+%A function to create zonally averaged climatologies of ACE measurements
+%by 3-monthly periods. 'make_ace_climatology.m' is called here. 
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
 %           This structure can be created with 'read_ace_ncdata.m' or with
-%           'read_ace_ncdata_for_mat.m'.
+%           'read_ace_ncdata_for_mat.m'. The GLC data must also be added to
+%           the tanstruct so that it has the latitude information.
 %
 %           out_directory: STRING - the path to the directory in which you
 %           would like the output to be saved.

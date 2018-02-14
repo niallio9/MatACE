@@ -1,9 +1,10 @@
-function [ ] = make_ace_climatology_multiple( clim_type, varargin )
-%A function to read theACE v3.5/6 .mat data and calculate a climatology
-%with the relevant information. The directory containing the .nc data, as
-%well as the directory to which you want to write the .mat data, should be
-%defined below. The direcetory containing the ACE data .mat files and the
-%output directory for the climatologies are defined by the user below
+function [ ] = make_ace_climatology_multiple_by_eql( clim_type, varargin )
+%A function to read theACE v3.5/6 .mat data and calculate a climatology,
+%using equivalent latitude, with the relevant information. The directory
+%containing the .nc data, as well as the directory to which you want to
+%write the .mat data, should be defined below. The directory containing
+%the ACE .mat files and the output directory for the climatologies are
+%defined by the user below.
 
 % *INPUT*
 %           clim_type: STRING - the type of climatology that you would like
@@ -40,26 +41,26 @@ home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
 
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
-matdirectory = 'F:\ACE\matdata\';
-% matdirectory = strcat(home_windows,'matdata\');
+%matdirectory = 'F:\ACE\matdata\';
+matdirectory = strcat(home_windows,'matdata\');
 if ~isdir(matdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',matdirectory)
     error('The directory containing the .nc data couldn''t be found')
 end
 % climdirectory = '/Users/niall/Dropbox/climatology/nryan/matclim/'; % edit this to your output directory
 % climdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matclim/';
-climdirectory = 'F:\ACE\climdata\';
-% climdirectory = strcat(home_windows,'climdata\');
+% climdirectory = 'F:\ACE\climdata\';
+climdirectory = strcat(home_windows,'climdata\');
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';
 filein_post = '.mat';
 
-%% Read the GLC file
-filein = strcat(matdirectory,filein_pre,'GLC',filein_post);
+%% Read the DMP file
+filein = strcat(matdirectory,filein_pre,'DMPv2p0',filein_post);
 temp_dir = dir(filein); % to check whether the GLC file exists
 if(~isempty(temp_dir)) % if the file exists
-    glc = load(filein); glc = glc.glcstruct;
+    dmp = load(filein); dmp = dmp.dmpstruct;
 else % if the file doesn't exist
     error('Error: I can''t find %s\n',filein);
 end
@@ -81,14 +82,14 @@ if isdir(climdirectory)
             if(~isempty(temp_dir)) % if the file exists
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
-                gasiglc = merge_ace_glc(gasi,glc);
+                gasidmp = merge_ace_dmp(gasi,dmp);
                 switch climtype
                     case 'month'
-                        make_ace_climatology_month(gasiglc,climdirectory);
+                        make_ace_climatology_month_by_eql(gasidmp,climdirectory);
                     case '3month'
-                        make_ace_climatology_3month(gasiglc,climdirectory);
+                        make_ace_climatology_3month_by_eql(gasidmp,climdirectory);
                     case 'serialmonth'
-                        make_ace_climatology_serialmonth(gasiglc,climdirectory);
+                        make_ace_climatology_serialmonth_by_eql(gasidmp,climdirectory);
                 end
             else
                 fprintf('Error: I can''t find %s\n',filein); % if the file doesn't exist
@@ -101,26 +102,26 @@ if isdir(climdirectory)
             if ~isempty(fileall)
                 for i = 1:length(fileall)
                     filein = strcat(matdirectory,fileall{i}); % get the path to the ith file in the list
-                    if ~strcmp(fileall{i}(10:end-4), 'GLC') && ~strcmp(fileall{i}(10:end-4), 'DMPv2p0')
+                    if ~strcmp(fileall{i}(10:end-4), 'DMPv2p0') && ~strcmp(fileall{i}(10:end-4), 'GLC')
                         fprintf('\nPROCESSING %s\n',fileall{i}(10:end-4))
                         gasi = load(filein); gasi = gasi.tanstruct;
-                        gasiglc = merge_ace_glc(gasi,glc);
+                        gasidmp = merge_ace_dmp(gasi,dmp);
                         switch climtype
                             case 'month'
-                                make_ace_climatology_month(gasiglc,climdirectory);
+                                make_ace_climatology_month_by_eql(gasidmp,climdirectory);
                             case '3month'
-                                make_ace_climatology_3month(gasiglc,climdirectory);
+                                make_ace_climatology_3month_by_eql(gasidmp,climdirectory);
                             case 'serialmonth'
-                                make_ace_climatology_serialmonth(gasiglc,climdirectory);
+                                make_ace_climatology_serialmonth_by_eql(gasidmp,climdirectory);
                         end
-                        clear gasiglc
+                        clear gasidmp
                     end
                 end
             else
                 fprintf('I couldn''t find any ACE .nc data in %s.\nIs the path correct?\n',ncdirectory)
             end
         end
-    else % if there are multiple gas names input
+    else % if there are multiple gas names as the input
         for i = 1:lin
             gasin = gases{i};
             filein = strcat(matdirectory,filein_pre,gasin,filein_post);
@@ -128,14 +129,14 @@ if isdir(climdirectory)
             if(~isempty(temp_dir)) % if the file exists
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
-                gasiglc = merge_ace_glc(gasi,glc);
+                gasidmp = merge_ace_dmp(gasi,dmp);
                 switch climtype
                     case 'month'
-                        make_ace_climatology_month(gasiglc,climdirectory);
+                        make_ace_climatology_month_by_eql(gasidmp,climdirectory);
                     case '3month'
-                        make_ace_climatology_3month(gasiglc,climdirectory);
+                        make_ace_climatology_3month_by_eql(gasidmp,climdirectory);
                     case 'serialmonth'
-                        make_ace_climatology_serialmonth(gasiglc,climdirectory);
+                        make_ace_climatology_serialmonth_by_eql(gasidmp,climdirectory);
                 end
                 clear gasiglc
             else

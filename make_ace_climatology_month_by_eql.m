@@ -1,12 +1,14 @@
-function [ ] = make_ace_climatology_month( tanstruct, out_directory)
-%A function to create zonally averaged climatologies of ACE measurements,
-%by calendar month. 'make_ace_climatology.m' is called here.
+function [ ] = make_ace_climatology_month_by_eql( tanstruct, out_directory)
+% A function to create zonally averaged climatologies of ACE measurements
+% by calendar month, using equivalent latitude.
+% 'make_ace_climatology_by_eql.m' is called here. 
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
 %           This structure can be created with 'read_ace_ncdata.m' or with
-%           'read_ace_ncdata_for_mat.m'. The GLC data must also be added to
-%           the tanstruct so that it has the latitude information.
+%           'read_ace_ncdata_for_mat.m'. The DMP data must also be added to
+%           the tanstruct so that it has the equivalent latitude
+%           information.
 %
 %           out_directory: STRING - the path to the directory in which you
 %           would like the output to be saved.
@@ -29,7 +31,7 @@ else
 end
 
 %the name of the output files
-savename_pre = 'ACEFTS_CLIM_v3_';
+savename_pre = 'ACEFTS_CLIM_v3_eql_';
 % cells with the names of the month
 monthnames = {'January', 'February', 'March', 'April', 'May', 'June', ...
     'July', 'August', 'September', 'October', 'November', 'December'};
@@ -44,7 +46,7 @@ if exist(climdirectory_gas,'dir') ~= 7
     mkdir(climdirectory_gas);
 end
 
-%% Only continue of the output directory exists
+%% Only continue if the output directory exists
 if isdir(climdirectory)  
     %% Loop through the months and create climatologies for each.
     for i = 1:12
@@ -53,7 +55,7 @@ if isdir(climdirectory)
         gas_monthi = subset_ace_by_month(gas,i);
         warning on
         fprintf('\nPreparing climatology for %s', monthnames{i})
-        climstruct_monthi = make_ace_climatology(gas_monthi);
+        climstruct_monthi = make_ace_climatology_by_eql(gas_monthi);
         
         % save the file as a matlab structure for now. In the chosen directory
         if  nansum(climstruct_monthi.date_mjd_mean) ~= 0

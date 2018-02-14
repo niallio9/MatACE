@@ -1,12 +1,14 @@
-function [ ] = make_ace_climatology_month( tanstruct, out_directory)
-%A function to create zonally averaged climatologies of ACE measurements,
-%by calendar month. 'make_ace_climatology.m' is called here.
+function [ ] = make_ace_climatology_3month_by_eql( tanstruct, out_directory)
+%A function to create zonally averaged climatologies of ACE measurements
+%by 3-monthly periods, using equivalent latitude.
+%'make_ace_climatology_by_eql.m' is called here. 
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
 %           This structure can be created with 'read_ace_ncdata.m' or with
-%           'read_ace_ncdata_for_mat.m'. The GLC data must also be added to
-%           the tanstruct so that it has the latitude information.
+%           'read_ace_ncdata_for_mat.m'. The DMP data must also be added to
+%           the tanstruct so that it has the equivalent latitude
+%           information.
 %
 %           out_directory: STRING - the path to the directory in which you
 %           would like the output to be saved.
@@ -29,36 +31,34 @@ else
 end
 
 %the name of the output files
-savename_pre = 'ACEFTS_CLIM_v3_';
+savename_pre = 'ACEFTS_CLIM_v3_eql_';
 % cells with the names of the month
-monthnames = {'January', 'February', 'March', 'April', 'May', 'June', ...
-    'July', 'August', 'September', 'October', 'November', 'December'};
+monthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 
 %% Define some things
 gas = tanstruct;
 climstruct = []; %#ok<NASGU>
 
-%% Create a folder to store the climatology data if one does not exist
-climdirectory_gas = strcat(climdirectory,gas.gas,'/');
-if exist(climdirectory_gas,'dir') ~= 7
-    mkdir(climdirectory_gas);
-end
-
 %% Only continue of the output directory exists
-if isdir(climdirectory)  
+if isdir(climdirectory)
+    %% Create a folder to store the climatology data if one does not exist
+    climdirectory_gas = strcat(climdirectory,gas.gas,'/');
+    if exist(climdirectory_gas,'dir') ~= 7
+        mkdir(climdirectory_gas);
+    end
     %% Loop through the months and create climatologies for each.
-    for i = 1:12
+    for i = 1:4
         %subset the ace data by month
         warning off % supress warnings about reducing the data to zero here. There is output below if this is the case
-        gas_monthi = subset_ace_by_month(gas,i);
+        gas_3monthi = subset_ace_by_3month(gas,monthnames{i});
         warning on
-        fprintf('\nPreparing climatology for %s', monthnames{i})
-        climstruct_monthi = make_ace_climatology(gas_monthi);
+        fprintf('\nPreparing climatology for %s...', monthnames{i})
+        climstruct_3monthi = make_ace_climatology_by_eql(gas_3monthi);
         
         % save the file as a matlab structure for now. In the chosen directory
-        if  nansum(climstruct_monthi.date_mjd_mean) ~= 0
-            climstruct = climstruct_monthi; %#ok<NASGU>
-            savename_post = sprintf('_%02d',i);
+        if  nansum(climstruct_3monthi.date_mjd_mean) ~= 0
+            climstruct = climstruct_3monthi; %#ok<NASGU>
+            savename_post = sprintf('_%s',monthnames{i});
             savedest = strcat(climdirectory_gas,savename_pre,gas.gas,savename_post);
             fprintf('\nSaving %s climatology to %s\n', monthnames{i}, savedest);
             save(savedest,'climstruct');
