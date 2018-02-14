@@ -49,6 +49,9 @@ if isfield(out,'lon')
    out.lon(:,badj) = [];
    out.lat(:,badj) = [];
 end
+if isfield(out,'eql')
+   out.eql(:,badj) = []; 
+end
 
 %% Change any other values with flags > 2 to NaNs
 [badI] = find(out.quality_flags > 1);

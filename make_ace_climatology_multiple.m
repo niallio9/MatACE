@@ -40,14 +40,16 @@ home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
 
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
-matdirectory = strcat(home_windows,'matdata\');
+matdirectory = 'F:\ACE\matdata\';
+% matdirectory = strcat(home_windows,'matdata\');
 if ~isdir(matdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',matdirectory)
     error('The directory containing the .nc data couldn''t be found')
 end
 % climdirectory = '/Users/niall/Dropbox/climatology/nryan/matclim/'; % edit this to your output directory
 % climdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matclim/';
-climdirectory = strcat(home_windows,'climdata\');
+climdirectory = 'F:\ACE\climdata\';
+% climdirectory = strcat(home_windows,'climdata\');
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';

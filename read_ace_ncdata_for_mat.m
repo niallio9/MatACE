@@ -23,13 +23,15 @@ function [ ] = read_ace_ncdata_for_mat( varargin )
 
 %%USER DEFINED
 % ncdirectory = '/Users/niall/Dropbox/climatology/nryan/ncdata/'; % edit this to your directory that contains the ACE netcdf data
-ncdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/ncdata/v3p6/';
+% ncdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/ncdata/v3p6/';
+ncdirectory = 'F:\ACE\ncdata\v3p6\';
 if ~isdir(ncdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',ncdirectory)
     error('The directory containing the .nc data couldn''t be found')
 end
 % matdirectory = '/Users/niall/Dropbox/climatology/nryan/matdata/'; % edit this to your output directory
-matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
+% matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
+matdirectory = 'F:\ACE\matdata\';
 
 %%STANDARD
 filein_pre = 'ACEFTS_L2_v3p6_';

@@ -1,5 +1,5 @@
 function [ tanstruct_out ] = interpolate_ace_to_pgrid( tanstruct_in, pressure_grid )
-%A function to interpolate the variables of ACE an data strcture to a
+%A function to interpolate the variables of ACE an data structure to a
 %user-defined pressure grid. The interpolation is performed in log-pressure
 %space. It is recommended to apply the quality flags before using this
 %function, with 'apply_ace_flags.m'. The interpolation will be weird if the
@@ -22,12 +22,13 @@ function [ tanstruct_out ] = interpolate_ace_to_pgrid( tanstruct_in, pressure_gr
 %           quality flags are removed as they cannot be interpolated.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 10/2017
+% NJR - 02/2018
 
 %% define some things
 gas = remove_ace_surface_pressure(tanstruct_in); % there are often multiple surface pressure values, which messes with interpolation
 gas = filter_ace_pressure(gas); % remove profiles that have zero values for pressures in them
 % gas = tanstruct_in;
-interptype = 'pchip';
+interptype = 'pchip'; %the spline interpolation method is giving bad results near the boundaries
 lorbit = length(gas.occultation);% this is the same as the length of p
 zace = gas.altitude_km;
 pace = gas.pressure_hPa;
@@ -83,6 +84,9 @@ if isfield(gas,'lat')
     gasout.lon = nan(lgrid,lorbit);
     gasout.lat = nan(lgrid,lorbit);
 end
+if isfield(gas,'eql')
+   gasout.eql = nan(lgrid,lorbit); 
+end
 %% Interpolate the fields of the ace structure
 fprintf('\nInterpolating the ACE data...')
 logpgridi = logpgrid(:,1); % set this initially outside the loop so it doesn't have to reset each time if pgrid is a vector
@@ -135,6 +139,17 @@ for i = 1:lorbit
             logpacei_s = logpacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space
             gasout.lat(:,i) = interp1(logpacei_s,lati,logpgridi,interptype, nan);
+        end
+    end
+    if isfield(gas,'eql')
+        eqli = gas.eql(:,i);
+        eqli(isnan(logpacei)) = nan;
+        lgood = ~isnan(eqli); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
+        if sum(lgood) > 4 % need at least 5 points to perform the interpolation
+            eqli = eqli(lgood); % reduce the size of the vector
+            logpacei_s = logpacei(lgood); % reduce the size as well
+            %interpolate the fields in log-pressure space
+            gasout.eql(:,i) = interp1(logpacei_s,eqli,logpgridi,interptype, nan);
         end
     end
 end

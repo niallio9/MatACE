@@ -25,7 +25,8 @@ if ~isdir(path_to_dmp_data)
 end
 
 %%USER DEFINED
-matdirectory = '/Users/niall/Dropbox/climatology/nryan/dmptest10'; % edit this to your output directory
+% matdirectory = '/Users/niall/Dropbox/climatology/nryan/dmptest10'; % edit this to your output directory
+matdirectory = 'F:\ACE\dmp3.5';
 
 %%STANDARD
 savename = 'ACE_v3p5_6_DMP2p0';

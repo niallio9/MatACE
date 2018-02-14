@@ -21,9 +21,10 @@ function [ tanstruct_out ] = interpolate_ace_to_altgrid( tanstruct_in, altitude_
 %           quality flags are removed as they cannot be interpolated.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 11/2017
+% NJR - 02/2018
 
 %% define some things
-interptype = 'pchip';
+interptype = 'pchip'; %the spline interpolation method is giving bad results near the boundaries
 gas = tanstruct_in;
 zgrid = altitude_grid;
 if isvector(zgrid)
@@ -59,6 +60,9 @@ if isfield(gas,'pressure_hPa')
     if length(gas.pressure_hPa(1,:)) == 1 || length(gas.altitude_km(1,:)) > 1
         warning('It seems like this structure has already been interpolated');
     end
+end
+if isfield(gas,'eql')
+   gasout.eql = nan(lgrid,lorbit); 
 end
 gasout.altitude_km = zgrid;
 
@@ -115,6 +119,15 @@ for i = 1:lorbit
             zacei_s = zacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space
             gasout.lat(:,i) = interp1(zacei_s,lati,zgridi,interptype,nan);
+        end
+    end
+    if isfield(gas,'eql')
+        lgood = ~isnan(gas.eql(:,i)); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
+        if sum(lgood) > 4 % need at least 4 points to perform the interpolation
+            eqli = gas.eql(lgood,i); % reduce the size of the vector
+            zacei_s = zacei(lgood); % reduce the size as well
+            %interpolate the fields in log-pressure space
+            gasout.eql(:,i) = interp1(zacei_s,eqli,zgridi,interptype,nan);
         end
     end
 end

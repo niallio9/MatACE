@@ -18,7 +18,8 @@ function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindi
 %           remain.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 11/17
+%   NJR - 11/2017
+%   NJR - 02/2018
 
 gasout = tanstruct_in;
 ygas = rowindices;
@@ -46,6 +47,9 @@ end
 if isfield(gasout,'lon') % when there is glc data included
     gasout.lon = gasout.lon(:,ygas);
     gasout.lat = gasout.lat(:,ygas);
+end
+if isfield(gasout,'eql') % when there is DMP data included in the tanstruct
+    gasout.eql = gasout.eql(:,ygas);
 end
 
 tanstruct_out = gasout;

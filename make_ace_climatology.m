@@ -45,7 +45,7 @@ if isempty(gas.occultation) == 0
     %% Replace erroneaous GLC latitude data with the tangent latitude
     [ gas ] = filter_ace_bad_lat(gas, 10); % using a limit of 10 for the difference in GLC and tangent latitudes. This is a bit ad hoc.
     [ gas ] = filter_ace_bad_lon(gas, 40); % using a limit of 40 for the difference in GLC and tangent longitudes. This is a bit ad hoc.
-    %% Interpolate the data and dmps to the model pressure grid (defined above)
+    %% Interpolate the data to the model pressure grid (defined above)
     % fprintf('\nInterpolating the gas data to the pre-defined pressure grid...')
     [ gas ] = interpolate_ace_to_pgrid( gas, pgrid ); % this also filters out bad pressure measurements (ones with values of zero).
     % fprintf('Done\n')
@@ -54,8 +54,8 @@ end
 %% create climatology
 %Within this, separate out the contributions to each latitude band
 %defined above
-%bin the data by latitude. this creates a structure with new fields that are explained below in (A).
-fprintf('\nBinning the data by latitude');
+%Bin the data by latitude. this creates a structure with new fields that are explained below in (A).
+fprintf('\nBinning the data by latitude\n');
 gas_latbin  = bin_ace_by_lat( gas, lat_bounds );
 climstruct_out = gas_latbin;
 if  nansum(gas_latbin.date_mjd_mean) == 0

@@ -17,7 +17,8 @@ function [ tanstruct_out ] = reduce_tanstruct_data_by_index( tanstruct_in, indic
 %           input but with the data reduced according to the input indices
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 10/17
+%   NJR - 10/2017
+%   NJR - 02/2018
 
 gasin = tanstruct_in;
 gasout = gasin;
@@ -49,6 +50,10 @@ if isvector(ygas)
         gasout.lat = nan(datasize);
         gasout.lon(ygas) = gasin.lon(ygas);
         gasout.lat(ygas) = gasin.lat(ygas);
+    end
+    if isfield(gasout,'eql') % when there is DMP data included in the tanstruct
+        gasout.eql = nan(datasize);
+        gasout.eql(ygas) = gasin.eql(ygas);
     end
     % now remove any colums that are all NaNs
     goodcol = find(nansum(gasout.vmr) ~= 0); % find the columns that are all nans
