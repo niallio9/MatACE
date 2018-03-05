@@ -10,7 +10,7 @@ function [ tanstruct_out ] = merge_ace_dmp( tanstruct_in, dmpstruct_in)
 %           This structure can be created with 'read_ace_ncdata.m' or with
 %           'read_ace_ncdata_for_mat.m'.
 %
-%           glcstruct_in: STructure - contains the location data for the
+%           glcstruct_in: Structure - contains the location data for the
 %           ace measurements.
 %
 % *OUTPUT*
@@ -49,7 +49,6 @@ if ~isfield(tanstruct_in,'lat')
     
     %% Check which ones match
     [~,ygas,ydmp] = intersect(gasorbit',dmporbit','rows'); % the indices of where the orbits/occultations match
-    
     fprintf('\nReading and adding the DMP data for the given occultations...')
     %fill in the glc data
     for i = 1:length(ygas)
@@ -90,6 +89,7 @@ if ~isfield(tanstruct_in,'lat')
     gasout.quality_flags = gasout.quality_flags(1:lalt,:);
     gasout.pressure_hPa = gasout.pressure_hPa(1:lalt,:);
     
+    gasout = reduce_tanstruct_by_rowindex(gasout, ygas); % take out any occultations for thich there were no DMP data
     tanstruct_out = gasout;
     fprintf('\nDone\n')
 else

@@ -39,10 +39,12 @@ function [ ] = make_ace_climatology_multiple_by_eql( clim_type, varargin )
 home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
+home_deluge = '/net/deluge/pb_1/users/nryan/';
 
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
-%matdirectory = 'F:\ACE\matdata\';
-matdirectory = strcat(home_windows,'matdata\');
+% matdirectory = 'F:\ACE\matdata\';
+% matdirectory = strcat(home_mac,'matdata/');
+matdirectory = strcat(home_deluge,'ACE/','matdata/');
 if ~isdir(matdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',matdirectory)
     error('The directory containing the .nc data couldn''t be found')
@@ -50,7 +52,8 @@ end
 % climdirectory = '/Users/niall/Dropbox/climatology/nryan/matclim/'; % edit this to your output directory
 % climdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matclim/';
 % climdirectory = 'F:\ACE\climdata\';
-climdirectory = strcat(home_windows,'climdata\');
+% climdirectory = strcat(home_mac,'climdata/');
+climdirectory = strcat(home_deluge,'ACE/','climdata/');
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';

@@ -23,9 +23,10 @@ gasin = tanstruct_in;
 gasout = gasin;
 lonlim = lon_limit;
 sizelon = size(gasout.lon(:,1)); % should be 150 levels for the ace measurement
+lontangent = repmat(gasin.lon_tangent, [sizelon,1] ); % need this because matlab on deluge cant subtract a vector from a matrix
 
 %% find the paces where the limit is broken and replace the data
-diflon = gasin.lon - gasin.lon_tangent; % find the difference betweent he glc and tangent latitudes
+diflon = gasin.lon - lontangent; % find the difference betweent he glc and tangent latitudes
 [~,jbad] = find(abs(diflon) >= lonlim); % get the row indices of where the limit is broken
 jbad = unique(jbad); % remove duplicates of the row indices
 gasout.lon(:,jbad) = repmat(gasout.lon_tangent(jbad),sizelon); % replace the GLC latitudes with the tangent latitude at all altitude levels

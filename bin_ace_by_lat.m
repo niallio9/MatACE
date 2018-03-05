@@ -58,7 +58,9 @@ for i = 1:llat
     if ~isempty(gas_lati.occultation)
         gaslatbin.beta_angle_mean(i) = mean(gas_lati.beta_angle);
         gaslatbin.beta_angle_var(i) = std(gas_lati.beta_angle);
-        gaslatbin.date_mjd_mean(i) = mean(gas_lati.date_mjd);
+        %gaslatbin.date_mjd_mean(i) = mean(gas_lati.date_mjd); ** removed cos it's stupid
+        gaslatbin.start_date = datestr(mjd2datenum(gas.date_mjd(1)));
+        gaslatbin.end_date = datestr(mjd2datenum(gas.date_mjd(end)));
         gaslatbin.lon_tangent_mean(i) = mean(gas_lati.lon_tangent);
         gaslatbin.lat_tangent_mean(i) = mean(gas_lati.lat_tangent);
         gaslatbin.lon_mean(:,i) = nanmean(gas_lati.lon,2);

@@ -36,7 +36,9 @@ pace = gas.pressure_hPa;
 % next line is to add to the ace pressure grid so that there are not values that
 % are equal when doing the interpolation.
 padd = flipud(cumsum(ones(size(zace(:,1))))*eps*1e6); % 1x150. order of 1e-10
+padd = repmat(padd,1,length(pace(1,:))); % needed to add this because matlab 2013b on deluge is causeing probelms when adding a vector to a matrix
 pace = pace + padd;
+clear padd
 % padd5 = flipud(cumsum(ones(5,1))*eps*1e6); % 1x150. order of 1e-10. just adding to the lowest 5 levels to avoid multiple values of 1 
 % pace(1:5,:) = pace(1:5,:) + padd5;
 logpace = log(pace);

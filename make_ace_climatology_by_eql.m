@@ -63,7 +63,7 @@ fprintf('\nBinning the data by equivalent latitude...');
 gas_eqlbin  = bin_ace_by_eql( gas, eql_bounds );
 fprintf('done\n')
 climstruct_out = gas_eqlbin;
-if  nansum(gas_eqlbin.date_mjd_mean) == 0
+if  isempty(gas_eqlbin.start_date)
     fprintf('There are no climatology data for the input. Too few observations');
 end
 climstruct = climstruct_out;

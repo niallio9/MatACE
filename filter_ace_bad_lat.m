@@ -1,6 +1,6 @@
 function [ tanstruct_out ] = filter_ace_bad_lat( tanstruct_in, lat_limit )
 %A function to find ACE measurements that have erroneous GLC latitudes, and
-%replace a;; the latitudes for those measurements with the tangent
+%replace the latitudes for those measurements with the tangent
 %latitude.
 %
 % *INPUT*
@@ -22,9 +22,10 @@ gasin = tanstruct_in;
 gasout = gasin;
 latlim = lat_limit;
 sizelat = size(gasout.lat(:,1)); % should be 150 levels for the ace measurement
+lattangent = repmat(gasin.lat_tangent, [sizelat,1] ); % need this because matlab on deluge cant subtract a vector from a matrix
 
 %% find the paces where the limit is broken and replace the data
-diflat = gasin.lat - gasin.lat_tangent; % find the difference between the glc and tangent latitudes
+diflat = gasin.lat - lattangent; % find the difference between the glc and tangent latitudes
 [~,jbad] = find(abs(diflat) >= latlim); % get the row indices of where the limit is broken
 jbad = unique(jbad); % remove duplicates of the row indices
 gasout.lat(:,jbad) = repmat(gasout.lat_tangent(jbad),sizelat); % replace the GLC latitudes with the tangent latitude at all altitude levels

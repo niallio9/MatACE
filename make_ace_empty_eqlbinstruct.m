@@ -62,7 +62,9 @@ end
 gaseqlbin.source_file = gas.source_file; % the same original source of the data
 gaseqlbin.beta_angle_mean = nan(1,leql); % one average per month  
 gaseqlbin.beta_angle_var = nan(1,leql); % one average per month
-gaseqlbin.date_mjd_mean = nan(1,leql); % make it a mean mjd
+% gaseqlbin.date_mjd_mean = nan(1,leql); % make it a mean mjd **** this has been removed cos it's stupid
+gaseqlbin.start_date = []; % for the date of the earliest measurement
+gaseqlbin.end_date = []; % for the date of the latest measurement
 gaseqlbin.gas = gas.gas; % the same as the original file
 gaseqlbin.lon_tangent_mean = nan(1,leql);
 gaseqlbin.lat_tangent_mean = nan(1,leql);

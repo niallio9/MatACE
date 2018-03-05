@@ -23,7 +23,7 @@ if nargin < 2
     home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
     home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
     home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
-    climdirectory = strcat(home_windows,'climdata/');
+    climdirectory = strcat(home_mac,'climdata/');
 else
     climdirectory = strcat(out_directory,'/');
 end
@@ -62,8 +62,11 @@ if isdir(climdirectory)
             if isempty(gas_yearj_monthi.date_mjd) == 0
                 fprintf('\nPreparing climatology for %s %d', monthnames{i}, years_unique(j))
                 climstruct_monthi = make_ace_climatology(gas_yearj_monthi);
+                climstruct_monthi.climatology_type = 'serial_month';
+                climstruct_monthi.time = [years_unique(j),i];
+                
                 % save the file as a matlab structure for now. In the chosen directory
-                if  nansum(climstruct_monthi.date_mjd_mean) ~= 0
+                if  ~isempty(climstruct_monthi.start_date)
                     climstruct = climstruct_monthi; %#ok<NASGU>
                     savename_post = sprintf('_%d_%02d',years_unique(j),i);
                     savedest = strcat(climdirectory_gas,savename_pre,gas.gas,savename_post);

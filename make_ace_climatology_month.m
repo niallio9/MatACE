@@ -54,9 +54,11 @@ if isdir(climdirectory)
         warning on
         fprintf('\nPreparing climatology for %s', monthnames{i})
         climstruct_monthi = make_ace_climatology(gas_monthi);
+        climstruct_monthi.climatology_type = 'calendar_month';
+        climstruct_monthi.time = i;
         
         % save the file as a matlab structure for now. In the chosen directory
-        if  nansum(climstruct_monthi.date_mjd_mean) ~= 0
+        if  ~isempty(climstruct_monthi.start_date)
             climstruct = climstruct_monthi; %#ok<NASGU>
             savename_post = sprintf('_%02d',i);
             savedest = strcat(climdirectory_gas,savename_pre,gas.gas,savename_post);
