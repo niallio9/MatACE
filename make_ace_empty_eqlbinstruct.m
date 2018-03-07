@@ -75,9 +75,13 @@ if length(gas.altitude_km(1,:)) == 1
     gaseqlbin.altitude_km = gas.altitude_km;
     lalt = length(gas.altitude_km); % should be the same for altitude and pressure anyway
 else
+    gaseqlbin.altitude_km_mean = nanmean(gas.altitude_km,2); %there should always be an altitude field in the ace data, whether interpolated or not
+end
+if length(gas.pressure_hPa(1,:)) == 1
     gaseqlbin.pressure_hPa = gas.pressure_hPa; % there will only be a pressure field for data interpolated onto a pressure grid
     lalt = length(gas.pressure_hPa);% should be the same for altitude and pressure anyway
-    gaseqlbin.altitude_km_mean = nanmean(gas.altitude_km,2); %there should always be an altitude field in the ace data, whether interpolated or not
+else
+    gaseqlbin.pressure_hPa_mean = nanmean(gas.pressure_hPa,2); %there should always be a pressure field in the new ace data, whether interpolated or not
 end
 gaseqlbin.vmr_zonal = nan(lalt,leql);
 gaseqlbin.vmr_zonal_var = nan(lalt,leql);
