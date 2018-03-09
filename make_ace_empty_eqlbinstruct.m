@@ -57,12 +57,11 @@ end
 % lorbit = length(gas.occultation);
 % lgrid = length(gas.altitude_km(:,1));
 %maxl = lorbit*lgrid; % this is the maximum number of points that can go into a bin
-
 %% Set up the output structure
 gaseqlbin.source_file = gas.source_file; % the same original source of the data
 gaseqlbin.beta_angle_mean = nan(1,leql); % one average per month  
 gaseqlbin.beta_angle_var = nan(1,leql); % one average per month
-% gaseqlbin.date_mjd_mean = nan(1,leql); % make it a mean mjd **** this has been removed cos it's stupid
+gaseqlbin.doy_mean = nan(1,leql); % this has been added to get the mean day of the year. can be used to make mean day of month later
 gaseqlbin.start_date = []; % for the date of the earliest measurement
 gaseqlbin.end_date = []; % for the date of the latest measurement
 gaseqlbin.gas = gas.gas; % the same as the original file

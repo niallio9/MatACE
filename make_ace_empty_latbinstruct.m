@@ -62,7 +62,7 @@ end
 gaslatbin.source_file = gas.source_file; % the same original source of the data
 gaslatbin.beta_angle_mean = nan(1,llat); % one average per month
 gaslatbin.beta_angle_var = nan(1,llat); % one average per month
-% gaslatbin.date_mjd_mean = nan(1,llat); % make it a mean mjd **** this has been removed cos it's stupid
+gaslatbin.doy_mean = nan(1,llat); % this has been added to get the mean day of the year. can be used to make mean day of month later
 gaslatbin.start_date = []; % for the date of the earliest measurement
 gaslatbin.end_date = []; % for the date of the latest measurement
 gaslatbin.gas = gas.gas; % the same as the original file

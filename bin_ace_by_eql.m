@@ -59,6 +59,7 @@ for i = 1:llat
         gaseqlbin.beta_angle_mean(i) = mean(gas_eqli.beta_angle);
         gaseqlbin.beta_angle_var(i) = std(gas_eqli.beta_angle);
 %         gaseqlbin.date_mjd_mean(i) = mean(gas_eqli.date_mjd); ** removed cos it's stupid
+        gaseqlbin.doy_mean(i) = mean(mjd2doy(gas_eqli.date_mjd));
         gaseqlbin.start_date = datestr(mjd2datenum(gas.date_mjd(1)));
         gaseqlbin.end_date = datestr(mjd2datenum(gas.date_mjd(end)));
         gaseqlbin.lon_tangent_mean(i) = mean(gas_eqli.lon_tangent);
