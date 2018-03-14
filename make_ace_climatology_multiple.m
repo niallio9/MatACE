@@ -120,7 +120,7 @@ if isdir(climdirectory)
                     end
                 end
             else
-                fprintf('I couldn''t find any ACE .nc data in %s.\nIs the path correct?\n',ncdirectory)
+                fprintf('I couldn''t find any ACE v3p6 .mat data in %s.\nIs the path correct?\n',matdirectory)
             end
         end
     else % if there are multiple gas names input

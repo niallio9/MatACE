@@ -71,16 +71,16 @@ gaseqlbin.lat_tangent_mean = nan(1,leql);
 %checked above to make sure one of these is common to all data, i.e., one
 %of either altitude or pressure is a vector and not an array
 if length(gas.altitude_km(1,:)) == 1
-    gaseqlbin.altitude_km = gas.altitude_km;
+    gaseqlbin.altitude_km_mean = gas.altitude_km;
     lalt = length(gas.altitude_km); % should be the same for altitude and pressure anyway
 else
-    gaseqlbin.altitude_km_mean = nanmean(gas.altitude_km,2); %there should always be an altitude field in the ace data, whether interpolated or not
+    gaseqlbin.altitude_km_mean = nanmean(gas.altitude_km,2); % leaving like this for now because there are sometimes only one measurement in a given climatology
 end
 if length(gas.pressure_hPa(1,:)) == 1
-    gaseqlbin.pressure_hPa = gas.pressure_hPa; % there will only be a pressure field for data interpolated onto a pressure grid
+    gaseqlbin.pressure_hPa = gas.pressure_hPa; % should be one pressure profile for pressure interpolated data
     lalt = length(gas.pressure_hPa);% should be the same for altitude and pressure anyway
 else
-    gaseqlbin.pressure_hPa_mean = nanmean(gas.pressure_hPa,2); %there should always be a pressure field in the new ace data, whether interpolated or not
+    gaseqlbin.pressure_hPa_mean = nanmean(gas.pressure_hPa,2); %this is kind of unnecessary for pressure interpolateed profiles. will cause an error later if working with altitude interpolated profiles
 end
 gaseqlbin.vmr_zonal = nan(lalt,leql);
 gaseqlbin.vmr_zonal_var = nan(lalt,leql);

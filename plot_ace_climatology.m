@@ -1,9 +1,9 @@
-function [ ] = plot_ace_climatology( climdata_in )
+function [ ] = plot_ace_climatology( climstruct_in )
 %A function to plot the climatology data for ACE. The function uses
 %'pcolor'.
 %
 % *INPUT*
-%           climdata_in: STRUCTURE - the data to be plotted. The structure
+%           climstruct_in: STRUCTURE - the data to be plotted. The structure
 %           is created by running one of the 'make_ace_climatology...'
 %           matlab functions.
 %
@@ -15,7 +15,7 @@ function [ ] = plot_ace_climatology( climdata_in )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% define some things
-clim = climdata_in;
+clim = climstruct_in;
 gas = clim.gas;
 climdata = clim.vmr_zonal;
 climtype = clim.climatology_type;

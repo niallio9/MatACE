@@ -44,7 +44,7 @@ savename_pre = 'ACE_v3p6_';
 if isdir(matdirectory)
     
     %% Get the names of the input gases
-    gases = varargin; % cell with gas names
+    gases = varargin; % array of cells with gas names
     lin = length(gases); % number of gases to read
     
     %% Read the files

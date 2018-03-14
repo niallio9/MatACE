@@ -32,7 +32,7 @@ else
     lstbreak = lst_break;
 end
 
-%% pick out the data that corresponds to the year
+%% pick out the data that corresponds to before and after the chosen LST
 lst_ace = get_ace_lst(gas); % get an array of the LSTs of the occultations
 ilst_before = find( lst_ace <= lstbreak ); % get the indices of the data points that are before the input LST
 ilst_after = find( lst_ace > lstbreak ); % get the indices of the data points that are before the input LST
