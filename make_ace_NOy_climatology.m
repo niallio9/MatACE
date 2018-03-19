@@ -88,7 +88,6 @@ if ~isempty(climfile_lat_serial_no)
         hno4_yearandmonth = sprintf('ACEFTS_CLIM_v3_lat_%s_%s.mat',gasfolder{6},yearandmonth{j});
         climfile_hno4 = fullfile(gasdir_hno4,'serial_month', hno4_yearandmonth); % the name of a climatology file
         if exist(climfile_no2,'file') == 2 && exist(climfile_hno3,'file') == 2 && exist(climfile_clono2,'file') == 2 && exist(climfile_n2o5,'file') == 2 && exist(climfile_hno4,'file') ==2 % check if each file exists for that month
-            disp('go')
             load(climfile_no2); % loads a variable called climstruct
             climstruct_no2 = climstruct;
             load(climfile_no); % loads a variable called climstruct

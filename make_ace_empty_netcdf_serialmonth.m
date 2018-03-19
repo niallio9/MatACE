@@ -32,17 +32,29 @@ ltime = 12;
 
 %% create the file and add the variable information
 fprintf('\ncreating the fields for %s...', gas)
-nccreate(filename,gas,'Dimensions',{'time', ltime, 'plev', llev,  'lat', llat},'Datatype','double','Format','classic');
-nccreate(filename,strcat(gas,'_STD'),'Dimensions',{'time', ltime, 'plev', llev,  'lat', llat},'Datatype','double','Format','classic');
-nccreate(filename,strcat(gas,'_NR'),'Dimensions',{'time', ltime, 'plev', llev,  'lat', llat},'Datatype','int32','Format','classic');
-nccreate(filename,'LST_MEAN','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
-nccreate(filename,'LST_MAX','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
-nccreate(filename,'LST_MIN','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
-nccreate(filename,'AVE_DOM','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
-nccreate(filename,'AVE_LAT','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
+nccreate(filename,gas,'Dimensions',{'lat', llat, 'plev', llev, 'time', ltime},'Datatype','double','Format','classic');
+nccreate(filename,strcat(gas,'_STD'),'Dimensions',{'lat', llat, 'plev', llev, 'time', ltime},'Datatype','double','Format','classic');
+nccreate(filename,strcat(gas,'_NR'),'Dimensions',{'lat', llat, 'plev', llev, 'time', ltime},'Datatype','int32','Format','classic');
+nccreate(filename,'LST_MEAN','Dimensions',{'lat', llat, 'time', ltime},'Datatype','single','Format','classic');
+nccreate(filename,'LST_MAX','Dimensions',{ 'lat', llat, 'time', ltime},'Datatype','single','Format','classic');
+nccreate(filename,'LST_MIN','Dimensions',{ 'lat', llat, 'time', ltime},'Datatype','single','Format','classic');
+nccreate(filename,'AVE_DOM','Dimensions',{ 'lat', llat, 'time', ltime},'Datatype','single','Format','classic');
+nccreate(filename,'AVE_LAT','Dimensions',{ 'lat', llat, 'time', ltime},'Datatype','single','Format','classic');
 nccreate(filename,'lat','Dimensions',{'lat', llat},'Datatype','double','Format','classic');
 nccreate(filename,'plev','Dimensions',{'plev', llev},'Datatype','double','Format','classic');
 nccreate(filename,'time','Dimensions',{'time', ltime},'Datatype','double','Format','classic');
+
+% nccreate(filename,gas,'Dimensions',{'time', ltime, 'plev', llev,  'lat', llat},'Datatype','double','Format','classic');
+% nccreate(filename,strcat(gas,'_STD'),'Dimensions',{'time', ltime, 'plev', llev,  'lat', llat},'Datatype','double','Format','classic');
+% nccreate(filename,strcat(gas,'_NR'),'Dimensions',{'time', ltime, 'plev', llev,  'lat', llat},'Datatype','int32','Format','classic');
+% nccreate(filename,'LST_MEAN','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
+% nccreate(filename,'LST_MAX','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
+% nccreate(filename,'LST_MIN','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
+% nccreate(filename,'AVE_DOM','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
+% nccreate(filename,'AVE_LAT','Dimensions',{'time', ltime, 'lat', llat},'Datatype','single','Format','classic');
+% nccreate(filename,'lat','Dimensions',{'lat', llat},'Datatype','double','Format','classic');
+% nccreate(filename,'plev','Dimensions',{'plev', llev},'Datatype','double','Format','classic');
+% nccreate(filename,'time','Dimensions',{'time', ltime},'Datatype','double','Format','classic');
 
 % write the attributes
 fprintf('\nwriting the attributes...')
@@ -51,7 +63,7 @@ ncwriteatt(filename,gas,'long_name', sprintf('mixing ratio of %s in air', gas));
 ncwriteatt(filename,gas,'cell_methods', 'lon:mean (zonal median, time:mean (of calendar month))');
 ncwriteatt(filename,gas,'standard_name', sprintf('volume mixing ratio of %s in air', gas));
 ncwriteatt(filename,gas,'units', 'ppv');
-ncwriteatt(filename,gas,'_FillValue', '-999');
+ncwriteatt(filename,gas,'_FillValue', -999);
 %gas_STD
 ncwriteatt(filename,strcat(gas,'_STD'),'long_name', sprintf('volume mixing ratio of %s in air standard deviation', gas));
 ncwriteatt(filename,strcat(gas,'_STD'),'units', 'ppv');

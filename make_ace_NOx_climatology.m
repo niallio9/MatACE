@@ -19,8 +19,8 @@ function [ ] = make_ace_NOx_climatology( )
 %% define some things
 %USER DEFINED
 % climdir = '/Users/niall/Dropbox/climatology/nryan/climdata/'; % edit this to your directory that contains the ACE netcdf data
-climdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
-% climdir = 'F:\ACE\climdata\';
+% climdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
+climdir = 'F:\ACE\climdata\';
 % climdir = '/net/deluge/pb_1/users/nryan/ACE/climdata/';
 if ~isdir(climdir)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',climdir)

@@ -8,7 +8,7 @@ function [ gas_in ] = write_ace_climatology_to_netcdf( varargin )
 %           netcdf file from the .mat climatology file.
 %           The input may be a single gas (e.g., 'O3'), or multiple
 %           gases (e.g., 'O3', 'ClO').
-%           o read all .mat files in the climatology data directory, the
+%           To read all .mat files in the climatology data directory, the
 %           input is 'all'.
 %
 % *OUTPUT*
@@ -40,17 +40,17 @@ min_obs = 5; % the minimum number of observations needed to include a climatolog
 llev = 48;
 llat = 36;
 ltime = 12;
-vmr_out = -999*ones(ltime,llev,llat);
-vmr_std_out = -999*ones(ltime,llev,llat);
-vmr_obs_out = -999*ones(ltime,llev,llat);
-lst_mean = -999*ones(ltime,llat);
-lst_max = -999*ones(ltime,llat);
-lst_min = -999*ones(ltime,llat);
-ave_dom = -999*ones(ltime,llat);
-ave_lat = -999*ones(ltime,llat);
-lat = -999*ones(1,llat);
+vmr_out = -999*ones(llat,llev, ltime);
+vmr_std_out = -999*ones(llat,llev, ltime);
+vmr_obs_out = -999*ones(llat,llev, ltime);
+lst_mean = -999*ones(llat, ltime);
+lst_max = -999*ones(llat, ltime);
+lst_min = -999*ones(llat, ltime);
+ave_dom = -999*ones(llat, ltime);
+ave_lat = -999*ones(llat, ltime);
+lat = -999*ones(llat,1);
 plev = -999*ones(llev,1);
-time = -999*ones(1,ltime);
+time = -999*ones(ltime,1);
 sdate1950 = datenum(1950,1,1); % the serial date of 1950-01-01 00:00:00
 
 
@@ -105,26 +105,54 @@ if isdir(ncdir)
                         % reduce the climstruct to only include climatology points that are created by more then 5 observations
                         climstruct = reduce_climstruct_data_by_obs_nr(climstruct, min_obs);
                         %get the data you need for the netcdf file
-                        vmr_out(k,:,:) = climstruct.vmr_zonal; %48x36 array
+                        vmr_out(:,:,k) = climstruct.vmr_zonal'; %36x48 array
+                        vmr_out = flip(vmr_out,1); % flip the latitude dimension to be from north to south
                         vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
-                        vmr_std_out(k,:,:) = sqrt(climstruct.vmr_zonal_var); % want the standard deviation here
+                        vmr_std_out(:,:,k) = sqrt(climstruct.vmr_zonal_var'); % want the standard deviation here
+                        vmr_std_out = flip(vmr_std_out,1);
                         vmr_std_out(isnan(vmr_std_out)) = -999;
-                        vmr_obs_out(k,:,:) = climstruct.obs_count;
+                        vmr_obs_out(:,:,k) = climstruct.obs_count';
+                        vmr_obs_out = flip(vmr_obs_out,1);
                         vmr_obs_out(isnan(vmr_obs_out)) = -999;
-                        lst_mean(k,:) = climstruct.lst_mean;
+                        lst_mean(:,k) = climstruct.lst_mean;
+                        lst_mean = flip(lst_mean,1); % flip the latitude dimension to be from north to south
                         lst_mean(isnan(lst_mean)) = -999;
-                        lst_max(k,:) = climstruct.lst_max;
+                        lst_max(:,k) = climstruct.lst_max;
+                        lst_max = flip(lst_max,1); % flip the latitude dimension to be from north to south
                         lst_max(isnan(lst_max)) = -999;
-                        lst_min(k,:) = climstruct.lst_min;
+                        lst_min(:,k) = climstruct.lst_min;
+                        lst_min = flip(lst_min,1); % flip the latitude dimension to be from north to south
                         lst_min(isnan(lst_min)) = -999;
                         repyear = repmat(climstruct.time(1),1,length(climstruct.doy_mean));
-                        ave_dom(k,:) = day(doy2date(climstruct.doy_mean, repyear));
+                        ave_dom(:,k) = day(doy2date(climstruct.doy_mean, repyear));
+                        ave_dom = flip(ave_dom,1); % flip the latitude dimension to be from north to south
                         ave_dom(isnan(ave_dom)) = -999;
-                        ave_lat(k,:) = climstruct.lat_tangent_mean;
+                        ave_lat(:,k) = climstruct.lat_tangent_mean;
+                        ave_lat = flip(ave_lat,1); % flip the latitude dimension to be from north to south
                         ave_lat(isnan(ave_lat)) = -999;
-                        lat(:) = climstruct.lat;
+                        lat(:) = flip(climstruct.lat); % flip the latitude dimension to be from north to south
                         plev(:) = climstruct.pressure_hPa;
                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
+%                         vmr_out(k,:,:) = climstruct.vmr_zonal; %48x36 array
+%                         vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
+%                         vmr_std_out(k,:,:) = sqrt(climstruct.vmr_zonal_var); % want the standard deviation here
+%                         vmr_std_out(isnan(vmr_std_out)) = -999;
+%                         vmr_obs_out(k,:,:) = climstruct.obs_count;
+%                         vmr_obs_out(isnan(vmr_obs_out)) = -999;
+%                         lst_mean(k,:) = climstruct.lst_mean;
+%                         lst_mean(isnan(lst_mean)) = -999;
+%                         lst_max(k,:) = climstruct.lst_max;
+%                         lst_max(isnan(lst_max)) = -999;
+%                         lst_min(k,:) = climstruct.lst_min;
+%                         lst_min(isnan(lst_min)) = -999;
+%                         repyear = repmat(climstruct.time(1),1,length(climstruct.doy_mean));
+%                         ave_dom(k,:) = day(doy2date(climstruct.doy_mean, repyear));
+%                         ave_dom(isnan(ave_dom)) = -999;
+%                         ave_lat(k,:) = climstruct.lat_tangent_mean;
+%                         ave_lat(isnan(ave_lat)) = -999;
+%                         lat(:) = climstruct.lat;
+%                         plev(:) = climstruct.pressure_hPa;
+%                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
                     end
                 end
                 % create and add the data to the file
@@ -150,7 +178,9 @@ if isdir(ncdir)
                 disp('Done')
             end
         end
-    end   
+    end 
+else
+    fprintf('\nIt doesn''t look like ''%s'' exists...\n',ncdir)
 end
 disp('All done :)')
 %
