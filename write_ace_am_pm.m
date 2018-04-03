@@ -1,14 +1,14 @@
 function [ ] = write_ace_am_pm( varargin )
 %A function to read th eACE v3.5/6 .mat data and split the data by am and
-%pm measurements. am and pm are determined by local solar time (LST).
+%pm measurements. am and pm are determined by local solar time (LST). The
+%LST of a measurement is determined at the tangent altitude.
 
 % *INPUT*
 %
 %           varargin: STRING - the name of the gas for which you want to
 %                make am/pm files. The directory containing the .mat
 %                data, which is the directory to which you want to write
-%                the output files, should be defined below. The ACE GLC
-%                data is also read here and used for determining the LST.
+%                the output files, should be defined below.
 %
 % *OUTPUT*
 %                .mat files will be written to the output folder that is
@@ -26,7 +26,8 @@ home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
 home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 
-matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
+% matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
+matdirectory = 'C:\Users\ryann\ACE\matdata\';
 % matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
 % matdirectory = strcat(home_deluge,'ACE/','matdata/');
@@ -40,15 +41,18 @@ filein_pre = 'ACE_v3p6_';
 filein_post = '.mat';
 fileout_pre = filein_pre;
 
-%% Read the GLC file
-filein = strcat(matdirectory,filein_pre,'GLC',filein_post);
-temp_dir = dir(filein); % to check whether the GLC file exists
-if(~isempty(temp_dir)) % if the file exists
-    glc = load(filein); glc = glc.glcstruct;
-else % if the file doesn't exist
-    error('Error: I can''t find %s\n',filein);
-end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%I have changed this next part because we should
+%%%%%%%%%%%%%%%%%%%%%%%%%%be using the tangent latitude for calculating lst
+%%%%%%%%%%%%%%%%%%%%%%%%%%here
+% %% Read the GLC file
+% filein = strcat(matdirectory,filein_pre,'GLC',filein_post);
+% temp_dir = dir(filein); % to check whether the GLC file exists
+% if(~isempty(temp_dir)) % if the file exists
+%     glc = load(filein); glc = glc.glcstruct;
+% else % if the file doesn't exist
+%     error('Error: I can''t find %s\n',filein);
+% end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Get the names of the input gases
     gases = varargin; % cell with gas names
     lin = length(gases); % number of gases to read
@@ -61,8 +65,8 @@ end
             if(~isempty(temp_dir)) % if the file exists
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
-                gasiglc = merge_ace_glc(gasi,glc);
-                [gasi_am, gasi_pm] = subset_ace_by_lst(gasiglc); % no argument uses noon as the split time
+%                 gasiglc = merge_ace_glc(gasi,glc);
+                [gasi_am, gasi_pm] = subset_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
                 % save the am data
                 savedest_am = strcat(matdirectory,fileout_pre,gasin,'_am');
                 fprintf('saving %s_am data to %s\n', gasin, savedest_am);
@@ -90,8 +94,8 @@ end
                     if ~strcmp(fileall{i}(10:end-4), 'GLC') && ~strcmp(fileall{i}(10:end-4), 'DMPv2p0')
                         fprintf('\nPROCESSING %s\n',fileall{i}(10:end-4))
                         gasi = load(filein); gasi = gasi.tanstruct;
-                        gasiglc = merge_ace_glc(gasi,glc);
-                        [gasi_am, gasi_pm] = subset_ace_by_lst(gasiglc); % no argument uses noon as the split time
+%                         gasiglc = merge_ace_glc(gasi,glc);
+                        [gasi_am, gasi_pm] = subset_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
                         % save the am data
                         savedest_am = strcat(matdirectory,fileout_pre,gasin,'_am');
                         fprintf('saving %s_am data to %s\n', gasin, savedest_am);
@@ -120,8 +124,8 @@ end
             if(~isempty(temp_dir)) % if the file exists
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
-                gasiglc = merge_ace_glc(gasi,glc);
-                [gasi_am, gasi_pm] = subset_ace_by_lst(gasiglc); % no argument uses noon as the split time
+%                 gasiglc = merge_ace_glc(gasi,glc);
+                [gasi_am, gasi_pm] = subset_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
                 % save the am data
                 savedest_am = strcat(matdirectory,fileout_pre,gasin,'_am');
                 fprintf('saving %s_am data to %s\n', gasin, savedest_am);

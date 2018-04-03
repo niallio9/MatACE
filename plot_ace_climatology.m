@@ -7,8 +7,6 @@ function [ ] = plot_ace_climatology( climstruct_in )
 %           is created by running one of the 'make_ace_climatology...'
 %           matlab functions.
 %
-%           vmrzonvar_dif: STRING - the title of the figure  
-%
 % *OUTPUT*
 %           makes a plot 
 %
@@ -18,8 +16,6 @@ function [ ] = plot_ace_climatology( climstruct_in )
 clim = climstruct_in;
 gas = clim.gas;
 climdata = clim.vmr_zonal;
-climtype = clim.climatology_type;
-climtime = clim.time;
 if isfield(clim,'lat')
     lat = clim.lat;
 %     lattitle = 'lat';
@@ -30,13 +26,17 @@ elseif isfield(clim, 'eql')
     latlabel = 'equivalent latitude [deg N]';
 end
 seasons = {'DJF', 'MAM', 'JJA', 'SON'};
-switch climtype
-    case 'calendar_month'
-        climtitle = sprintf('%s climatology, %02.0f', gas, climtime);
-    case 'season'
-        climtitle = sprintf('%s climatology, %s', gas, seasons{climtime});
-    case 'serial_month'
-        climtitle = sprintf('%s climatology, %i-%02.0f', gas, climtime(1), climtime(2));  
+if isfield(clim,'climatology_type')
+    climtype = clim.climatology_type;
+    climtime = clim.time;
+    switch climtype
+        case 'calendar_month'
+            climtitle = sprintf('%s climatology, %02.0f', gas, climtime);
+        case 'season'
+            climtitle = sprintf('%s climatology, %s', gas, seasons{climtime});
+        case 'serial_month'
+            climtitle = sprintf('%s climatology, %i-%02.0f', gas, climtime(1), climtime(2));
+    end
 end
 plev = clim.pressure_hPa;
 fs = 16;
@@ -44,13 +44,18 @@ fs = 16;
 ytickspace = [10^-4 10^-2 1 10^2];
 
 %% make the plot for the input variable
-pcolor(lat, plev, climdata);
-title(climtitle)
+figure, pcolor(lat, plev, climdata);
+if isfield(clim,'climatology_type')
+    title(climtitle)
+else
+    title(gas,'interpreter','none')
+end
 set(gca, 'Ydir','reverse', 'YScale', 'log', 'YMinorTick','on');
 yticks(ytickspace);
 xlabel(latlabel)
 ylabel('pressure [hPa]')
 c = colorbar;
+% caxis([0,100]); % ONLY FOR SPECIFIC CASES***************************************************************
 % c = colorbar('location','eastoutside','position',[0.923 0.309 0.016 0.35]);
 if strcmp(gas,'T')
     title(c,'K [deg]','Position', [12 -23 0])

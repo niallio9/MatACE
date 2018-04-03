@@ -20,22 +20,33 @@ function [ ] = make_ace_NOx_climatology( )
 %USER DEFINED
 % climdir = '/Users/niall/Dropbox/climatology/nryan/climdata/'; % edit this to your directory that contains the ACE netcdf data
 % climdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
-climdir = 'F:\ACE\climdata\';
+% climdir = 'F:\ACE\climdata\';
+climdir = 'C:\Users\ryann\ACE\climdata\';
 % climdir = '/net/deluge/pb_1/users/nryan/ACE/climdata/';
 if ~isdir(climdir)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',climdir)
     error('The directory containing the .mat climatology data couldn''t be found')
 end
 
+nofolder = 'NO_sap'; % this is where you choose which folder of NO and NO2 data to use. e.g.. 'NO_am', 'NO_sap_pm', etc.
+no2folder = 'NO2_sap';
+if length(nofolder) > 2 && ~strcmp(nofolder(3:end), no2folder(4:end))
+    error('the naming style of %s and %s don''t match', nofolder, no2folder)
+end
+
 %STANDARD
-gasfolder = {'NO', 'NO2'}; % an array with the gas names;
+if length(nofolder) > 2
+    noxfolder = strcat('NOx',nofolder(3:end));
+else
+    noxfolder = 'NOx';
+end
 min_obs = 5; % the minimum number of observations needed to include a climatology point
 
 %% go through the climatology data and pull out whats needed to make the NOx climatology (the NO and NO2 files)
 
-gasdir_no = fullfile(climdir,gasfolder{1}); % make the full path to the folder for NO
-gasdir_no2 = fullfile(climdir,gasfolder{2}); % make the full path to the folder for NO
-gasdir_nox = fullfile(climdir,'NOx'); % make the full path to the folder for NO
+gasdir_no = fullfile(climdir,nofolder); % make the full path to the folder for NO
+gasdir_no2 = fullfile(climdir,no2folder); % make the full path to the folder for NO
+gasdir_nox = fullfile(climdir,noxfolder); % make the full path to the folder for NO
 if exist(gasdir_no,'dir') ~=7
     error('there is no folder found called %s. Stopping.', gasdir_no)
 end
@@ -50,6 +61,7 @@ if exist(fullfile(gasdir_nox,'serial_month'),'dir') ~=7
 end
 templat_serial = dir(fullfile(gasdir_no,'serial_month','*lat*.mat')); % get the names of the serial-month latitude NO climatology files
 climfile_lat_serial_no = {templat_serial.name};
+
 if ~isempty(climfile_lat_serial_no)
     % get the years and months that the NO measurements are for
     for j = 1:length(climfile_lat_serial_no) %
@@ -58,9 +70,9 @@ if ~isempty(climfile_lat_serial_no)
     for j = 1:length(yearandmonth) % go through each file NO file available and see if there is an NO2 file for the same year/month
         %the .mat climatolgy files are of the type
         %"ACEFTS_CLIM_v3_lat_NO2_2013_06.mat"
-        no_yearandmonth = sprintf('ACEFTS_CLIM_v3_lat_%s_%s.mat',gasfolder{1},yearandmonth{j});
+        no_yearandmonth = sprintf('ACEFTS_CLIM_v3_lat_%s_%s.mat',nofolder,yearandmonth{j});
         climfile_no = fullfile(gasdir_no,'serial_month', no_yearandmonth);
-        no2_yearandmonth = sprintf('ACEFTS_CLIM_v3_lat_%s_%s.mat',gasfolder{2},yearandmonth{j});
+        no2_yearandmonth = sprintf('ACEFTS_CLIM_v3_lat_%s_%s.mat',no2folder,yearandmonth{j});
         climfile_no2 = fullfile(gasdir_no2,'serial_month', no2_yearandmonth); % the name of a climatology file
         if exist(climfile_no2,'file') == 2 % check if the file exists for that month
             load(climfile_no2); % loads a variable called climstruct
@@ -77,7 +89,7 @@ if ~isempty(climfile_lat_serial_no)
             climstruct_nox.doy_mean = (climstruct_no.doy_mean + climstruct_no2.doy_mean)/2;
             climstruct_nox.start_date = datestr(datenum(climstruct_no.start_date) + datenum(climstruct_no2.start_date))/2;
             climstruct_nox.end_date = datestr(datenum(climstruct_no.end_date) + datenum(climstruct_no2.end_date))/2;
-            climstruct_nox.gas = 'NOx';
+            climstruct_nox.gas = noxfolder;
             climstruct_nox.lon_tangent_mean = (climstruct_no.lon_tangent_mean + climstruct_no2.lon_tangent_mean)/2;
             climstruct_nox.lat_tangent_mean = (climstruct_no.lat_tangent_mean + climstruct_no2.lat_tangent_mean)/2;
             climstruct_nox.altitude_km_mean = (climstruct_no.altitude_km_mean + climstruct_no2.altitude_km_mean)/2;
@@ -100,8 +112,8 @@ if ~isempty(climfile_lat_serial_no)
             climstruct_nox.time = climstruct_no.time;
             % save the file
             climstruct = climstruct_nox;
-            savedest = fullfile(gasdir_nox,'serial_month',sprintf('ACEFTS_CLIM_v3_lat_NOx_%s.mat', yearandmonth{j}));
-            fprintf('\nSaving NOx %s climatology to %s\n', yearandmonth{j}, savedest);
+            savedest = fullfile(gasdir_nox,'serial_month',sprintf('ACEFTS_CLIM_v3_lat_%s_%s.mat', noxfolder, yearandmonth{j}));
+            fprintf('\nSaving %s %s climatology to %s\n', noxfolder, yearandmonth{j}, savedest);
             save(savedest,'climstruct');
         end
     end

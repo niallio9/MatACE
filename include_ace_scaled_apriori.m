@@ -1,5 +1,5 @@
 function [ tanstruct_out ] = include_ace_scaled_apriori(tanstruct_in)
-%A function to change the flags of scaled a priori data from -888 to 0. The
+%A function to change the flags of scaled a priori data from 8 to 0. The
 %reason for this is so that scaled a priori data will then be treated as
 %ordinary data points.
 

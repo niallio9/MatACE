@@ -171,7 +171,7 @@ toc
 end
 %%output the new tanstruct
 out = acegas;
-out.date_mjd = floor(out.date_mjd) + 10; % change the time to the same day but at 10am
+out.date_mjd = aceo3.date_mjd + (lst_in - lst_ace)./24; % change the time to the same day but at 10am. Shift the original time by the number of hours between the origianl and new LST
 out.gas = gasname_out;
 out.vmr = vmr_scaled;
 out.vmr_error = vmr_error_scaled;

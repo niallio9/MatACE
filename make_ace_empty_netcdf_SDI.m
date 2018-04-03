@@ -1,5 +1,5 @@
-function [ ] = make_ace_empty_netcdf_serialmonth( filename_out, gasname )
- %A function to create an empty ACE climatology netCDF file. Th fields of
+function [ ] = make_ace_empty_netcdf_SDI( filename_out, gasname )
+ %A function to create an empty ACE climatology netCDF file. The fields of
  %the file is in a standard format required for the SPARC Data Initiative
  %for a monthly mean zonal climatology time series. A serial monthly
  %climatology.
@@ -26,7 +26,8 @@ if exist(filename,'file') == 2
     delete(filename);
 end
 gas = gasname;
-llev = 48;
+% llev = 48;
+llev = 28;
 llat = 36;
 ltime = 12;
 
@@ -60,52 +61,52 @@ nccreate(filename,'time','Dimensions',{'time', ltime},'Datatype','double','Forma
 fprintf('\nwriting the attributes...')
 %gas
 ncwriteatt(filename,gas,'long_name', sprintf('mixing ratio of %s in air', gas));
-ncwriteatt(filename,gas,'cell_methods', 'lon:mean (zonal median, time:mean (of calendar month))');
+ncwriteatt(filename,gas,'cell_methods', 'lon: mean (zonal median), time: mean (of calendar month)');
 ncwriteatt(filename,gas,'standard_name', sprintf('volume mixing ratio of %s in air', gas));
 ncwriteatt(filename,gas,'units', 'ppv');
-ncwriteatt(filename,gas,'_FillValue', -999);
+ncwriteatt(filename,gas,'FillValue', '-999');
 %gas_STD
 ncwriteatt(filename,strcat(gas,'_STD'),'long_name', sprintf('volume mixing ratio of %s in air standard deviation', gas));
 ncwriteatt(filename,strcat(gas,'_STD'),'units', 'ppv');
-ncwriteatt(filename,strcat(gas,'_STD'),'_FillValue', '-999');
+ncwriteatt(filename,strcat(gas,'_STD'),'FillValue', '-999');
 %gas_NR
 ncwriteatt(filename,strcat(gas,'_NR'),'long_name', 'number of values');
 ncwriteatt(filename,strcat(gas,'_NR'),'units', 'none');
-ncwriteatt(filename,strcat(gas,'_NR'),'_FillValue', '-999');
+ncwriteatt(filename,strcat(gas,'_NR'),'FillValue', '-999');
 %LST_MEAN
 ncwriteatt(filename,'LST_MEAN','long_name', 'mean of local solar time');
 ncwriteatt(filename,'LST_MEAN','units', 'hours');
-ncwriteatt(filename,'LST_MEAN','_FillValue', '-999');
+ncwriteatt(filename,'LST_MEAN','FillValue', '-999');
 %LST_MAX
 ncwriteatt(filename,'LST_MAX','long_name', 'maximum of local solar time');
 ncwriteatt(filename,'LST_MAX','units', 'hours');
-ncwriteatt(filename,'LST_MAX','_FillValue', '-999');
+ncwriteatt(filename,'LST_MAX','FillValue', '-999');
 %LST_MIN
 ncwriteatt(filename,'LST_MIN','long_name', 'minimum of local solar time');
 ncwriteatt(filename,'LST_MIN','units', 'hours');
-ncwriteatt(filename,'LST_MIN','_FillValue', '-999');
+ncwriteatt(filename,'LST_MIN','FillValue', '-999');
 %AVE_DOM
 ncwriteatt(filename,'AVE_DOM','long_name', 'average day of month');
 ncwriteatt(filename,'AVE_DOM','units', 'days');
-ncwriteatt(filename,'AVE_DOM','_FillValue', '-999')
+ncwriteatt(filename,'AVE_DOM','FillValue', '-999')
 %AVE_LAT
 ncwriteatt(filename,'AVE_LAT','long_name', 'average latitude');
 ncwriteatt(filename,'AVE_LAT','units', 'degrees north');
-ncwriteatt(filename,'AVE_LAT','_FillValue', '-999')
+ncwriteatt(filename,'AVE_LAT','FillValue', '-999')
 %lat
 ncwriteatt(filename,'lat','long_name', 'latitude');
 ncwriteatt(filename,'lat','standard_name', 'latitude');
 ncwriteatt(filename,'lat','units', 'degrees north');
-ncwriteatt(filename,'lat','_CoordinateAxisType', 'Lat');
+% ncwriteatt(filename,'lat','_CoordinateAxisType', 'Lat');
 ncwriteatt(filename,'lat','axis', 'Y')
 %plev
 ncwriteatt(filename,'plev','long_name', 'pressure');
 ncwriteatt(filename,'plev','standard_name', 'air_pressure');
 ncwriteatt(filename,'plev','positive', 'down');
 ncwriteatt(filename,'plev','axis', 'Z');
-ncwriteatt(filename,'plev','units', 'degrees hPa');
-ncwriteatt(filename,'plev','_CoordinateAxisType', 'Pressure');
-ncwriteatt(filename,'plev','_CoordinateZisPositive', 'down');
+ncwriteatt(filename,'plev','units', 'hPa');
+% ncwriteatt(filename,'plev','_CoordinateAxisType', 'Pressure');
+% ncwriteatt(filename,'plev','_CoordinateZisPositive', 'down');
 %time 
 ncwriteatt(filename,'time','long_name', 'time');
 ncwriteatt(filename,'time','standard_name', 'time');

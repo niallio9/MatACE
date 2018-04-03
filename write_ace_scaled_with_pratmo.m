@@ -1,18 +1,20 @@
-function [ ] = write_ace_scaled_apriori( varargin )
-%A function to read the ACE v3.5/6 .mat data and alter the quality flags in
-%the structure so that the flags indicating scaled a priori information in
-%measurements are replaced by flags that indicate ordinary mesurement data.
-%A new file is created that contains the information. The name of the
-%species in the output file (and output filename) is changed to 'GAS_sap',
-%with GAS indicating the original name of the species.
-%
+function [ ] = write_ace_scaled_with_pratmo( varargin )
+%A function to scale ACE VMR profiles to a given local solar time using a
+%chemical box model.
+% *****************NOTE, THIS FUNCTION IS OBSOLETE AND TAKES A VERY LONG
+% TIME TO RUN. IT IS BETTER TO USE SOMETHING LIKE
+% 'make_ace_nitrogen_ratios_with_pratmo.m', WHICH CALCULATES THE RATIOS FOR
+% ALL POSSIBLE ACE MEASUREMENTS AND FOR MULTIPLE GASES AT ONCE. THE RATIO
+% INFORMATION IS THEN SAVED FOR LATER USE***************** NJR - 04/18
+
 % *INPUT*
 %
 %           varargin: STRING - the name of the gas for which you want to
-%                make files that treat scaled apriori data as measurements.
+%                make files that sre scaled with pratmo data.
 %                The directory containing the .mat data, which is the
 %                directory to which you want to write the output files,
-%                should be defined below. 
+%                should be defined below. The ACE GLC data is also read
+%                here and used for determining the LST. 
 %
 % *OUTPUT*
 %                .mat files will be written to the output folder that is
@@ -25,14 +27,15 @@ function [ ] = write_ace_scaled_apriori( varargin )
 % 'gas' is the gas species. e.g., ACE_v3p6_O3.mat
 
 %%USER DEFINED
+lst_scale = 10; % this needs to be changed by the user. It is the time to which you want to scale the data
+
 home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
 home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 
-matdirectory = 'C:\Users\ryann\ACE\matdata';
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
-% matdirectory = 'F:\ACE\matdata\';
+matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
 % matdirectory = strcat(home_deluge,'ACE/','matdata/');
 if ~isdir(matdirectory)
@@ -44,6 +47,22 @@ end
 filein_pre = 'ACE_v3p6_';
 filein_post = '.mat';
 fileout_pre = filein_pre;
+
+%% Read the O3 and T files
+fileo3 = strcat(matdirectory,filein_pre,'O3',filein_post);
+temp_dir = dir(fileo3); % to check whether the GLC file exists
+if(~isempty(temp_dir)) % if the file exists
+    aceo3 = load(fileo3); aceo3 = aceo3.tanstruct;
+else % if the file doesn't exist
+    error('Error: I can''t find %s\n',fileo3);
+end
+fileT = strcat(matdirectory,filein_pre,'T',filein_post);
+temp_dir = dir(fileT); % to check whether the GLC file exists
+if(~isempty(temp_dir)) % if the file exists
+    aceT = load(fileT); aceT =aceT.tanstruct;
+else % if the file doesn't exist
+    error('Error: I can''t find %s\n',fileT);
+end
 
 %% Get the names of the input gases
     gases = varargin; % cell with gas names
@@ -57,12 +76,12 @@ fileout_pre = filein_pre;
             if(~isempty(temp_dir)) % if the file exists
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
-                gasi_sap = include_ace_scaled_apriori(gasi);
+                gasi_pratmo = scale_ace_with_pratmo(gasi,aceo3,aceT,lst_scale);
+                gasout = gasi_pratmo.gas;
                 % save the data
-                savedest = strcat(matdirectory,fileout_pre,gasin,'_sap');
-                fprintf('saving %s_sap data to %s\n', gasin, savedest);
-                tanstruct = gasi_sap;
-                tanstruct.gas = strcat(gasin,'_sap');
+                savedest = strcat(matdirectory,fileout_pre,gasout);
+                fprintf('saving %s data to %s\n', gasout, savedest);
+                tanstruct = gasi_pratmo; %#ok<NASGU>
                 save(savedest,'tanstruct');
                 fprintf('done\n')
             else
@@ -79,12 +98,12 @@ fileout_pre = filein_pre;
                     if ~strcmp(fileall{i}(10:end-4), 'GLC') && ~strcmp(fileall{i}(10:end-4), 'DMPv2p0')
                         fprintf('\nPROCESSING %s\n',fileall{i}(10:end-4))
                         gasi = load(filein); gasi = gasi.tanstruct;
-                        gasi_sap = include_ace_scaled_apriori(gasi);
-                        % save the am data
-                        savedest = strcat(matdirectory,fileout_pre,gasin,'_sap');
-                        fprintf('saving %s_sap data to %s\n', gasin, savedest);
-                        tanstruct = gasi_sap;
-                        tanstruct.gas = strcat(gasin,'_sap');
+                        gasi_pratmo = scale_ace_with_pratmo(gasi,aceo3,aceT,lst_scale);
+                        gasout = gasi_pratmo.gas;
+                        % save the data
+                        savedest = strcat(matdirectory,fileout_pre,gasout);
+                        fprintf('saving %s data to %s\n', gasout, savedest);
+                        tanstruct = gasi_pratmo; %#ok<NASGU>
                         save(savedest,'tanstruct');
                         fprintf('done\n')
                         clear tanstruct gasi
@@ -102,12 +121,12 @@ fileout_pre = filein_pre;
             if(~isempty(temp_dir)) % if the file exists
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
-                gasi_sap = include_ace_scaled_apriori(gasi);
+                gasi_pratmo = scale_ace_with_pratmo(gasi,aceo3,aceT,lst_scale);
+                gasout = gasi_pratmo.gas;
                 % save the data
-                savedest = strcat(matdirectory,fileout_pre,gasin,'_sap');
-                fprintf('saving %s_sap data to %s\n', gasin, savedest);
-                tanstruct = gasi_sap; 
-                tanstruct.gas = strcat(gasin,'_sap');
+                savedest = strcat(matdirectory,fileout_pre,gasout);
+                fprintf('saving %s data to %s\n', gasout, savedest);
+                tanstruct = gasi_pratmo; %#ok<NASGU>
                 save(savedest,'tanstruct');
                 fprintf('done\n')
                 clear tanstruct gasi

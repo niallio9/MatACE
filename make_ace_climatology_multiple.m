@@ -43,7 +43,8 @@ home_deluge = '/net/deluge/pb_1/users/nryan/';
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
 % matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
-matdirectory = strcat(home_deluge,'ACE/','matdata/');
+% matdirectory = strcat(home_deluge,'ACE/','matdata/');
+matdirectory = 'C:\Users\ryann\ACE\matdata\';
 if ~isdir(matdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',matdirectory)
     error('The directory containing the .mat data couldn''t be found')
@@ -52,7 +53,8 @@ end
 % climdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
 % climdirectory = 'F:\ACE\climdata\';
 % climdirectory = strcat(home_mac,'climdata/');
-climdirectory = strcat(home_deluge,'ACE/','climdata/');
+% climdirectory = strcat(home_deluge,'ACE/','climdata/');
+climdirectory = 'C:\Users\ryann\ACE\climdata\';
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';
