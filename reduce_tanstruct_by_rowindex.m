@@ -19,7 +19,7 @@ function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindi
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 11/2017
-%   NJR - 02/2018
+%   NJR - 02/2018 - include 'eql' field
 
 gasout = tanstruct_in;
 ygas = rowindices;

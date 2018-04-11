@@ -90,7 +90,7 @@ if isfield(gas,'eql')
    gasout.eql = nan(lgrid,lorbit); 
 end
 %% Interpolate the fields of the ace structure
-fprintf('\nInterpolating the ACE data...')
+fprintf('\nInterpolating the data...')
 logpgridi = logpgrid(:,1); % set this initially outside the loop so it doesn't have to reset each time if pgrid is a vector
 logpacei = logpace(:,1);
 for i = 1:lorbit
@@ -155,7 +155,7 @@ for i = 1:lorbit
         end
     end
 end
-fprintf('done')
+disp('done')
 tanstruct_out = gasout;
 end
 
