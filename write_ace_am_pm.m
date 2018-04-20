@@ -66,7 +66,7 @@ fileout_pre = filein_pre;
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
 %                 gasiglc = merge_ace_glc(gasi,glc);
-                [gasi_am, gasi_pm] = subset_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
+                [gasi_am, gasi_pm] = split_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
                 % save the am data
                 savedest_am = strcat(matdirectory,fileout_pre,gasin,'_am');
                 fprintf('saving %s_am data to %s\n', gasin, savedest_am);
@@ -95,7 +95,7 @@ fileout_pre = filein_pre;
                         fprintf('\nPROCESSING %s\n',fileall{i}(10:end-4))
                         gasi = load(filein); gasi = gasi.tanstruct;
 %                         gasiglc = merge_ace_glc(gasi,glc);
-                        [gasi_am, gasi_pm] = subset_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
+                        [gasi_am, gasi_pm] = split_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
                         % save the am data
                         savedest_am = strcat(matdirectory,fileout_pre,gasin,'_am');
                         fprintf('saving %s_am data to %s\n', gasin, savedest_am);
@@ -125,7 +125,7 @@ fileout_pre = filein_pre;
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
 %                 gasiglc = merge_ace_glc(gasi,glc);
-                [gasi_am, gasi_pm] = subset_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
+                [gasi_am, gasi_pm] = split_ace_by_lst_tangent(gasi); % no argument uses noon as the split time
                 % save the am data
                 savedest_am = strcat(matdirectory,fileout_pre,gasin,'_am');
                 fprintf('saving %s_am data to %s\n', gasin, savedest_am);

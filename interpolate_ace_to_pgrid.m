@@ -95,6 +95,10 @@ logpgridi = logpgrid(:,1); % set this initially outside the loop so it doesn't h
 logpacei = logpace(:,1);
 for i = 1:lorbit
     %i
+    if mod(i,1000) == 0
+        fprintf('\npast %i of %i\n', i, lorbit)
+    end
+    
     if length(logpgrid(1,:)) > 1 % If there are multiple grids to which to interpolate, i.e. pgrid is an array
        logpgridi = logpgrid(:,i); % this is only changed if pgrid is not a vector
     end
@@ -157,5 +161,7 @@ for i = 1:lorbit
 end
 disp('done')
 tanstruct_out = gasout;
+
+%
 end
 
