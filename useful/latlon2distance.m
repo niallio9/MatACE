@@ -36,14 +36,24 @@ lat1 = (lat_1/180)*pi;
 lon1 = (lon_1/180)*pi;
 lat2 = (lat_2/180)*pi;
 lon2 = (lon_2/180)*pi;
+if isvector(lat1) && ismatrix(lat2) % for the code to run on stupid Deluge
+    lat1 = repmat(lat1, 1, length(lat2(1,:)));
+    lon1 = repmat(lon1, 1, length(lon2(1,:)));
+elseif isvector(lat2) && ismatrix(lat1)
+    lat2 = repmat(lat2, 1, length(lat1(1,:)));
+    lon2 = repmat(lon2, 1, length(lon1(1,:)));
+end
 dlat = lat2 - lat1;
 dlon = lon2 - lon1;
 a = ((sin(dlat/2)).^2) + (cos(lat1).*cos(lat2)).*(sin(dlon/2)).^2;
 c = 2*atan(sqrt(a)./sqrt(1-a));
+if isvector(alt_km) && ismatrix(c) % for the code to run on stupid Deluge
+    alt_km = repmat(alt_km, 1, length(c(1,:)));
+end
 % whos
 d = (Re+alt_km).*c;
 
 distance_out = d;
-
+%
 end
 

@@ -23,14 +23,14 @@ function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindi
 
 gasout = tanstruct_in;
 ygas = rowindices;
-gasout.occultation = gasout.occultation(ygas);
-gasout.sr1ss0 = gasout.sr1ss0(ygas);
-gasout.beta_angle = gasout.beta_angle(ygas);
-gasout.date_mjd = gasout.date_mjd(ygas);
+gasout.occultation = gasout.occultation(:,ygas);
+gasout.sr1ss0 = gasout.sr1ss0(:,ygas);
+gasout.beta_angle = gasout.beta_angle(:,ygas);
+gasout.date_mjd = gasout.date_mjd(:,ygas);
 gasout.vmr = gasout.vmr(:,ygas);
 gasout.vmr_error = gasout.vmr_error(:,ygas);
-gasout.lat_tangent = gasout.lat_tangent(ygas);
-gasout.lon_tangent = gasout.lon_tangent(ygas);
+gasout.lat_tangent = gasout.lat_tangent(:,ygas);
+gasout.lon_tangent = gasout.lon_tangent(:,ygas);
 if isfield(gasout,'quality_flags')
     gasout.quality_flags = gasout.quality_flags(:,ygas);
     %     else

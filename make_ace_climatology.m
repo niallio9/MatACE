@@ -62,7 +62,7 @@ fprintf('\nBinning the data by latitude\n');
 gas_latbin  = bin_ace_by_lat( gas, lat_bounds );
 climstruct_out = gas_latbin;
 if  isempty(gas_latbin.start_date)
-    fprintf('There are no climatology data for the input. Too few observations');
+    fprintf('There are no climatology data for the input. Too few observations\n');
 end
 climstruct = climstruct_out;
 %

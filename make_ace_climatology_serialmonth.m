@@ -1,4 +1,4 @@
-function [ ] = make_ace_climatology_serialmonth( tanstruct, out_directory)
+function [ test ] = make_ace_climatology_serialmonth( tanstruct, out_directory)
 %A function to create zonally averaged climatologies of ACE measurements,
 %by each unique calendar month. 'make_ace_climatology.m' is called here.
 
@@ -49,6 +49,7 @@ if isdir(climdirectory)
     % get the unique years for the data
     vdates = datevec(mjd2datenum(gas.date_mjd));
     years_unique = unique(vdates(:,1));
+    
     %% For each year loop through the months and create climatologies for each.
     for j = 1:length(years_unique)
         %subset the data by year
@@ -75,6 +76,9 @@ if isdir(climdirectory)
                     save(savedest,'climstruct');
                 else
                     fprintf('There are no climatology data for %s %d\n', monthnames{i}, years_unique(j));
+%                     j
+                    years_unique(j)
+%                     i
                 end
             else
                 fprintf('There are no ACE data for %s %d\n', monthnames{i}, years_unique(j));

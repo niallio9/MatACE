@@ -3,8 +3,9 @@ function [ ] = write_ace_scaled_with_pratmo( varargin )
 %chemical box model.
 % *****************NOTE, THIS FUNCTION IS OBSOLETE AND TAKES A VERY LONG
 % TIME TO RUN. IT IS BETTER TO USE SOMETHING LIKE
-% 'make_ace_nitrogen_ratios_with_pratmo.m', WHICH CALCULATES THE RATIOS FOR
-% ALL POSSIBLE ACE MEASUREMENTS AND FOR MULTIPLE GASES AT ONCE. THE RATIO
+% 'make_ace_nitrogen_ratios_with_pratmo.m' or
+% 'make_ace_gas_vmrs_with_pratmo', WHICH CALCULATE THE RATIOS FOR ALL
+% POSSIBLE ACE MEASUREMENTS AND FOR MULTIPLE GASES AT ONCE. THE RATIO
 % INFORMATION IS THEN SAVED FOR LATER USE***************** NJR - 04/18
 
 % *INPUT*

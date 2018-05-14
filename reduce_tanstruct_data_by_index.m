@@ -18,7 +18,9 @@ function [ tanstruct_out ] = reduce_tanstruct_data_by_index( tanstruct_in, indic
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 10/2017
-%   NJR - 02/2018
+%   NJR - 02/2018 include 'eql' field
+%   NJR - 05/2018 can use for tanstructs that have more than one row of
+%   date or lat_tangent / lon_tangent info
 
 gasin = tanstruct_in;
 gasout = gasin;
@@ -29,6 +31,16 @@ if isvector(ygas)
     gasout.vmr(ygas) = gasin.vmr(ygas);
     gasout.vmr_error = nan(datasize);
     gasout.vmr_error(ygas) = gasin.vmr_error(ygas);
+    if isequal(size(gasin.date_mjd), datasize) % for a case where the tanstruct has been modified to have a different info for each data point
+        gasout.date_mjd = nan(datasize);
+        gasout.date_mjd(ygas) = gasin.date_mjd(ygas);
+    end
+    if isequal(size(gasin.lat_tangent), datasize) % for a case where the tanstruct has been modified to have a different info for each data point
+        gasout.lat_tangent = nan(datasize);
+        gasout.lat_tangent(ygas) = gasin.lat_tangent(ygas);
+        gasout.lon_tangent = nan(datasize);
+        gasout.lon_tangent(ygas) = gasin.lon_tangent(ygas);
+    end
     if isfield(gasout,'quality_flags')
         gasout.quality_flags = nan(datasize);
         gasout.quality_flags(ygas) = gasin.quality_flags(ygas);

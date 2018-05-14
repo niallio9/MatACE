@@ -1,4 +1,4 @@
-function [ tanstruct_out ] = subset_ace_by_lst( tanstruct_in, lst_start, lst_end )
+function [ tanstruct_out, index_out ] = subset_ace_by_lst( tanstruct_in, lst_start, lst_end )
 %A function to subset ace data to that which has a local solar time (LST)
 %that lies within a chosen range. Empty arrays are produced if there
 %is no data for an output. The longitude that has been added from the GLC
@@ -18,7 +18,10 @@ function [ tanstruct_out ] = subset_ace_by_lst( tanstruct_in, lst_start, lst_end
 % *OUTPUT*
 %           tanstruct_out: STRUCTURE - output has the same
 %           fields as the input, but with only data that corresponds to
-%           local solar times in the input range
+%           local solar times in the input range.
+%
+%           index_out: VECTOR - the linear indices of the ACE data that lie
+%           within the LST range. 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 04/2018
@@ -39,6 +42,7 @@ end
 gas_out = reduce_tanstruct_data_by_index(gas, ilst_good);
 
 tanstruct_out = gas_out;
+index_out = ilst_good;
 %
 end
 

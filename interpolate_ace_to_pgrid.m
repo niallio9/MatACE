@@ -29,6 +29,7 @@ gas = remove_ace_surface_pressure(tanstruct_in); % there are often multiple surf
 gas = filter_ace_pressure(gas); % remove profiles that have zero values for pressures in them
 % gas = tanstruct_in;
 interptype = 'pchip'; %the spline interpolation method is giving bad results near the boundaries
+req_points = 4; % the number of points required for an interpolation
 lorbit = length(gas.occultation);% this is the same as the length of p
 zace = gas.altitude_km;
 pace = gas.pressure_hPa;
@@ -106,7 +107,7 @@ for i = 1:lorbit
         logpacei = logpace(:,i); % this is only changed if zace is not a vector
     end
     lgood = ~isnan(gas.vmr(:,i)); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
-    if sum(lgood) > 4 % need at least 5 points to perform the interpolation
+    if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
         vmri = gas.vmr(lgood,i); % reduce the size of the vector
         vmr_errori = gas.vmr_error(lgood,i);
         logpacei_s = logpacei(lgood); % reduce the size as well
@@ -121,7 +122,7 @@ for i = 1:lorbit
         zacei(isnan(logpacei)) = nan; % this is now added because there are sometimes multiple surface pressure values (that are filtered out, above), and that information cannot be reflected in a single altitude profile
     end
     lgood = ~isnan(zacei); % the indices of the Z field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
-    if sum(lgood) > 4 % need at least 5 points to perform the interpolation
+    if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
         zacei = zacei(lgood); % reduce the size of the vector
         logpacei_s = logpacei(lgood); % reduce the size as well
         %interpolate the fields in log-pressure space?????
@@ -131,7 +132,7 @@ for i = 1:lorbit
         loni = gas.lon(:,i);
         loni(isnan(logpacei)) = nan;
         lgood = ~isnan(loni); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
-        if sum(lgood) > 4 % need at least 5 points to perform the interpolation
+        if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
             loni = loni(lgood); % reduce the size of the vector
             logpacei_s = logpacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space
@@ -140,7 +141,7 @@ for i = 1:lorbit
         lati = gas.lat(:,i);
         lati(isnan(logpacei)) = nan;
         lgood = ~isnan(lati); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
-        if sum(lgood) > 4 % need at least 5 points to perform the interpolation
+        if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
             lati = lati(lgood); % reduce the size of the vector
             logpacei_s = logpacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space
@@ -151,7 +152,7 @@ for i = 1:lorbit
         eqli = gas.eql(:,i);
         eqli(isnan(logpacei)) = nan;
         lgood = ~isnan(eqli); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
-        if sum(lgood) > 4 % need at least 5 points to perform the interpolation
+        if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
             eqli = eqli(lgood); % reduce the size of the vector
             logpacei_s = logpacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space

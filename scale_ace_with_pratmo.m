@@ -1,6 +1,12 @@
 function [ tanstruct_scaled ] = scale_ace_with_pratmo( tanstruct_in, tanstruct_o3_in, tanstruct_T_in, lst_in )
 %A function to scale ACE VMR profiles to a given local solar time using a
 %chemical box model.
+% *****************NOTE, THIS FUNCTION IS OBSOLETE AND TAKES A VERY LONG
+% TIME TO RUN. IT IS BETTER TO USE SOMETHING LIKE
+% 'make_ace_nitrogen_ratios_with_pratmo.m' or
+% 'make_ace_gas_vmrs_with_pratmo', WHICH CALCULATE THE RATIOS FOR ALL
+% POSSIBLE ACE MEASUREMENTS AND FOR MULTIPLE GASES AT ONCE. THE RATIO
+% INFORMATION IS THEN SAVED FOR LATER USE***************** NJR - 04/18
 
 % *INPUT*    
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
@@ -135,7 +141,7 @@ for j = 1:10%nace
     init.z = zlow';   % model will provide output for radicals from about 10-58 km (zeros outside that)
 
     % run with O3 held constant
-    [box0] = run_boxmodel_test(init);
+    [box0] = run_boxmodel_njr(init);
     
     %find the profile values at the LSTs of ACE and get the
     %scaling fraction

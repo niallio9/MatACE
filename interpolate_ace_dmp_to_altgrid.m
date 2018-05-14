@@ -20,6 +20,7 @@ function [ tanstruct_out ] = interpolate_ace_dmp_to_altgrid( dmpstruct_in, altit
 
 %% define some things
 interptype = 'pchip';
+req_points = 4; % the number of points required for an interpolation
 dmp = remove999_ace_dmp(dmpstruct_in); % removes the 999 values from the ace dmps
 %dmp = dmpstruct_in;
 lorbit = length(dmp.occultation);% this is the same as the length of p
@@ -71,7 +72,7 @@ for i = 1:lorbit
        zdmpi = zdmp(:,i); % this is only changed if zace is not a vector
     end
     lgood = ~isnan(dmp.T(:,i)); % the indices of the T field that do not contain nans. nans will be placed where there is no data using 'remove999_ace_dmp.m'
-    if sum(lgood) > 4 % need at least 4 points to perform the interpolation
+    if sum(lgood) >= req_points % need at least 4 points to perform the interpolation
         Ti = dmp.T(lgood,i); % reduce the size of the vector
         zdmpi_s = zdmpi(lgood); % reduce the size as well
         %interpolate the fields in log-pressure space
@@ -80,31 +81,31 @@ for i = 1:lorbit
     %Repeat the above process for each variable. They may contain different
     %amounts of NaNs
     lgood = ~isnan(dmp.lon(:,i));
-    if sum(lgood) > 4
+    if sum(lgood) >= req_points
         loni = dmp.lon(lgood,i);
         zdmpi_s = zdmpi(lgood);
         dmpout.lon(:,i) = interp1(zdmpi_s,loni,zgridi,interptype,nan);
     end
     lgood = ~isnan(dmp.lat(:,i));
-    if sum(lgood) > 4
+    if sum(lgood) >= req_points
         lati = dmp.lat(lgood,i);
         zdmpi_s = zdmpi(lgood);
         dmpout.lat(:,i) = interp1(zdmpi_s,lati,zgridi,interptype,nan);
     end
     lgood = ~isnan(dmp.Theta(:,i));
-    if sum(lgood) > 4
+    if sum(lgood) >= req_points
         Thetai = dmp.Theta(lgood,i);
         zdmpi_s = zdmpi(lgood);
         dmpout.Theta(:,i) = interp1(zdmpi_s,Thetai,zgridi,interptype,nan);
     end
     lgood = ~isnan(dmp.spv(:,i));
-    if sum(lgood) > 4
+    if sum(lgood) >= req_points
         spvi = dmp.spv(lgood,i);
         zdmpi_s = zdmpi(lgood);
         dmpout.spv(:,i) = interp1(zdmpi_s,spvi,zgridi,interptype,nan);
     end
     lgood = ~isnan(dmp.eql(:,i));
-    if sum(lgood) > 4
+    if sum(lgood) >= req_points
         eqli = dmp.eql(lgood,i);
         zdmpi_s = zdmpi(lgood);
         dmpout.eql(:,i) = interp1(zdmpi_s,eqli,zgridi,interptype,nan);
@@ -114,7 +115,7 @@ for i = 1:lorbit
         logpdmpi = log(dmp.pressure_hPa(:,i)); % this is only changed if it is an array
     end
     lgood = ~isnan(logpdmpi); % the indices of the P field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
-    if sum(lgood) > 4 % need at least 4 points to perform the interpolation
+    if sum(lgood) >= req_points % need at least 4 points to perform the interpolation
         logpdmpi = logpdmpi(lgood); % reduce the size of the vector
         zdmpi_s = zdmpi(lgood); % reduce the size as well
         logpdmpouti = interp1(zdmpi_s,logpdmpi,zgridi,interptype,nan);

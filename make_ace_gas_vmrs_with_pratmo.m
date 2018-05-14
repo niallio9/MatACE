@@ -1,8 +1,8 @@
-function [ pratstruct ] = make_ace_gas_vmrs_with_pratmo( tanstruct_o3_in, tanstruct_T_in, varargin )
-%A function to calculate the the VMRs of nitrogen-containing
-%species at multiple local solar times (LSTs) and at the location of ACE
-%measurements. The values can be used to create ratios that can be used
-%later to scale the ace measurements.
+function [ ] = make_ace_gas_vmrs_with_pratmo( tanstruct_o3_in, tanstruct_T_in, varargin )
+%A function to calculate the the VMRs of trace species at multiple local
+%solar times (LSTs) throughout the days of ACE measurements, at the
+%measurement locations. The values can be used to create ratios that can be
+%used later to scale the ace measurements.
 
 % *INPUT*    
 %           tanstruct_O3_in: STRUCTURE - contains the O3 specific ACE data.
@@ -19,12 +19,10 @@ function [ pratstruct ] = make_ace_gas_vmrs_with_pratmo( tanstruct_o3_in, tanstr
 %           gases (e.g., 'O3', 'ClO').
 %
 % *OUTPUT*
-%           tanstruct_scaled: STRUCTURE - with the same fields as the input
-%           tanstruct, but with all of the volume mixing ratios scaled to
-%           the input local solar time. The errors are also scaled using
-%           the same factor. The time of the each measurement has been
-%           edited to be the same day but at the local time of the input.
-
+%           tanstruct_scaled: STRUCTURE - the VMR information as a function
+%           of LST is saved for each input species in the current
+%           directory.
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 04/18
 
@@ -80,7 +78,7 @@ alon(alon<0) = alon(alon<0) + 360;
 %% loop through the ace data and run the box model for each measurement
 fprintf('\nRunning PRATMO for %i occultations...',nace)
 tic
-for j = 1:5%nace
+for j = 1:nace
     if mod(j,10) == 0
         fprintf('\npast %i of %i\n', j, nace)
         %        fprintf('\noccultation %i of %i milestone\n',j,nace)
@@ -146,7 +144,7 @@ for n = 1:lgases
     eval(setvmr_n);
     out.lat_tangent = aceo3.lat_tangent;
     out.lon_tangent = aceo3.lon_tangent;
-    out.LST_pratmo = lst_pratmo_out; % same for all gases
+    out.lst = lst_pratmo_out; % same for all gases
     % out.lon = aceo3.lon;
     % out.lat = aceo3.lat;
     pratstruct = out; %#ok<NASGU>

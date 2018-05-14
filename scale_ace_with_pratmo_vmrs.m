@@ -1,4 +1,4 @@
-function [ tanstruct_scaled, vmr_ratio ] = scale_ace_with_pratmo_vmrs( tanstruct_in, ratios_in, lst_in )
+ function [ tanstruct_scaled, vmr_ratio ] = scale_ace_with_pratmo_vmrs( tanstruct_in, ratios_in, lst_in )
 %A function to scale ACE VMR profiles to a given local solar time using
 %VMRs calculated using a chemical box model (like PRATMO). PRATMO VMRs can
 %be calculated with 'make_ace_gas_vmrs_with_pratmo.m'.
