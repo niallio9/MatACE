@@ -1,9 +1,9 @@
-function [ ] = make_ace_empty_netcdf_SDI( filename_out, gasname )
- %A function to create an empty ACE climatology netCDF file. The fields of
+function [ ] = make_maestro_empty_netcdf_SDI( filename_out, gasname )
+ %A function to create an empty MEASTRO climatology netCDF file. The fields of
  %the file is in a standard format required for the SPARC Data Initiative
  %for a monthly mean zonal climatology time series. A serial monthly
  %climatology.
- %Data from ACE .mat climatology files can later be written to the .nc file
+ %Data from MAESTRO .mat climatology files can later be written to the .nc file
  %created here.
  
 % *INPUT*
@@ -17,7 +17,7 @@ function [ ] = make_ace_empty_netcdf_SDI( filename_out, gasname )
 %           A .nc file will be created
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 03/18
+%   NJR - 05/18
 
 %% define some things
 filename = filename_out;
@@ -115,13 +115,13 @@ ncwriteatt(filename,'time','axis', 'T');
 ncwriteatt(filename,'time','units', 'days since 1950-01-01 00:00:00');
 
 %global attributes
-ncwriteatt(filename,'/','Experiment', 'ACE-FTS');
-ncwriteatt(filename,'/','Version', '3.5/3.6');
+ncwriteatt(filename,'/','Experiment', 'ACE-MAESTRO');
+ncwriteatt(filename,'/','Version', '3.13');
 ncwriteatt(filename,'/','Organisation', 'CSA');
 ncwriteatt(filename,'/','Type_of_Data', 'MEASUREMENTS');
 ncwriteatt(filename,'/','Platform', 'SATELLITE');
 ncwriteatt(filename,'/','Name_of_Platform', 'SCISAT-1');
-ncwriteatt(filename,'/','PI_name', 'Prof. Kaley Walker');
+ncwriteatt(filename,'/','PI_name', 'Prof. Tom McElroy');
 ncwriteatt(filename,'/','File_Creation_Time', datestr(now));
 ncwriteatt(filename,'/','File_Modification_Time', datestr(now));
 ncwriteatt(filename,'/','Fields', 'T2Mz: Monthly-mean zonal mean 2-d atmosphere');
@@ -131,7 +131,7 @@ ncwriteatt(filename,'/','Institute', 'University of Toronto');
 ncwriteatt(filename,'/','Address', '60 St George Street, M5S 1A7, ON, Toronto, CA');
 ncwriteatt(filename,'/','Email', 'kwalker@atmosp.physics.utoronto.ca, nryan@atmosp.physics.utoronto.ca');
 ncwriteatt(filename,'/','Project_id', 'SPARC Data_Initiative');
-ncwriteatt(filename,'/','Comment', '5 Points are required for an Monthly-Zonal-Average');
+ncwriteatt(filename,'/','Comment', '5 Points are required for a Monthly-Zonal-Average');
 ncwriteatt(filename,'/','Scaling_of_data', 'None');
 ncwriteatt(filename,'/','LST_level', '7 hPa'); %%%************************gotta check this********************************
 ncwriteatt(filename,'/','AVE_DOM_Level', '7 hPa');

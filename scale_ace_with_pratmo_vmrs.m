@@ -141,6 +141,11 @@ out.source_file = gas.source_file;
 out.occultation = gas.occultation;
 out.sr1ss0 = gas.sr1ss0;
 out.beta_angle = gas.beta_angle;
+% whos
+% size(gas.date_mjd)
+if isvector(gas.date_mjd) && ismatrix(lstgas)
+    gas.date_mjd = repmat(gas.date_mjd, length(lstgas(:,1)), 1); % to run on stupid fucking deluge
+end
 out.date_mjd(:,ygas) = gas.date_mjd(:,ygas) + (lstin(:,ygas) - lstgas(:,ygas))./24; % change the time to the same day but at the lst_in. Shift the original time by the number of hours between the original and new LST
 % out.date_mjd = rat.date_mjd(yrat); % change the time to the times of the ratios. This will be the same day but at the 'LST_in'
 out.gas = gasname;

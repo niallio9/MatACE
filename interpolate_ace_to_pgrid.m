@@ -95,7 +95,6 @@ fprintf('\nInterpolating the data...')
 logpgridi = logpgrid(:,1); % set this initially outside the loop so it doesn't have to reset each time if pgrid is a vector
 logpacei = logpace(:,1);
 for i = 1:lorbit
-    %i
     if mod(i,1000) == 0
         fprintf('\npast %i of %i\n', i, lorbit)
     end

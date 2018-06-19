@@ -38,7 +38,7 @@ out.vmr_error(:,badj) = [];
 out.quality_flags(:,badj) = [];
 if length(out.altitude_km(1,:)) > 1 % for the data that has been interpolated to a pressure grid
     out.altitude_km(:,badj) = [];
-    fprintf('\nWarning: The input structure appears to have already been interpolated. Applying the flags here is a bit iffy...')
+    fprintf('\nWarning: The input structure appears to have already been interpolated. Applying the flags here is a bit iffy...\n')
 end
 if isfield(out,'pressure_hPa') % for the data that has been interpolated to a pressure grid
    if length(out.pressure_hPa(1,:)) > 1

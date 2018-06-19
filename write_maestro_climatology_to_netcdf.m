@@ -1,6 +1,6 @@
-function [ ] = write_ace_climatology_to_netcdf( varargin )
- %A function to create an ACE climatology netCDF file from the information
- %contained in the ACE climstruct .mat file.
+function [ ] = write_maestro_climatology_to_netcdf( varargin )
+ %A function to create an ACE MAESTRO climatology netCDF file from the information
+ %contained in the ACE MAESTRO climstruct .mat file.
 %
 % *INPUT*
 %
@@ -16,13 +16,14 @@ function [ ] = write_ace_climatology_to_netcdf( varargin )
 %           'ncdir', as defined below by the user.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 03/18
+%   NJR - 05/18
 
 %% define some things
 %USER DEFINED
 % climdir = '/Users/niall/Dropbox/climatology/nryan/climdata/'; % edit this to your directory that contains the ACE netcdf data
 % climdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
-climdir = 'C:\Users\ryann\ACE\climdata';
+% climdir = 'C:\Users\ryann\ACE\climdata';
+climdir = 'C:\Users\ryann\ACE\MAESTRO\climdata';
 % climdir = 'F:\ACE\climdata\';
 % climdir = '/net/deluge/pb_1/users/nryan/ACE/climdata/';
 if ~isdir(climdir)
@@ -31,7 +32,8 @@ if ~isdir(climdir)
 end
 % ncdir = '/Users/niall/Dropbox/climatology/nryan/climdata_netcdf/'; % edit this to your output directory
 % ncdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata_netcdf/';
-ncdir = 'C:\Users\ryann\ACE\climdata_netcdf';
+% ncdir = 'C:\Users\ryann\ACE\climdata_netcdf';
+ncdir = 'C:\Users\ryann\ACE\MAESTRO\climdata_netcdf';
 % ncdir = 'F:\ACE\climdata_netcdf\';
 % ncdir = '/net/deluge/pb_1/users/nryan/ACE/climdata_netcdf/';
 
@@ -114,7 +116,7 @@ if isdir(ncdir)
                 for k = 1:12
                     %the .mat climatolgy files are of the type
                     %"ACEFTS_CLIM_v3_eql_NO2_2013_06.mat"
-                    climfile_yearandmonth = sprintf('ACEFTS_CLIM_v3_lat_%s_%i_%02.0f.mat',gasfolder{i},data_years_unique(j),k);
+                    climfile_yearandmonth = sprintf('ACEMAESTRO_CLIM_v3_lat_%s_%i_%02.0f.mat',gasfolder{i},data_years_unique(j),k);
                     climfile_k = fullfile(gasdir_i,'serial_month', climfile_yearandmonth); % the name of a climatology file
                     if exist(climfile_k,'file') == 2 % check if the file exists for that month
                         load(climfile_k); % loads a variable called climstruct
@@ -169,6 +171,8 @@ if isdir(ncdir)
 %                         lat(:) = climstruct.lat;
 %                         plev(:) = climstruct.pressure_hPa;
 %                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
+                    else
+                        fprintf('\nCould not find %s\n', climfile_k)
                     end
                 end
                 % get the name of the gas for the output file
@@ -188,13 +192,13 @@ if isdir(ncdir)
                     gasfolder_short = gasfolder{i};
                 end
                 % create and add the data to the file
-                ncfilename_j = sprintf('SPARC_DI_T2Mz_%s_%i_ACEFTS_v3.6_i01.nc', gasfolder{i}, data_years_unique(j));
+                ncfilename_j = sprintf('SPARC_DI_T2Mz_%s_%i_ACEMAESTRO_v3.13_i01.nc', gasfolder{i}, data_years_unique(j));
                 outdir = fullfile(ncdir, gasfolder_short);
                 if exist(outdir,'dir') ~= 7
                     mkdir(outdir);
                 end
                 ncfilename_j = fullfile(outdir, ncfilename_j);
-                make_ace_empty_netcdf_SDI(ncfilename_j,gasfolder_short); % make the empty .nc file (no data)
+                make_maestro_empty_netcdf_SDI(ncfilename_j,gasfolder_short); % make the empty .nc file (no data)
                 fprintf('writing the %i data...\n', data_years_unique(j))
                 ncwrite(ncfilename_j, gasfolder_short, vmr_out);
                 ncwrite(ncfilename_j, strcat(gasfolder_short,'_STD'), vmr_std_out);

@@ -1,6 +1,7 @@
-function [ ] = make_ace_climatology_serialmonth( tanstruct, out_directory)
+function [ ] = make_ace_climatology_serialmonth_with_filter( tanstruct, out_directory)
 %A function to create zonally averaged climatologies of ACE measurements,
-%by each unique calendar month. 'make_ace_climatology.m' is called here.
+%by each unique calendar month. 'make_ace_climatology_with_filter.m' is
+%called here. A MAD filter is applied to the data in each latitude bin.
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
@@ -15,7 +16,7 @@ function [ ] = make_ace_climatology_serialmonth( tanstruct, out_directory)
 %           .mat files of STRUCTURES will be written to 'out_directory'.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 02/18
+%   NJR - 05/18
 
 tic
 %% Things that may be changed often
@@ -30,7 +31,8 @@ end
 
 %the name of the output files
 % savename_pre = 'CMAM_CLIM_MLSsample_lat_';
-savename_pre = 'ACEFTS_CLIM_v3_lat_';
+% savename_pre = 'ACEFTS_CLIM_v3_lat_';
+savename_pre = 'ACEMAESTRO_CLIM_v1_lat_';
 % cells with the names of the month
 monthnames = {'January', 'February', 'March', 'April', 'May', 'June', ...
     'July', 'August', 'September', 'October', 'November', 'December'};
@@ -63,7 +65,7 @@ if isdir(climdirectory)
             warning on
             if isempty(gas_yearj_monthi.date_mjd) == 0
                 fprintf('\nPreparing climatology for %s %d', monthnames{i}, years_unique(j))
-                climstruct_monthi = make_ace_climatology(gas_yearj_monthi);
+                climstruct_monthi = make_ace_climatology_with_filter(gas_yearj_monthi);
                 climstruct_monthi.climatology_type = 'serial_month';
                 climstruct_monthi.time = [years_unique(j),i];
                 

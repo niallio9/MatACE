@@ -152,7 +152,8 @@ for n = 1:lgases
     % save for now in case matlab closes or some shit
     savedest = sprintf('ACE_v3p6_pratmo_%s_all_LST',gasnames{n});
     fprintf('saving %s data to %s\n', gasnames{n}, savedest);
-    save(savedest,'pratstruct')
+%     save(savedest,'pratstruct')
+    save(savedest,'pratstruct','-v7.3')
     
 end
 disp('All done :)')
