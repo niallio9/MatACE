@@ -20,6 +20,8 @@ function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 11/2017
 %   NJR - 02/2018 - include 'eql' field
+%   NJR - 07/2018 can use for structures with 'distance', 'time_diff',
+%   and/or 'lst_ratio' fields.
 
 gasout = tanstruct_in;
 ygas = rowindices;
@@ -50,6 +52,15 @@ if isfield(gasout,'lon') % when there is glc data included
 end
 if isfield(gasout,'eql') % when there is DMP data included in the tanstruct
     gasout.eql = gasout.eql(:,ygas);
+end
+if isfield(gasout,'distance')
+    gasout.distance = gasout.distance(:,ygas);
+end
+if isfield(gasout,'time_diff')
+    gasout.time_diff = gasout.time_diff(:,ygas);
+end
+if isfield(gasout,'lst_ratio')
+    gasout.lst_ratio = gasout.lst_ratio(:,ygas);
 end
 
 tanstruct_out = gasout;

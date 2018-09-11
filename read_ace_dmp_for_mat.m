@@ -50,6 +50,7 @@ if isdir(matdirectory)
     out.lon_tangent = nan(1,coldmp);
     out.lat_tangent  = nan(1,coldmp);
     out.version = cell(1,coldmp); % string
+    out.tropopauses_km = nan(4,coldmp); % there are four tropopause heights given int he dmp files
     out.altitude_km = nan(rowdmp,1); % all the altitude grids are the same
     out.T = nan(rowdmp,coldmp);
     out.pressure_hPa = nan(rowdmp,coldmp);
@@ -71,6 +72,7 @@ if isdir(matdirectory)
         out.lon_tangent(i) = dmpi.lon_tangent;
         out.lat_tangent(i) = dmpi.lat_tangent;
         out.version{i} = dmpi.version;
+        out.tropopauses_km(:,i) = dmpi.tropopauses_km;
         if i == 1
             out.altitude_km(:,i) = dmpi.altitude_km; % all the altitude grids are the same
         end

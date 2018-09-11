@@ -1,10 +1,7 @@
 function [ ] = make_ace_summed_climatology( gasout_name, varargin )
  %A function to create an ACE climatology for a family of gases. The
  % function uses .mat ACE climatology files and uses a simple addition of
- % the respective climatologies. The individual files are first filtered by
- % the number of observations used in each climatology. Historically, 5
- % measurements are required for a grid point in the climtology to be
- % valid.
+ % the respective climatologies.
 %
 % *INPUT*
 %           gasout_name: STRING - the name of the family of gases. This is
@@ -14,7 +11,7 @@ function [ ] = make_ace_summed_climatology( gasout_name, varargin )
 %           family of gases. You can input the same gas more than once if
 %           it makes a multiple contribution to a family.
 %           An input for NOx (NO + NO2) would be: 'NO', 'NO2'.
-
+%
 %
 % *OUTPUT*
 %           .mat files of the climatology information will be written to

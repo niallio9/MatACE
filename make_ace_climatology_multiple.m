@@ -54,7 +54,7 @@ end
 % climdirectory = 'F:\ACE\climdata\';
 % climdirectory = strcat(home_mac,'climdata/');
 % climdirectory = strcat(home_deluge,'ACE/','climdata/');
-climdirectory = 'C:\Users\ryann\ACE\climdata\';
+climdirectory = 'C:\Users\ryann\ACE\climdata_testing\time_matched_climatology\';
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';
@@ -87,6 +87,10 @@ if isdir(climdirectory)
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
                 gasiglc = merge_ace_glc(gasi,glc);
+%                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 disp('subsetting data to aug 2004 - dec 2010')
+%                 gasiglc = subset_ace_by_date(gasiglc,[2004,08,01],[2010,12,31]);
+%                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 switch climtype
                     case 'month'
                         make_ace_climatology_month(gasiglc,climdirectory);
@@ -134,6 +138,10 @@ if isdir(climdirectory)
                 fprintf('\nPROCESSING %s\n',gasin)
                 gasi = load(filein); gasi = gasi.tanstruct;
                 gasiglc = merge_ace_glc(gasi,glc);
+%                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 disp('subsetting data to aug 2004 - dec 2010')
+%                 gasiglc = subset_ace_by_date(gasiglc,[2004,08,01],[2010,12,31]);
+%                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 switch climtype
                     case 'month'
                         make_ace_climatology_month(gasiglc,climdirectory);

@@ -43,7 +43,7 @@ if ~strcmp(ratname, gasname) % make sure that the name of the gas in the loaded 
     error('the name of the gas in %s (%s) does not match the name of the dimension of the ratios array (%s)', filein_i, gasname, ratname);
 end
 %check that the length of the lst input matches the tanstruct input
-if isvector(lst_in) && length(lst_in) ~= length(gas.occultation)
+if isrow(lst_in) && length(lst_in) ~= length(gas.occultation)
     error('the length of the input LST vector should be the same as number of measurements to be scaled\n Maybe match the data first?')
 end
 if gas.altitude_km(1:lzrat,1) ~= rat.altitude_km(1:lzrat,1)
@@ -102,11 +102,20 @@ end
 for i = 1:length(ygas)
 %         i
     inonan = ~isnan(rat.lst(:,yrat(i))); % get indices of where there are not nans in the pratmo LSTs
+    
     if sum(inonan) > 10 % only do if you have more than 10 profiles in pratmo for that day
         for j = 1:lzrat
-%             j
-            vmr_lst_ace(j,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,j,yrat(i)), lstgas(j, ygas(i))); % lzgas x length(ygas)
-            vmr_lst_in(j,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,j,yrat(i)), lstin(j, ygas(i))); % lzgas x length(ygas)
+            %             j
+            ratlsti = rat.lst(inonan,yrat(i))
+            ratvmri = rat.vmr(inonan,j,yrat(i));
+            [ratlsti, Iratlsti] = unique(ratlsti); % remove repeating lst values for this profile 
+            ratvmri = ratvmri(Iratlsti); % remove the corresponding vmrs too
+            
+            vmr_lst_ace(j,i) = interp1(ratlsti, ratvmri, lstgas(j, ygas(i))); % lzgas x length(ygas)
+            vmr_lst_in(j,i) = interp1(ratlsti, ratvmri, lstin(j, ygas(i))); % lzgas x length(ygas)
+% % %             vmr_lst_ace(j,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,j,yrat(i)), lstgas(j, ygas(i))); % lzgas x length(ygas)
+% % %             vmr_lst_in(j,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,j,yrat(i)), lstin(j, ygas(i))); % lzgas x length(ygas)
+
 %             vmr_lst_ace(j,i)
 %             vmr_lst_in(j,i)
 %             ygas(i)

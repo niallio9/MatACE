@@ -16,6 +16,9 @@ function [ tanstruct_out ] = include_ace_scaled_apriori(tanstruct_in)
 
 %% Alter the scaled a priori flags of 8
 dataout = tanstruct_in;
+% this next line was added to have an error value (not a NaN) that
+% corresponds to the vmr value. NJR - 08/2018
+dataout.vmr_error(dataout.quality_flags == 8) = 0;
 dataout.quality_flags(dataout.quality_flags == 8) = 0;
 
 %%

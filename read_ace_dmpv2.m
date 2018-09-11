@@ -84,9 +84,20 @@ end
 version = textscan(tline, '%s');
 out.version = strcat(cell2mat(version{1,1}(2,1)),cell2mat(version{1,1}(3,1)));
 
-for n = 7:12
+for n = 7:9
     dummy = fgetl(fid1); %#ok<NASGU> % lines seven to eleven aren't needed
 end
+
+for n = 10
+    tline = fgetl(fid1); % tenth line
+end
+tropopauses = textscan(tline, '%s');
+out.tropopauses_km = [str2double(tropopauses{1,1}(1,1)), str2double(tropopauses{1,1}(2,1)), str2double(tropopauses{1,1}(3,1)), str2double(tropopauses{1,1}(4,1))]';
+
+for n = 11:12
+    dummy = fgetl(fid1); %#ok<NASGU> % lines seven to eleven aren't needed
+end
+
 
 %% get the data
 % %the columns contain information in the following order;

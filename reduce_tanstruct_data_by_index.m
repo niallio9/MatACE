@@ -21,6 +21,8 @@ function [ tanstruct_out ] = reduce_tanstruct_data_by_index( tanstruct_in, indic
 %   NJR - 02/2018 include 'eql' field
 %   NJR - 05/2018 can use for tanstructs that have more than one row of
 %   date or lat_tangent / lon_tangent info
+%   NJR - 07/2018 can use for structures with 'distance', 'time_diff',
+%   and/or 'lst_ratio' fields.
 
 gasin = tanstruct_in;
 gasout = gasin;
@@ -66,6 +68,18 @@ if isvector(ygas)
     if isfield(gasout,'eql') % when there is DMP data included in the tanstruct
         gasout.eql = nan(datasize);
         gasout.eql(ygas) = gasin.eql(ygas);
+    end
+    if isfield(gasout,'distance') % for structures that have been created from other datasets using coincidence criteria, etc.
+        gasout.distance = nan(datasize);
+        gasout.distance(ygas) = gasin.distance(ygas);
+    end
+    if isfield(gasout,'time_diff') % for structures that have been created from other datasets using coincidence criteria, etc.
+        gasout.time_diff = nan(datasize);
+        gasout.time_diff(ygas) = gasin.time_diff(ygas);
+    end
+    if isfield(gasout,'lst_ratio') % for structures that have been created from other datasets using coincidence criteria, etc.
+        gasout.lst_ratio = nan(datasize);
+        gasout.lst_ratio(ygas) = gasin.lst_ratio(ygas);
     end
     % now remove any colums that are all NaNs
     goodcol = find(nansum(gasout.vmr) ~= 0); % find the columns that are all nans

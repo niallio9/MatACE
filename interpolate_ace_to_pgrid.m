@@ -111,7 +111,9 @@ for i = 1:lorbit
         vmr_errori = gas.vmr_error(lgood,i);
         logpacei_s = logpacei(lgood); % reduce the size as well
         %interpolate the fields in log-pressure space
+%         i
         gasout.vmr(:,i) = interp1(logpacei_s,vmri,logpgridi,interptype, nan);
+%         vmr_errori
         gasout.vmr_error(:,i) = interp1(logpacei_s,vmr_errori,logpgridi,interptype, nan);
     end
     if length(zace(1,:)) > 1 % this should really only be a vector though. You shouldn't be interpolating already interpolated data
