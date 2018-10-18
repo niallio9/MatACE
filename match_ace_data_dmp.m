@@ -20,28 +20,26 @@ function [ tanstruct_out, dmpstruct_out ] = match_ace_data_dmp( tanstruct_in, dm
 %           gas info.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 10/2017
+% NJR - 10/2018 - edited for new dmp format
 
 %% Define some things
 gas = tanstruct_in;
 dmp = dmpstruct_in;
-lgas = length(gas.occultation);
-ldmp = length(dmp.occultation);
+% lgas = length(gas.occultation);
+% ldmp = length(dmp.date_mjd);
+vdate_gas = datevec(mjd2datenum(gas.date_mjd));
+vdate_dmp = datevec(mjd2datenum(dmp.date_mjd));
 
 %% check to see if they already match
-if isequal(gas.occultation, dmp.occultation)
+if isequal(vdate_gas(:,1:5), vdate_dmp(:,1:5))
     %disp('the occultation numbers already match')
     tanstruct_out = gas;
     dmpstruct_out = dmp;
 else
-    fprintf('\nsubsetting the ace data and DMPs by matching occultation numbers\n')
-    %% Get the unique codes that identify the occultations/orbit.
-    gasorbit(1,1:lgas) = gas.occultation;
-    gasorbit(2,1:lgas) = gas.sr1ss0;
-    dmporbit(1,1:ldmp) = dmp.occultation;
-    dmporbit(2,1:ldmp) = dmp.sr1ss0;
+    fprintf('\nsubsetting the ace data and DMPs by matching times down to the minute\n')
     
     %% Check which ones match
-    [~,ygas,ydmp] = intersect(gasorbit',dmporbit','rows'); % the indices of where the orbits/occultations match
+    [~,ygas,ydmp] = intersect(vdate_gas(:,1:5), vdate_dmp(:,1:5), 'rows'); % the indices of where the year/month/date/hour/minute match
     
     %% reduce the sizes of the variables to only include the ones with coincident orbit/occulations
     gasout = reduce_tanstruct_by_rowindex(gas,ygas);

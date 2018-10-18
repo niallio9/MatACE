@@ -18,6 +18,7 @@ function [ dmpstruct_out ] = reduce_dmpstruct_data_by_index( dmpstruct_in, indic
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 10/17
+%   NJR - 10/18 - edited for new DMP format
 
 dmpin = dmpstruct_in;
 dmpout = dmpin;

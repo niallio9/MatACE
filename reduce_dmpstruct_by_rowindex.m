@@ -15,17 +15,18 @@ function [ dmpstruct_out ] = reduce_dmpstruct_by_rowindex( dmpstruct_in, rowindi
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 10/17
+%   NJR - 10/18 - edited for new DMP format
 
 dmpout = dmpstruct_in;
 ydmp = rowindices;
 
-dmpout.source_file = dmpout.source_file(ydmp);
-dmpout.occultation = dmpout.occultation(ydmp);
-dmpout.sr1ss0 = dmpout.sr1ss0(ydmp);
+% dmpout.source_file = dmpout.source_file(ydmp);
+% dmpout.occultation = dmpout.occultation(ydmp);
+% dmpout.sr1ss0 = dmpout.sr1ss0(ydmp);
 dmpout.date_mjd = dmpout.date_mjd(ydmp);
-dmpout.lat_tangent = dmpout.lat_tangent(ydmp);
-dmpout.lon_tangent = dmpout.lon_tangent(ydmp);
-dmpout.version = dmpout.version(ydmp);
+% dmpout.lat_tangent = dmpout.lat_tangent(ydmp);
+% dmpout.lon_tangent = dmpout.lon_tangent(ydmp);
+% dmpout.version = dmpout.version(ydmp);
 dmpout.T = dmpout.T(:,ydmp);
 if length(dmpout.pressure_hPa(1,:)) > 1
     dmpout.pressure_hPa = dmpout.pressure_hPa(:,ydmp);
@@ -39,6 +40,13 @@ if length(dmpout.altitude_km(1,:)) > 1 % for the data that has been interpolated
     dmpout.altitude_km = dmpout.altitude_km(:,ydmp);
 end
 
+% for the tropospheric info
+dmpout.tropopauses_hPa_WMO = dmpout.tropopauses_hPa_WMO(:,ydmp);
+dmpout.tropopauses_km_WMO = dmpout.tropopauses_km_WMO(:,ydmp);
+dmpout.tropopauses_hPa_Dyn = dmpout.tropopauses_hPa_Dyn(:,ydmp);
+dmpout.tropopauses_km_Dyn = dmpout.tropopauses_km_Dyn(:,ydmp);
+
+%%
 dmpstruct_out = dmpout;
 
 if isempty(ydmp)

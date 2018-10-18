@@ -38,6 +38,7 @@ factor_limit = 10;
 failure_low = 0;
 failure_high = 0;
 for n = 1 : norbit
+%     n
     inonan = find(~isnan(gas.vmr(:,n))); %the indices of vmr values that are not nans
     if ~isempty(inonan)
         %         whos
