@@ -39,7 +39,8 @@ home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
 % newclim_dir = strcat(home_windows,'climdata_v3p5_nr\');
-newclim_dir = 'C:\Users\ryann\ACE\climdata_testing\';
+% newclim_dir = 'C:\Users\ryann\ACE\climdata_testing\';
+newclim_dir = 'C:\Users\ryann\ACE\climdata\';
 % newclim_dir = 'C:\Users\ryann\MLS\climdata\';
 % newclim_dir = 'C:\Users\ryann\ACE\\MAESTRO\climdata\';
 
@@ -62,7 +63,7 @@ months = 1:12;
 
 %% loop through the months and fill in the cells of arrays
 for i = 1:12 % do all months
-    filenewi = strcat( newclim_dir, gasname,'/','serial_month','/', newfile_pre, sprintf('%i_%0.2i',yearin, months(i)), newfile_post);
+    filenewi = strcat( newclim_dir, gasname,'/','serial_month','/', newfile_pre, sprintf('%i_%0.2i',yearin, months(i)), newfile_post)
     if exist(filenewi,'file') ~= 2
         fprintf('There is no file for %i_%0.2i. Moving on...\n', yearin, months(i))
         vmrzon(:,:,i) = nan(48,36); % this is hardcoded here, for now.

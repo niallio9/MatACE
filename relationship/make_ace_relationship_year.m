@@ -19,7 +19,7 @@ function [ ] = make_ace_relationship_year( tanstruct_x_in, tanstruct_y_in, out_d
 
 tic
 %% Things that may be changed often
-if nargin < 2
+if nargin < 3
     home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
     home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
     home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
@@ -40,11 +40,11 @@ relstruct = []; %#ok<NASGU>
 gasname_out = strcat(gasx.gas,'-',gasy.gas);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-lat1 = 0;
-lat2 = 30;
+lat1 = -30;
+lat2 = -90;
 gasx = subset_ace_by_lat(gasx,lat1,lat2);
 gasy = subset_ace_by_lat(gasy,lat1,lat2);
-gasname_out = strcat(gasname_out,'-','0030N');
+gasname_out = strcat(gasname_out,'-','vortexS');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Only continue of the output directory exists

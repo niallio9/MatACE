@@ -26,6 +26,9 @@ if length(tanrel.altitude_km(1,:)) == 1
 else
     altcol = reshape(tanrel.altitude_km, column_size);
 end
+if isfield(tanrel,'lat')
+    latcol = reshape(tanrel.lat, column_size);   
+end
 
 %% get the line of best fit from slope and intercept
 fittedX = linspace(min(vmrcolx), max(vmrcolx), 200);
@@ -40,7 +43,7 @@ ms = 2;
 % l1 = sprintf('r = %0.2f', round2(tanrel.correlation, 0.01));
 l1 = sprintf('r = %0.2f\nm = %0.2e%s%0.2e\nc = %0.2e%s%0.2e', round2(tanrel.correlation, 0.01), tanrel.slope, char(177), tanrel.slope_error, tanrel.intercept, char(177), tanrel.intercept_error);
 
-h1 = scatter(vmrcolx, vmrcoly, ms, altcol, 'filled'); hold on; %#ok<NASGU>
+h1 = scatter(vmrcolx, vmrcoly, ms, latcol, 'filled'); hold on; %#ok<NASGU>
 h2 = plot(fittedX, fittedY, 'k-', 'LineWidth', lw); %#ok<NASGU>
 % labels and text
 text(0.5*min(vmrcolx), 0.7*max(vmrcoly), l1, 'Fontsize', fs_text)

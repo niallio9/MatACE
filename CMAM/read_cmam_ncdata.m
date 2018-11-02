@@ -21,7 +21,7 @@ cfile = filename_in;
 cfile = strcat(filename,extension);
 vmrgas = cfile(1:end-55); % this is for the cmam30 naming format of e.g., 'vmrclo_6hrChem_CMAM_CMAM30-SD_r1i1p1_2008010100-2008123118.nc'
 disp('reading CMAM variables...')
-cout.source = filename_in;
+cout.source_file = filename_in;
 % cout.gas = vmrgas(4:end); %just take the gas name and not the 'vmr' preface
 cout.gas = ncreadatt(cfile,vmrgas,'long_name');
 cout.vmr = ncread(cfile,vmrgas);

@@ -1,4 +1,4 @@
-function [ dmpstruct_out ] = reduce_dmpstruct_data_by_index( dmpstruct_in, indices )
+function [ dmpstruct_out ] = reduce_dmpstruct_data_by_index( dmpstruct_in, indices, delete_rows )
 %A function to reduce the ace dmp data according to the provided
 %indices. Data that do not correspond to the indices are changed to NaNs.
 %If a whole row (occultation) of data is converted to NaNs, then that 
@@ -46,9 +46,11 @@ if isvector(ydmp)
         dmpout.pressure_hPa(ydmp) = dmpin.pressure_hPa(ydmp);
     end
     
-    % now remove any colums that are all NaNs
-    goodcol = find(nansum(dmpout.T) ~= 0); % find the columns that are all nans
-    dmpout = reduce_dmpstruct_by_rowindex(dmpout,goodcol);
+    if nargin < 3 || delete_rows == 1
+        % now remove any colums that are all NaNs
+        goodcol = find(nansum(dmpout.lon) ~= 0); % find the columns that are all nans
+        dmpout = reduce_dmpstruct_by_rowindex(dmpout,goodcol);
+    end
     
     dmpstruct_out = dmpout;
     

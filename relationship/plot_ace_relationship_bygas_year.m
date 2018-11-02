@@ -66,11 +66,14 @@ if yplot == 1
     %     figure(figi), set(gcf,'Position', [5,12,1096,704])
     %     figure(figi), set(gcf,'Position', [358,61,722,532])
     %         figure(figi), set(gcf,'Position', [97,49,852,630]) %
-    figure(figi), set(gcf,'Position', [97    49   969   898])
+%     figure(figi), set(gcf,'Position', [97    49   969   898])
+    figure(figi), set(gcf,'Position', [97  -211   969   895])
     suptitle(sprintf('%s relationship',gasname))
     hold on
-    cmin1 = 10;
-    cmax1 = 150; % the maximum ace altitude used
+    cmin1 = -90;
+    cmax1 = -50; % the maximum ace altitude used
+%     cmin1 = -90;
+%     cmax1 = -40; %
     for i = 1:length(yearsin)
         sdatej(i) = datenum([yearsin(i),1,1]);
         filenewi = strcat( newclim_dir, gasname,'/', newfile_pre, sprintf('%i',yearsin(i)), newfile_post);

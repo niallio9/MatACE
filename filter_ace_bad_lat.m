@@ -20,7 +20,11 @@ function [ tanstruct_out ] = filter_ace_bad_lat( tanstruct_in, lat_limit )
 %% Define some things
 gasin = tanstruct_in;
 gasout = gasin;
-latlim = lat_limit;
+if nargin < 2
+    latlim = 10; % ad hoc value - NJR 10/18
+else
+    latlim = lat_limit;
+end
 sizelat = size(gasout.lat(:,1)); % should be 150 levels for the ace measurement
 lattangent = repmat(gasin.lat_tangent, [sizelat,1] ); % need this because matlab on deluge cant subtract a vector from a matrix
 

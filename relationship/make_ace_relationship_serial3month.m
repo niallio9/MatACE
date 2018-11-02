@@ -1,4 +1,4 @@
-function [ ] = make_ace_relationship_season( tanstruct_x_in, tanstruct_y_in, out_directory)
+function [ ] = make_ace_relationship_serial3month( tanstruct_x_in, tanstruct_y_in, out_directory)
 %A function to create zonally averaged climatologies of ACE measurements,
 %by each unique calendar month. 'make_ace_climatology.m' is called here.
 
@@ -32,8 +32,7 @@ end
 % savename_pre = 'CMAM_CLIM_MLSsample_lat_';
 savename_pre = 'ACEFTS_REL_v3_lat_';
 % cells with the names of the month
-monthnames = {'January', 'February', 'March', 'April', 'May', 'June', ...
-    'July', 'August', 'September', 'October', 'November', 'December'};
+monthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 
 %% Define some things
 gasx = tanstruct_x_in;
@@ -51,7 +50,7 @@ gasname_out = strcat(gasname_out,'-','0030N');
 %% Only continue of the output directory exists
 if isdir(reldirectory)
     %% Create a folder to store the climatology data if one does not exist
-    reldirectory_gas = strcat(reldirectory,gasname_out,'/','serial_month','/')
+    reldirectory_gas = strcat(reldirectory,gasname_out,'/','seasonal','/');
     if exist(reldirectory_gas,'dir') ~= 7
         mkdir(reldirectory_gas);
     end
@@ -64,14 +63,14 @@ if isdir(reldirectory)
     vdates = datevec(mjd2datenum(gasx.date_mjd));
     years_unique = unique(vdates(:,1));
     
-    %% For each year loop through the months and create climatologies for each.
+    %% For each year loop through the seasons and create climatologies for each.
     for j = 1:length(years_unique)
         %subset the data by year
         warning off % suppress warnings about reducing the data to zero here. There is output below if this is the case
         gasx_yearj = subset_ace_by_year(gasx,years_unique(j));
         gasy_yearj = subset_ace_by_year(gasy,years_unique(j));
         warning on
-        for i = 1:12
+        for i = 1:4
             %subset the ace data by month
             warning off % suppress warnings about reducing the data to zero here. There is output below if this is the case
             gasx_yearj_monthi = subset_ace_by_month(gasx_yearj,i);

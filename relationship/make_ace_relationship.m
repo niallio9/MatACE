@@ -21,8 +21,8 @@ function [ relstruct_out ] = make_ace_relationship( tanstruct_x_in, tanstruct_y_
 %% Define some things
 gasx = apply_ace_flags(tanstruct_x_in);
 gasy = apply_ace_flags(tanstruct_y_in);
-min_alt = 10;
-max_alt = 150;
+min_alt = 0;
+max_alt = 35;
 
 if ~isequal(gasx.altitude_km, gasy.altitude_km)
     error('the altitude grids of each gas are not equal. Stopping...')
@@ -103,11 +103,15 @@ elseif isfield(gasy,'lon')
     out.lat = gasy.lat;
 end
 if isfield(gasx,'eql')
-    out.lon = gasx.eql;
+    out.eql = gasx.eql;
 elseif isfield(gasy,'eql')
-    out.lon = gasy.eql;
+    out.eql = gasy.eql;
 end
-
+if isfield(gasx,'spv')
+    out.spv = gasx.spv;
+elseif isfield(gasy,'spv')
+    out.spv = gasy.spv;
+end
 
 
 relstruct_out = out;

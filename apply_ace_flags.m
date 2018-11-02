@@ -52,11 +52,24 @@ end
 if isfield(out,'eql')
    out.eql(:,badj) = []; 
 end
+if isfield(out,'spv')
+   out.spv(:,badj) = []; 
+end
 
 %% Change any other values with flags > 2 to NaNs
 [badI] = find(out.quality_flags > 1);
 out.vmr(badI) = nan;
 out.vmr_error(badI) = nan;
+if isfield(out,'lon')
+    out.lon(badI) = nan;
+    out.lat(badI) = nan;
+end
+if isfield(out,'eql')
+    out.eql(badI) = nan;
+end
+if isfield(out,'spv')
+    out.spv(badI) = nan;
+end
 % remove any columns that are only nans now
 goodcol = find(nansum(out.vmr) ~= 0);
 out = reduce_tanstruct_by_rowindex(out, goodcol);

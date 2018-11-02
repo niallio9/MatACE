@@ -1,4 +1,4 @@
-function [ tanstruct_out ] = reduce_tanstruct_data_by_index( tanstruct_in, indices )
+function [ tanstruct_out ] = reduce_tanstruct_data_by_index( tanstruct_in, indices, delete_rows )
 %A function to reduce the ace data according to the provided
 %indicies. Data that do not correspond to the indices are changed to NaNs.
 %If a whole row (occultation) of data is converted to NaNs, then that 
@@ -69,6 +69,10 @@ if isvector(ygas)
         gasout.eql = nan(datasize);
         gasout.eql(ygas) = gasin.eql(ygas);
     end
+    if isfield(gasout,'spv') % when there is DMP data included in the tanstruct
+        gasout.spv = nan(datasize);
+        gasout.spv(ygas) = gasin.spv(ygas);
+    end
     if isfield(gasout,'distance') % for structures that have been created from other datasets using coincidence criteria, etc.
         gasout.distance = nan(datasize);
         gasout.distance(ygas) = gasin.distance(ygas);
@@ -81,9 +85,12 @@ if isvector(ygas)
         gasout.lst_ratio = nan(datasize);
         gasout.lst_ratio(ygas) = gasin.lst_ratio(ygas);
     end
-    % now remove any colums that are all NaNs
-    goodcol = find(nansum(gasout.vmr) ~= 0); % find the columns that are all nans
-    gasout = reduce_tanstruct_by_rowindex(gasout,goodcol);
+    
+    if nargin < 3 || delete_rows == 1
+        % now remove any colums that are all NaNs
+        goodcol = find(nansum(gasout.vmr) ~= 0); % find the columns that are all nans
+        gasout = reduce_tanstruct_by_rowindex(gasout,goodcol);
+    end
     
     tanstruct_out = gasout;
 else

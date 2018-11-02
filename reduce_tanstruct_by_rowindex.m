@@ -53,6 +53,9 @@ end
 if isfield(gasout,'eql') % when there is DMP data included in the tanstruct
     gasout.eql = gasout.eql(:,ygas);
 end
+if isfield(gasout,'spv') % when there is DMP data included in the tanstruct
+    gasout.spv = gasout.spv(:,ygas);
+end
 if isfield(gasout,'distance')
     gasout.distance = gasout.distance(:,ygas);
 end
