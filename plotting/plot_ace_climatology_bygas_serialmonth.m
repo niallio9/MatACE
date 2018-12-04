@@ -40,9 +40,9 @@ home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
 % newclim_dir = strcat(home_windows,'climdata_v3p5_nr\');
 % newclim_dir = 'C:\Users\ryann\ACE\climdata_testing\';
-newclim_dir = 'C:\Users\ryann\ACE\climdata\';
+% newclim_dir = 'C:\Users\ryann\ACE\climdata\';
 % newclim_dir = 'C:\Users\ryann\MLS\climdata\';
-% newclim_dir = 'C:\Users\ryann\ACE\\MAESTRO\climdata\';
+newclim_dir = 'C:\Users\ryann\ACE\\MAESTRO\climdata\';
 
 vmrzon = nan(48,36,12);
 if nargin > 2
@@ -84,6 +84,7 @@ if yplot == 1
     cmax1 = max(vmrzon(:));
     for i = 1:12
         subplot(4,3,i), plot_on_ace_clim_latlev_contourf( vmrzon(:,:,i), sprintf('%0.2i',months(i)) )
+        ylim([10^0,10^3])
         caxis([0,cmax1]);
         if i ~= 1 && i ~= 4 && i ~= 7 && i ~= 10
             ylabel('')

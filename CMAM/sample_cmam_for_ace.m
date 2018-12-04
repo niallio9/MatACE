@@ -42,7 +42,7 @@ lon_cmam = cmam.lon;
 dlon_cmam = lon_cmam(2) - lon_cmam(1); % get the cmam lon step
 logp_cmam = log(cmam.pressure_hPa);
 %output structure
-cout.source_file = cmam.source;
+cout.source_file = cmam.source_file;
 cout.occultation = ace.occultation;
 cout.sr1ss0 = ace.sr1ss0;
 cout.beta_angle = ace.beta_angle;
@@ -91,11 +91,11 @@ for n = 1:nocc
     % for interpolation near the limits of the lon grid. This creates the
     % illusion of a circular grid for linear interpolation.
     if max(lon_ace(:,n)) > lon_cmam(end)
-        lon_cmami = cat(1,lon_cmam, lon_cmam(end) + dlon_cmam); % add another point to the end of the lon grid
+        lon_cmami = cat(2,lon_cmam, lon_cmam(end) + dlon_cmam); % add another point to the end of the lon grid
         vmrt5_cmam = cat(1, vmrt5_cmam, vmrt5_cmam(1,:,:,:)); % add the first lon vmrs after the last
         %         vmrt2_cmam = cat(1, vmrt2_cmam, vmrt2_cmam(1,:,:));
     elseif min(lon_ace(:,n)) < lon_cmam(1)
-        lon_cmami = cat(1, lon_cmam(1) - dlon_cmam, lon_cmam); % add a lon grid point before the first
+        lon_cmami = cat(2, lon_cmam(1) - dlon_cmam, lon_cmam); % add a lon grid point before the first
         vmrt5_cmam = cat(1, vmrt5_cmam(end,:,:,:), vmrt5_cmam); % add the last lon vmrs before the first
         %         vmrt2_cmam = cat(1, vmrt2_cmam(end,:,:), vmrt2_cmam);
     end

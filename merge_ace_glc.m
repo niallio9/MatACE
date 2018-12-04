@@ -68,7 +68,7 @@ if ~isfield(tanstruct_in,'lat')
     end
     % fill in the nan columns with the tangent values
     for i = 1:lorbit
-        if nansum(latout(:,i)) == 0
+        if nansum(latout(:,i)) == 0 || nansum(lonout(:,i)) == 0 % edited to add lon to the case. NJR - 11/18
             lonout(:,i) = repmat(gas.lon_tangent(i),lalt,1);
             latout(:,i) = repmat(gas.lat_tangent(i),lalt,1);
         end

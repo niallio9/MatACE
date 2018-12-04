@@ -1,4 +1,4 @@
-function [ ] = write_ace_climatology_to_netcdf( varargin )
+function [ ] = write_ace_climatology_to_netcdf_SDI( varargin )
  %A function to create an ACE climatology netCDF file from the information
  %contained in the ACE climstruct .mat file.
 %

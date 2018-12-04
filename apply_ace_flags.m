@@ -56,7 +56,7 @@ if isfield(out,'spv')
    out.spv(:,badj) = []; 
 end
 
-%% Change any other values with flags > 2 to NaNs
+%% Change any other values with flags > 1 to NaNs
 [badI] = find(out.quality_flags > 1);
 out.vmr(badI) = nan;
 out.vmr_error(badI) = nan;

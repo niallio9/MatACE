@@ -1,4 +1,4 @@
-function [mls_sample, chosen_rowcolumn] = sample_mls_for_ace(mlsstruct_in, tanstruct_in, do_day_night)
+function [mls_sample, chosen_rowcolumn] = sample_mls_for_ace(mlsstruct_in, tanstruct_in)
 %A function to sample MLS data according to the time/lat/lon/alt of ACE
 %measurements. The two closest times are sampled, mainly to have a choice
 %of start-time when using chemical box model to scale the data at a later
@@ -76,20 +76,6 @@ for n = 1:nocc
 %             fprintf('%i data points lie within %f km\n', length(Id), distance_lim)
             % subset to the data that is within 'distance_lim' of the ace measurement
             mls3h_int_d = reduce_tanstruct_data_by_index(mls3h_int, Id); % this will give an empty matrix if there are no points that fit the criteria.
-            %% New scetion to alter which values to keep, depending on day or night LST
-            if do_day_night == 1
-                [~,day_index] = subset_ace_by_lst_tangent(mls3h_int_d,6,18);
-                [~,night_index] = subset_ace_by_lst_tangent(mls3h_int_d,18,6);
-                press_highalt = find(mls3h_int_d.pressure_hPa(:,1) <= 30);
-                press_lowalt = find(mls3h_int_d.pressure_hPa(:,1) >= 30);
-                mls3h_int_d.vmr(press_highalt,day_index) = nan; % remove day values above 30hPa. values above 30hPa are to be from night time
-                mls3h_int_d.lat(press_highalt,day_index) = nan;
-                mls3h_int_d.lon(press_highalt,day_index) = nan;
-                mls3h_int_d.vmr(press_lowalt,night_index) = nan; % remove night values below 30hPa. values below 30hPa are to be from day time
-                mls3h_int_d.lat(press_lowalt,night_index) = nan;
-                mls3h_int_d.lon(press_lowalt,night_index) = nan;
-                %             zmls = p2z_waccm(mls3h_int_d.pressure_hPa.*100)/1000; % calculate the MLS altitude
-            end
             %%
             %need to recalculate the distances because the last reduction of the data above might
             %have removed some measurements.

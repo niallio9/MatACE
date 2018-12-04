@@ -1,6 +1,6 @@
 function [ tanstruct_out ] = merge_ace_data( tanstruct1_in, tanstruct2_in )
 %A function to merge two ace files so that the data is a combination of the
-%data in both files. Dubplicate occultations are removed
+%data in both files. Duplicate occultations are removed
 
 % *INPUT*
 %           tanstruct1_in: STRUCTURE - contains the gas specific ACE data.
@@ -113,17 +113,22 @@ if isfield(gas1,'eql') && isfield(gas2,'eql') % when there is DMP data included 
 else
     fprintf('the ''eql'' fields were not merged because it is not present in both inputs\n')
 end
-if isfield(gasout,'distance')
+if isfield(gas1,'spv') && isfield(gas2,'spv') % when there is DMP data included in the tanstruct
+    gasout.spv = [gas1.spv, gas2.spv];
+else
+    fprintf('the ''eql'' fields were not merged because it is not present in both inputs\n')
+end
+if isfield(gas1,'distance') && isfield(gas2,'distance')
     gasout.distance = [gas1.distance, gas2.distance];
 else
     fprintf('the ''distance'' fields were not merged because it is not present in both inputs\n')
 end
-if isfield(gasout,'time_diff')
+if isfield(gas1,'time_diff') && isfield(gas2,'time_diff')
     gasout.time_diff = [gas1.time_diff, gas2.time_diff];
 else
     fprintf('the ''time_diff'' fields were not merged because it is not present in both inputs\n')
 end
-if isfield(gasout,'lst_ratio')
+if isfield(gas1,'lst_ratio') && isfield(gas2,'lst_ratio')
     gasout.lst_ratio = [gas1.lst_ratio, gas2.lst_ratio];
 else
     fprintf('the ''lst_ratio'' fields were not merged because it is not present in both inputs\n');
@@ -132,7 +137,9 @@ end
 %% remove duplicate occultations
 disp('removing duplicate occultations...')
 % orbitnames = get_ace_occultation_names(gasout);
-[~,igood] = unique(gasout.date_mjd);
+[~,igood] = unique(gasout.date_mjd(1,:)); % included an indexing here because the sampled MLS data has an 'alt x occ' array of times 
+gasout
+size(igood)
 gasout = reduce_tanstruct_by_rowindex(gasout, igood);
 
 %%

@@ -29,7 +29,7 @@ file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 file_post = '_20042010.mat';
 
 % dataX = {clo, hocl, hcl, clono2, Cly}; the Cly name is a dummy for later
-gasnames1 = {'ClOmlsprat10','HOClmls_sap','HCl','ClONO2'};
+gasnames1 = {'ClOmlspratlatnegfixampm','HOClmls_sap','HCl','ClONO2'};
 gasnames2 = {'ClOcmam','HOClcmam','HClcmam','ClONO2cmam'};
 
 %% define some things

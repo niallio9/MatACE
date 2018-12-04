@@ -22,6 +22,8 @@ function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindi
 %   NJR - 02/2018 - include 'eql' field
 %   NJR - 07/2018 can use for structures with 'distance', 'time_diff',
 %   and/or 'lst_ratio' fields.
+%   NJR - 11/2018 can use with source_file and version: included in MAESTRO
+%   structures, and others
 
 gasout = tanstruct_in;
 ygas = rowindices;
@@ -33,6 +35,12 @@ gasout.vmr = gasout.vmr(:,ygas);
 gasout.vmr_error = gasout.vmr_error(:,ygas);
 gasout.lat_tangent = gasout.lat_tangent(:,ygas);
 gasout.lon_tangent = gasout.lon_tangent(:,ygas);
+if isfield (gasout,'source_file')
+    gasout.source_file = gasout.source_file(:,ygas);
+end
+if isfield (gasout,'version')
+    gasout.version = gasout.version(:,ygas);
+end
 if isfield(gasout,'quality_flags')
     gasout.quality_flags = gasout.quality_flags(:,ygas);
     %     else

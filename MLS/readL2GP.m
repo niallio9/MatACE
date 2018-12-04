@@ -82,19 +82,17 @@ else
 end;
 
 b=file;
-for i=1:4,
+for i=1:3,
     [a,b]=strtok(b, '_');
 end
-A.band = a;
-% r=find(a=='-');
-for i=1:1,
-    [a,b]=strtok(b, '_');
-end
-A.version=a(2:end);  %parse 'version' from the file name 
-% A.l2cycle=a((r(end)+1):end);  %parse 'l2cycle' from the file name 
+
+r=find(a=='-');
+A.version=a(1:(r(end)-1));  %parse 'version' from the file name 
+A.l2cycle=a((r(end)+1):end);  %parse 'l2cycle' from the file name 
 
 [a,b]=strtok(b, '_');
 A.date=strtok(a, '.');
+
 
 
 file=fullfile(Path, file);
@@ -114,26 +112,26 @@ if strcmp(file(end+(-3:0)), '.he5'),
         geofields_=    {fi.GroupHierarchy.Groups(1).Groups(2).Groups(N).Groups(2).Datasets.Name};
 
         for i=1:length(datafields_),
-            A.(strtokn(datafields_{i}, 'last', '/'))=h5read(A.file, datafields_{i});
+            A.(strtokn(datafields_{i}, 'last', '/'))=hdf5read(A.file, datafields_{i});
         end
         for i=1:length(geofields_),
-            A.(strtokn(geofields_{i}, 'last', '/'))=h5read(A.file, geofields_{i});
+            A.(strtokn(geofields_{i}, 'last', '/'))=hdf5read(A.file, geofields_{i});
         end
 
     else
-        datafields={'L2Value' 'L2Precision' 'Pressure' 'Status', 'Convergence'};
-        geofields= {'Time' 'TimeUTC' 'Altitude' 'Latitude' 'LineOfSightAngle' 'LocalTime' 'Longitude' 'AscendingDescending' 'SolarZenithAngle' 'Reserved'};
+        datafields={'L2gpValue' 'L2gpPrecision' 'Quality' 'Status', 'Convergence'};
+        geofields= {'ChunkNumber' 'Latitude' 'LineOfSightAngle' 'LocalSolarTime' 'Longitude' 'OrbitGeodeticAngle' 'Pressure' 'SolarZenithAngle' 'Time'};
 
         for i=1:length(datafields),
             try
-                A.(datafields{i})=h5read(A.file, ['/HDFEOS/SWATHS/' swath '/Data Fields/' datafields{i}]);
+                A.(datafields{i})=hdf5read(A.file, ['/HDFEOS/SWATHS/' swath '/Data Fields/' datafields{i}]);
             catch
                 A.(datafields{i})=[];
             end
         end
         for i=1:length(geofields),
             try
-                A.(geofields{i})=h5read(A.file, ['/HDFEOS/SWATHS/' swath '/Geolocation Fields/' geofields{i}]);
+                A.(geofields{i})=hdf5read(A.file, ['/HDFEOS/SWATHS/' swath '/Geolocation Fields/' geofields{i}]);
             catch
                 A.(geofields{i})=[];
             end

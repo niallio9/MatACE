@@ -67,8 +67,7 @@ if(~isempty(temp_dir)) % if the file exists
     glc = load(filein); glc = glc.glcstruct;
 else % if the file doesn't exist
     error('Error: I can''t find %s\n',filein);
-end
-
+end 
 %% Read and save the data
 if isdir(climdirectory)
     

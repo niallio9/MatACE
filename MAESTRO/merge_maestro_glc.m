@@ -1,9 +1,9 @@
 function [ tanstruct_out ] = merge_maestro_glc( tanstruct_in, glcstruct_in)
-%A function to read ACE GLC data files, according to the occultations of
-%the input, and add the latitude and longitutde information to the input
-%structure. The input ACE data should use the original ACE 1km-grid. The
-%tangent latitude and longitude are used when there is no information in
-%the GLC file.
+%A function to read ACE-MAESTRO sunset/sunrise table, according to the
+%occultations of the input, and add the latitude and longitutde information
+%to the input structure. The input ACE data should use the original ACE
+%1km-grid. The tangent latitude and longitude are used when there is no
+%information in the GLC file.
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.

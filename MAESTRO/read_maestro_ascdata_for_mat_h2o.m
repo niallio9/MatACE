@@ -1,5 +1,5 @@
-function [ tanstruct ] = read_maestro_ascdata_for_mat( path_to_maestro_data )
-%A function to read the ACE MAESTRO O3 files and make a .mat
+function [ tanstruct ] = read_maestro_ascdata_for_mat_h2o( path_to_maestro_data )
+%A function to read the ACE MAESTRO H2O files and make a .mat
 %structure. This function assumes that all of the MAESTRO files are in the
 %same directory. The output folder for the .mat data should be specified by
 %the user below. 
@@ -27,7 +27,7 @@ matdirectory = 'C:\Users\ryann\ACE\MAESTRO\matdata'; % edit this to your output 
 % matdirectory = 'F:\ACE\dmp3.5';
 
 %%STANDARD
-savename = 'MAESTRO_v3p13_O3';
+savename = 'MAESTRO_v3res_H2O';
 
 %%
 if isdir(matdirectory) 
@@ -38,8 +38,8 @@ if isdir(matdirectory)
     datafolders = datafolders(3:end); % get rid of ',' and'..' 
     
     %% Read out the data from each of the files and put them into a structure
-    % There seems to be 311 levels of O3 data for now.
-    rownum = 311;
+    % I have set and overestimate of 50 levels of H2O data for now.
+    rownum = 50;
     colnum = 2e5; % i think there's about 1.2e5 measurements from maestro at the moment, so this is an overshoot
     out.source_file = cell(1,colnum); %string
     out.version = cell(1,colnum); % string
@@ -49,20 +49,20 @@ if isdir(matdirectory)
     out.sr1ss0 = nan(1,colnum);
     out.beta_angle = nan(1,colnum);
     out.date_mjd = nan(1,colnum);
-    out.gas ='O3'; % this is fixed for now as I'm only doing O3 at the moment
+    out.gas ='H2O'; % this is fixed for now as I'm only doing O3 at the moment
     out.altitude_km = nan(rownum,colnum);
     out.vmr = nan(rownum,colnum);
     out.vmr_error = nan(rownum,colnum);
     out.lon_tangent = nan(1,colnum);
     out.lat_tangent  = nan(1,colnum);
     out.pressure_hPa = nan(rownum,colnum);
-%     out.lon = nan(rownum,colnum);
-%     out.lat = nan(rownum,colnum);
+    out.lon = nan(rownum,colnum);
+    out.lat = nan(rownum,colnum);
     out.quality_flags = nan(rownum,colnum);
     itotal = 0;
     for n = 1:length(datafolders) % go through the folders corresponding to each year and month       
         %% get a list of the .asc files in the directory
-        tempdir = dir(strcat(datadirectory,'/',datafolders{n},'/','*vo3g*.dat')); % the names of the data files
+        tempdir = dir(strcat(datadirectory,'/',datafolders{n},'/','*odv*.dat_v31.short')); % the names of the h2o data files
         fileall = {tempdir.name};
         fprintf('%s\n',datafolders{n});
         fprintf('Reading files...\n')
@@ -70,7 +70,7 @@ if isdir(matdirectory)
             itotal = itotal + 1;
             filei = strcat(datadirectory,'/',datafolders{n},'/',fileall{i});
             %             fprintf('%s\n',filei);
-            [ maestroi ] = read_maestro_ascdata(filei);
+            [ maestroi ] = read_maestro_ascdata_h2o(filei);
             if isstruct(maestroi)
                 out.source_file{itotal} = maestroi.source_file;
                 out.version{itotal} = maestroi.version;
@@ -78,9 +78,13 @@ if isdir(matdirectory)
                 out.sr1ss0(itotal) = maestroi.sr1ss0;
                 out.date_mjd(itotal) = maestroi.date_mjd;
                 out.vmr(:,itotal) = maestroi.vmr;
+                error_mean = nanmean(maestroi.vmr_error(maestroi.vmr_error < 10000)); % mean of the values less than 10000
+                maestroi.vmr_error(maestroi.vmr_error == 10000) = error_mean; % this could be all nans if all the values are 1000
                 out.vmr_error(:,itotal) = maestroi.vmr_error;
                 out.altitude_km(:,itotal) = maestroi.altitude_km; % all the altitude grids are the same
                 out.quality_flags(:,itotal) = maestroi.quality_flags;
+                out.lat(:,itotal) = maestroi.lat;
+                out.lon(:,itotal) = maestroi.lon;
             else
                 warning('something went wrong with reading %s', filei)
             end

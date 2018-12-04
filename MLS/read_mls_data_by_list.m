@@ -1,4 +1,4 @@
-function [ mls_out ] = read_mls_data( mls_file, swath )
+function [ mls_out ] = read_mls_data( mls_list, swath )
 %A function to read the MLS data in .he5 format and output a cell array of
 %structure with the information. Use the 'mls_list' input to subset the files
 %to a specific year or gas, etc.
@@ -17,7 +17,7 @@ function [ mls_out ] = read_mls_data( mls_file, swath )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 04/18
 
-filelist = mls_file;
+filelist = mls_list;
 filein = fopen(filelist);
 i = 0;
 disp('reading filenames...')

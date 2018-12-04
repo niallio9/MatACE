@@ -71,7 +71,7 @@ if yplot == 1
     suptitle(sprintf('%s relationship',gasname))
     hold on
     cmin1 = -90;
-    cmax1 = -50; % the maximum ace altitude used
+    cmax1 = -40; % the maximum ace altitude used
 %     cmin1 = -90;
 %     cmax1 = -40; %
     for i = 1:length(yearsin)
@@ -100,7 +100,7 @@ if yplot == 1
             end
             if i == 14
                 c = colorbar('location','eastoutside','position',[0.923 0.309 0.016 0.35]); % [0.923 0.309 0.016 0.35]
-                title(c,'altitude [km]','Position', [8 -23 0])
+                title(c,'latitude [deg]','Position', [8 -23 0])
             end
         end
 

@@ -22,6 +22,7 @@ function [ tanstruct_maestro_out ] = merge_maestro_ace_pressure( tanstruct_maest
 % NJR - 05/2018
 tic
 %% define some things
+interptype = 'pchip';
 maestro = tanstruct_maestro;
 ace = tanstruct_ace;
 
@@ -30,9 +31,11 @@ ace = tanstruct_ace;
 logpace = log(ace.pressure_hPa);
 % interpolate the ace pressures to the maestro altitudes
 
-logpmaestro = interp1(ace.altitude_km(:,1), logpace, maestro.altitude_km(:,1));
-maestro.pressure_hPa = exp(logpmaestro);
-maestro.altitude_km = maestro.altitude_km(:,1);
+for i = 1:length(maestro.occultation)
+    logpmaestroi = interp1(ace.altitude_km(:,1), logpace(:,i), maestro.altitude_km(:,i), interptype, nan);
+    maestro.pressure_hPa(:,i) = exp(logpmaestroi);
+    % maestro.altitude_km = maestro.altitude_km(:,1);
+end
 
 %% deal with NaN pressures created from the interpolation
 [badI] = find(isnan(maestro.pressure_hPa));
@@ -53,11 +56,12 @@ goodcol = find(nansum(maestro.vmr_error) ~= 0); % same for the errors columns th
 maestro = reduce_tanstruct_by_rowindex(maestro, goodcol);
 
 %% filter out any data for which the vmr error is larger than 50% of the vmr
-vmrdif = (abs(maestro.vmr) - abs(maestro.vmr_error))./abs(maestro.vmr);
-goodcol = find(vmrdif > 0.5 & maestro.vmr_error > 0 & maestro.vmr < 20e-6);
-% whos
-maestro = reduce_tanstruct_data_by_index(maestro, goodcol);
-
+if ~strcmp(maestro.gas,'H2O') % don't do this or the H2O data because the error is massive for that product
+    vmrdif = (abs(maestro.vmr) - abs(maestro.vmr_error))./abs(maestro.vmr);
+    goodcol = find(vmrdif > 0.5 & maestro.vmr_error > 0 & maestro.vmr < 20e-6);
+    % whos
+    maestro = reduce_tanstruct_data_by_index(maestro, goodcol);
+end
 
 %% for the version 1.2 data, SPARC book says that the altitude range is 5-60km.
 badrow = find(maestro.altitude_km(:,1) > 60);
@@ -68,7 +72,7 @@ if length(maestro.altitude_km(1,:)) > 1
 end
 if isfield(maestro,'lon')
    maestro.lon(badrow,:) = nan;
-   maestro.lat(badrowm,:) = nan;
+   maestro.lat(badrow,:) = nan;
 end
 
 

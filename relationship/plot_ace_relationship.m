@@ -55,7 +55,7 @@ ylabel('VMR')
 %colobar for altitude
 c = colorbar;
 % title(c,'altitude [km]','Position', [12 -23 0])
-title(c,'altitude [km]','Position', [25 344 0])
+title(c,'latitude [degN]','Position', [25 344 0])
 set(gca,'FontSize',fs)
 xlim([min(vmrcolx)*1.1, max(vmrcolx)*1.1])
 ylim([min(vmrcoly)*1.1, max(vmrcoly)*1.1])

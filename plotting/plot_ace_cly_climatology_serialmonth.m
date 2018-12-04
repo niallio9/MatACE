@@ -54,7 +54,7 @@ switch datasource
         clono2 = {'ClONO2cmam'};
 %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlsprat10_sap','ClOcmam'};
+        clo = {'ClOmlspratlatnegfixampm','ClOcmam'};
         hocl = {'HOClmls_sap','HOClcmam'};
         hcl = {'HCl','HClcmam'};
         clono2 = {'ClONO2','ClONO2cmam'};

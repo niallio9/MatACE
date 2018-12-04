@@ -29,12 +29,12 @@ function [ vmrzon_hcl, hcl_frac, vmrzon_cly ] = plot_ace_cly_climatology_fractio
 datasource = 'both';
 file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 
-file_post = '_JJA.mat';
+file_post = '_DJF.mat';
 % monthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 
 switch datasource
     case 'instrument'
-        clo = {'ClOmlsprat2ppm_sap'};
+        clo = {'ClOmls'};
         hocl = {'HOClmls_sap'};
         hcl = {'HCl'};
         clono2 = {'ClONO2'};
@@ -46,7 +46,7 @@ switch datasource
         clono2 = {'ClONO2cmam'};
         %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlsprat10_sap','ClOcmam'};
+        clo = {'ClOmlspratlatnegfixampmmatched','ClOcmammatched'};
         hocl = {'HOClmls_sap','HOClcmam'};
         hcl = {'HCl','HClcmam'};
         clono2 = {'ClONO2','ClONO2cmam'};
@@ -257,7 +257,8 @@ for n = 1:length(clo)
     %% line plot of fractions and of absolute vmrs
     if yplot == 1
 %         figpos = [-1227 367 655 544];
-        figpos = [-1227 438 565 473];
+%         figpos = [-1227 438 565 473];
+        figpos = [268   385   565   473];
 %         figpos = [97,49,852,630];
         % Do for the zonal vmr
         %     figi = randi(100);
