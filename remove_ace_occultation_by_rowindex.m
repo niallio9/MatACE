@@ -1,7 +1,7 @@
-function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindices )
+function [ tanstruct_out ] = remove_ace_occultation_by_rowindex( tanstruct_in, rowindices )
 %A function to reduce the ace data according to the provided
 %indicies. The indices indicate the occultations that you would like to
-%keep.
+%delete.
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
@@ -18,68 +18,63 @@ function [ tanstruct_out ] = reduce_tanstruct_by_rowindex( tanstruct_in, rowindi
 %           remain.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 11/2017
-%   NJR - 02/2018 - include 'eql' field
-%   NJR - 07/2018 can use for structures with 'distance', 'time_diff',
-%   and/or 'lst_ratio' fields.
-%   NJR - 11/2018 can use with source_file and version: included in MAESTRO
-%   structures, and others ***** THIS DOESNT REALLY WORK. USE ONE SOURCE FILE...************FIX************************* 
+%   NJR - 02/2019 
 
 gasout = tanstruct_in;
-ygas = rowindices;
-gasout.occultation = gasout.occultation(:,ygas);
-gasout.sr1ss0 = gasout.sr1ss0(:,ygas);
-gasout.beta_angle = gasout.beta_angle(:,ygas);
-gasout.date_mjd = gasout.date_mjd(:,ygas);
-gasout.vmr = gasout.vmr(:,ygas);
-gasout.vmr_error = gasout.vmr_error(:,ygas);
-gasout.lat_tangent = gasout.lat_tangent(:,ygas);
-gasout.lon_tangent = gasout.lon_tangent(:,ygas);
+to_remove = rowindices;
+gasout.occultation(:, to_remove) = [];
+gasout.sr1ss0(:, to_remove) = [];
+gasout.beta_angle(:, to_remove) = [];
+gasout.date_mjd(:, to_remove) = [];
+gasout.vmr(:, to_remove) = [];
+gasout.vmr_error(:, to_remove) = [];
+gasout.lat_tangent(:, to_remove) = [];
+gasout.lon_tangent(:, to_remove) = [];
 % if isfield (gasout,'source_file')
 %         gasout.source_file = gasout.source_file(:,ygas);
 % end
 if isfield (gasout,'version')
-    gasout.version = gasout.version(:,ygas);
+    gasout.version(:, to_remove) = [];
 end
 if isfield(gasout,'quality_flags')
-    gasout.quality_flags = gasout.quality_flags(:,ygas);
+    gasout.quality_flags(:, to_remove) = [];
     %     else
     %         fprintf('\njust to let you know, there''s no quality flags in here\n')
 end
 if length(gasout.altitude_km(1,:)) > 1 % for the data that has been interpolated to a pressure grid
-    gasout.altitude_km = gasout.altitude_km(:,ygas);
+    gasout.altitude_km(:, to_remove) = [];
 end
 if isfield(gasout,'pressure_hPa') % for the data that has been interpolated to a pressure grid, or the new version that includes pressure included
     if length(gasout.pressure_hPa(1,:)) > 1
-        gasout.pressure_hPa = gasout.pressure_hPa(:,ygas);
+        gasout.pressure_hPa(:, to_remove) = [];
     end
 end
 if isfield(gasout,'lon') % when there is glc data included
-    gasout.lon = gasout.lon(:,ygas);
-    gasout.lat = gasout.lat(:,ygas);
+    gasout.lon(:, to_remove) = [];
+    gasout.lat(:, to_remove) = [];
 end
 if isfield(gasout,'eql') % when there is DMP data included in the tanstruct
-    gasout.eql = gasout.eql(:,ygas);
+    gasout.eql(:, to_remove) = [];
 end
 if isfield(gasout,'spv') % when there is DMP data included in the tanstruct
-    gasout.spv = gasout.spv(:,ygas);
+    gasout.spv(:, to_remove) = [];
 end
 if isfield(gasout,'theta') % when there is DMP data included in the tanstruct
-    gasout.theta = gasout.theta(:,ygas);
+    gasout.theta(:, to_remove) = [];
 end
 if isfield(gasout,'distance')
-    gasout.distance = gasout.distance(:,ygas);
+    gasout.distance(:, to_remove) = [];
 end
 if isfield(gasout,'time_diff')
-    gasout.time_diff = gasout.time_diff(:,ygas);
+    gasout.time_diff(:, to_remove) = [];
 end
 if isfield(gasout,'lst_ratio')
-    gasout.lst_ratio = gasout.lst_ratio(:,ygas);
+    gasout.lst_ratio(:, to_remove) = [];
 end
 
 tanstruct_out = gasout;
 
-if isempty(ygas)
+if isempty(gasout.occultation)
    warning('The ace structure has been reduced to zero entries')
 end
 %

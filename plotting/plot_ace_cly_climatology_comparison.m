@@ -29,7 +29,7 @@ file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 file_post = '_20042010.mat';
 
 % dataX = {clo, hocl, hcl, clono2, Cly}; the Cly name is a dummy for later
-gasnames1 = {'ClOmlspratlatnegfixampm','HOClmls_sap','HCl','ClONO2'};
+gasnames1 = {'ClOmlspratlatnegfixkw2ampmvortex_sap','HOClmlspratlatnegfixkw2ampmvortex_sap','HCl','ClONO2'};
 gasnames2 = {'ClOcmam','HOClcmam','HClcmam','ClONO2cmam'};
 
 %% define some things
@@ -114,7 +114,8 @@ vmrzondif = vmrzon1 - vmrzon2;
 meanvmrzon = (vmrzon1+vmrzon2)/2;
 vmrzondifp = 100 * vmrzondif ./ meanvmrzon;
 max(vmrzondif(:));
-max(vmrzondifp(:))
+max(vmrzondifp(:));
+test = vmrzondifp;
 % vmrzon_cly = squeeze(vmrzon1(:,:,1)) + squeeze(vmrzon1(:,:,2)) + squeeze(vmrzon1(:,:,1)) + squeeze(vmrzon1(:,:,1));
 
 %% Make the plots if you want
@@ -149,9 +150,9 @@ vmrzondif = signvmrzondif.*vmrzondif;
 
 % vmrzondif = -5*ones(size(vmrzondif));
 
-test = cminusgrid;
-test1 = vmrzon1;
-test2 = vmrzondif;
+% % test = cminusgrid;
+% % test1 = vmrzon1;
+% % test2 = vmrzondif;
 
 ngas = length(vmrzon1(1,1,:));
 fs = 12;
@@ -160,8 +161,12 @@ ylim1 = 10^-1;
 axx1 = nan(ngas,1);
 ytickspace = [10^-4 10^-2 1 10^2];
 % figpos = [-1262 41  353  893];
-figpos = [-1156 40  300  893];
+% figpos = [-1156 40  300  893];
 % figpos = [97  -214   480   893];
+% figpos = [633    95   300   893];
+% figpos = [542    42   300   640]; % dell laptop
+figpos = [542  -265   300   947]; % office monitor
+
 
 
 
@@ -251,7 +256,7 @@ if yplot == 1
     fignames = {'ClO\_%dif', 'HOCl\_%dif', 'HCl\_%dif', 'ClONO2\_%dif', 'Cly\_%dif'};
     for i = 1:ngas
         axx1(i) = subplot(ngas,1,i);
-        contourf(axx1(i), latace, pace, vmrzondifp(:,:,i), cgridpercent); caxis([cgridpercent(1),cgridpercent(end)])
+        contourf(axx1(i), latace, pace, vmrzondifp(:,:,i), cgridpercent, 'ShowText', 'on'); caxis([-50,50])%caxis([cgridpercent(1),cgridpercent(end)])
         title(fignames{i})
         set(gca, 'Ydir','reverse', 'YScale', 'log', 'YMinorTick','on','YMinorGrid','ON','XMinorTick','on', 'XMinorGrid', 'ON', 'YGrid', 'ON', 'FontSize',fs);
         yticks(ytickspace); ylim([ylim1 ylim2]);

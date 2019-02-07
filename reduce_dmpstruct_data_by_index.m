@@ -31,8 +31,8 @@ if isvector(ydmp)
     dmpout.lon(ydmp) = dmpin.lon(ydmp);
     dmpout.lat = nan(datasize);
     dmpout.lat(ydmp) = dmpin.lat(ydmp);
-    dmpout.Theta = nan(datasize);
-    dmpout.Theta(ydmp) = dmpin.Theta(ydmp);
+    dmpout.theta = nan(datasize);
+    dmpout.theta(ydmp) = dmpin.theta(ydmp);
     dmpout.spv = nan(datasize);
     dmpout.spv(ydmp) = dmpin.spv(ydmp);
     dmpout.eql = nan(datasize);

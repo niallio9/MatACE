@@ -42,7 +42,15 @@ out.quality_flags = nan(lalt,lmls);
 out.pressure_hPa = repmat(mls.pressure_hPa, 1, lmls); % need the number or pressure profiles to match the number of occultations
 out.lat = repmat(mls.lat,lalt,1); % want these for now so that it mimics the inclusion of GLC information in the ACE data structures.
 out.lon = repmat(mls.lon,lalt,1);
-
+if isfield(mls,'spv')
+    out.spv = mls.spv;
+end
+if isfield(mls,'theta')
+    out.theta = mls.theta;
+end
+if isfield(mls,'eql')
+    out.eql = mls.eql;
+end
 %% make the output file
 tanstruct = out; % the naming of the structure should be the same too, so that it can be used in the ACE functions.
 

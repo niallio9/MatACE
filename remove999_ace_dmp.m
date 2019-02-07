@@ -26,7 +26,7 @@ if isfield(dmpout,'altitude_km')
 end
 dmpout.lon(dmpout.lon == -999) = nan;
 dmpout.lat(dmpout.lat == -999) = nan;
-dmpout.Theta(dmpout.Theta == -999) = nan;
+dmpout.theta(dmpout.theta == -999) = nan;
 dmpout.spv(dmpout.spv == -999) = nan;
 dmpout.eql(dmpout.eql == -999) = nan;
 %%
@@ -38,7 +38,7 @@ if isfield(dmpout,'altitude_km')
 end
 dmpout.lon(dmpout.lon > 1e12) = nan;
 dmpout.lat(dmpout.lat > 1e12) = nan;
-dmpout.Theta(dmpout.Theta> 1e12) = nan;
+dmpout.theta(dmpout.theta> 1e12) = nan;
 dmpout.spv(dmpout.spv > 1e12) = nan;
 dmpout.eql(dmpout.eql > 1e12) = nan;
 % tropopause data

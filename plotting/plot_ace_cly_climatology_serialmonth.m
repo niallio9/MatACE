@@ -54,8 +54,8 @@ switch datasource
         clono2 = {'ClONO2cmam'};
 %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlspratlatnegfixampm','ClOcmam'};
-        hocl = {'HOClmls_sap','HOClcmam'};
+        clo = {'ClOmlspratlatnegfixampmvortex_sap','ClOcmam'};
+        hocl = {'HOClmlspratlatnegfixampmvortex_sap','HOClcmam'};
         hcl = {'HCl','HClcmam'};
         clono2 = {'ClONO2','ClONO2cmam'};
 %         clo = {'ClOcmam','ClOmlsprat10_sap'};
@@ -239,8 +239,8 @@ for n = 1:length(clo)
         latmin = latmax_old;
         latmax = latmin_old;
     end
-    ilatmin = find(lat_bounds == latmin);
-    ilatmax = find(lat_bounds == latmax) - 1;
+    ilatmin = find(lat_bounds == latmin)
+    ilatmax = find(lat_bounds == latmax) - 1
     
     vmrzon_clo = squeeze(nanmean(vmrzon_clo(:,ilatmin:ilatmax,:), 2 )) * 1e9;
     vmrzon_hocl = squeeze(nanmean(vmrzon_hocl(:,ilatmin:ilatmax,:), 2 )) * 1e9;

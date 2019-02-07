@@ -65,6 +65,12 @@ end
 if isfield(gas,'eql')
    gasout.eql = nan(lgrid,lorbit); 
 end
+if isfield(gas,'spv')
+   gasout.spv = nan(lgrid,lorbit); 
+end
+if isfield(gas,'theta')
+   gasout.theta = nan(lgrid,lorbit); 
+end
 gasout.altitude_km = zgrid;
 
 %% Interpolate the fields of the ace structure
@@ -129,6 +135,24 @@ for i = 1:lorbit
             zacei_s = zacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space
             gasout.eql(:,i) = interp1(zacei_s,eqli,zgridi,interptype,nan);
+        end
+    end
+    if isfield(gas,'spv')
+        lgood = ~isnan(gas.spv(:,i)); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
+        if sum(lgood) >= req_points % need at least 4 points to perform the interpolation
+            spvi = gas.spv(lgood,i); % reduce the size of the vector
+            zacei_s = zacei(lgood); % reduce the size as well
+            %interpolate the fields in log-pressure space
+            gasout.spv(:,i) = interp1(zacei_s,spvi,zgridi,interptype,nan);
+        end
+    end
+    if isfield(gas,'theta')
+        lgood = ~isnan(gas.theta(:,i)); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
+        if sum(lgood) >= req_points % need at least 4 points to perform the interpolation
+            thetai = gas.theta(lgood,i); % reduce the size of the vector
+            zacei_s = zacei(lgood); % reduce the size as well
+            %interpolate the fields in log-pressure space
+            gasout.theta(:,i) = interp1(zacei_s,thetai,zgridi,interptype,nan);
         end
     end
 end

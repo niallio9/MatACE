@@ -1,4 +1,4 @@
-function [ ] = plot_ace_climatology_bygas_3monthly( gas_in, do_plot )
+function [ Cplot, h ] = plot_ace_climatology_bygas_3monthly( gas_in, do_log )
 %A funcion to compare the climatology made by Jaho, with the current
 %version of the climatology. The assumption is that the two versions are
 %made on the same latitude and altitude grid, and ar for the same gas.
@@ -41,11 +41,11 @@ home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
 % newclim_dir = strcat(home_windows,'climdata_v3p5_nr\');
 newclim_dir = 'C:\Users\ryann\ACE\climdata\';
 
-vmrzon = cell(1,4);
+vmrzon = nan(48,36,12);
 if nargin > 1
-    yplot = do_plot;
+    dolog = do_log;
 else
-    yplot = 1;
+    dolog = 0;
 end
 gasname = gas_in;
 newfile_pre = strcat('ACEFTS_CLIM_v3_lat_',gasname,'_'); % ACEFTS_CLIM_v3_O3_12.mat
@@ -57,27 +57,45 @@ newmonthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 for i = 1:4 % do all 3-month periods
     filenewi = strcat( newclim_dir, gasname,'/', newfile_pre, newmonthnames{i}, newfile_post);
     clim = load(filenewi); clim = clim.climstruct; % the variable is called climstruct in the new data
-    vmrzon{i} = clim.vmr_zonal;
+    vmrzon(:,:,i) = clim.vmr_zonal;
 end
-%% Make the plots if you want
-if yplot == 1
+
+%% If plotting in log
+vmrzon = vmrzon * 1e6;  % put into ppm
+cmax = max(vmrzon(:));
+cmax = 2000;
+if dolog == 1
+    c = [ 0.00005 0.0001 0.0002 0.0005 0.001 0.002 0.005 0.01 0.02 0.05 0.1 0.2 0.5 1]; % for tick marks
+    cstart = 4;
+    c = c(cstart:end);
+    c = round2(cmax * c, 1);
+%     c = [2.5 3 3.5 4 4.5 5 5.5 6 7 8 20 50 5000];
+    vmrzon(vmrzon <= 0) = nan;%c(1)*cmax;
+    vmrzon = log10(vmrzon);
+    cgrid = log10(c); % for caxis
+else
+    cgrid = linspace(0, cmax, 10);
+    c = cgrid; 
+end
+
+ymax = 500;
+ymin = 60;
+
+
     % Do for the zonal vmr
     figi = randi(100);
 %     figure(figi), set(gcf,'Position', [5,12,1096,704])
     figure(figi), set(gcf,'Position', [358,61,722,532])
     suptitle(sprintf('%s zonal VMR, 2004 - 2017',gasname))
     hold on
-    cmax_all = nan(1,4);
     for i = 1:4
-        subplot(2,2,i), plot_on_ace_clim_latlev( vmrzon{i}, newmonthnames{i} )
-        %         cmax1 = 1e-6; % may need to be gas specific
-        cmax_all(i) = max(max(abs(vmrzon{i})));
+        subplot(2,2,i), [Cplot, h] = plot_on_ace_clim_latlev_contourf( vmrzon(:,:,i), newmonthnames{i}, cgrid );
+%         clabel(Cplot,c)
+        caxis([cgrid(1),cgrid(end)])
+%         colormap(parula(length(cgrid) - 1))
+        ylim([ymin, ymax])
         if i == 4
-            c = colorbar('location','eastoutside','position',[0.923 0.309 0.016 0.35]);
-            cmax1 = max(cmax_all);
-            if ~isnan(cmax1)
-                caxis([0,cmax1]);
-            end
+            c = colorbar('YTick', cgrid, 'Yticklabel', c, 'location','eastoutside','position',[0.923 0.309 0.016 0.35]);
             title(c,'VMR','Position', [8 -23 0])
         end
     end
@@ -139,7 +157,6 @@ if yplot == 1
 %     end
 %     legend(string(newmonthnames))
     
-end
 %
 end
 

@@ -2,10 +2,15 @@ function [ ] = plotacefile_timexlat_by_year( gasname_in, year_in )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+%% define some things
+home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
+home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
+home_windows = 'C:\Users\ryann\'; %#ok<NASGU>
+
 gasname = gasname_in;
 filein_pre = 'ACE_v3p6_';
 filein_post = '.mat';
-filein = strcat(filein_pre,gasname,filein_post);
+filein = strcat(home_windows,'/','ACE','/','matdata','/',filein_pre,gasname,filein_post);
 
 temp = load(filein);
 gas = temp.tanstruct;

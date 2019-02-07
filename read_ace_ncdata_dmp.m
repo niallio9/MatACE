@@ -44,7 +44,7 @@ out.T = double(h5read(filein, '/Temperature'));
 out.pressure_hPa = double(h5read(filein, '/Pressure'));
 out.lon = double(h5read(filein, '/Lon'));
 out.lat = double(h5read(filein, '/Lat'));
-out.Theta = double(h5read(filein, '/Theta'));
+out.theta = double(h5read(filein, '/Theta'));
 out.spv = double(h5read(filein, '/sPV'));
 out.eql = double(h5read(filein, '/EqL'));
 

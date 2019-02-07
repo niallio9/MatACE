@@ -7,8 +7,9 @@ function [ mlsstruct_out, dmpstruct_out, ygas, ydmp ] = match_mls_data_dmp( mlss
 %           data and metadata. It is usually created using
 %           'read_and_extract_mls_data'.
 %
-%           years_in: STRUCTURE - the years of the data that you want to
-%           find matches for.
+%           dmpstruct_in: STRUCTURE - a .MAT structure containing MLS DMP
+%           data and metadata. It is usually created using
+%           'read_and_extract_mls_data'.
 %
 % *OUTPUT*
 %           tanstruct_out: STRUCTURE - output has the same

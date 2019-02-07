@@ -1,4 +1,4 @@
-function [ vmrzon_hcl, hcl_frac, vmrzon_cly ] = plot_ace_cly_climatology_fractions( lat_minmax, do_plot )
+function [ vmrzon_cly_error, vmrzon_hcl_error ] = plot_ace_cly_climatology_fractions( lat_minmax, do_plot )
 %A funcion to compare the climatology made by Jaho, with the current
 %version of the climatology. The assumption is that the two versions are
 %made on the same latitude and altitude grid, and ar for the same gas.
@@ -29,12 +29,12 @@ function [ vmrzon_hcl, hcl_frac, vmrzon_cly ] = plot_ace_cly_climatology_fractio
 datasource = 'both';
 file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 
-file_post = '_DJF.mat';
+file_post = '_JJA.mat';
 % monthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 
 switch datasource
     case 'instrument'
-        clo = {'ClOmls'};
+        clo = {'ClOmlspratlatnegfixampmvortex'};
         hocl = {'HOClmls_sap'};
         hcl = {'HCl'};
         clono2 = {'ClONO2'};
@@ -46,8 +46,8 @@ switch datasource
         clono2 = {'ClONO2cmam'};
         %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlspratlatnegfixampmmatched','ClOcmammatched'};
-        hocl = {'HOClmls_sap','HOClcmam'};
+        clo = {'ClOmlspratlatnegfixkw2ampmvortex_sap','ClOcmam'};
+        hocl = {'HOClmlspratlatnegfixkw2ampmvortex_sap','HOClcmam'};
         hcl = {'HCl','HClcmam'};
         clono2 = {'ClONO2','ClONO2cmam'};
 end
@@ -258,7 +258,10 @@ for n = 1:length(clo)
     if yplot == 1
 %         figpos = [-1227 367 655 544];
 %         figpos = [-1227 438 565 473];
-        figpos = [268   385   565   473];
+        figpos = [332   30   565   473]; % office monitor
+%         figpos = [268   385   565   473];
+
+
 %         figpos = [97,49,852,630];
         % Do for the zonal vmr
         %     figi = randi(100);

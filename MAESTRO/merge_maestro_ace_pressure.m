@@ -56,7 +56,7 @@ goodcol = find(nansum(maestro.vmr_error) ~= 0); % same for the errors columns th
 maestro = reduce_tanstruct_by_rowindex(maestro, goodcol);
 
 %% filter out any data for which the vmr error is larger than 50% of the vmr
-if ~strcmp(maestro.gas,'H2O') % don't do this or the H2O data because the error is massive for that product
+if ~strcmp(maestro.gas,'H2Omaestro') % don't do this or the H2O data because the error is massive for that product
     vmrdif = (abs(maestro.vmr) - abs(maestro.vmr_error))./abs(maestro.vmr);
     goodcol = find(vmrdif > 0.5 & maestro.vmr_error > 0 & maestro.vmr < 20e-6);
     % whos

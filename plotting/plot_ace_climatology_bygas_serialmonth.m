@@ -1,4 +1,4 @@
-function [ ] = plot_ace_climatology_bygas_serialmonth( gas_in, year_in, do_plot )
+function [ ] = plot_ace_climatology_bygas_serialmonth( gas_in, year_in, do_log )
 %A funcion to compare the climatology made by Jaho, with the current
 %version of the climatology. The assumption is that the two versions are
 %made on the same latitude and altitude grid, and ar for the same gas.
@@ -16,7 +16,7 @@ function [ ] = plot_ace_climatology_bygas_serialmonth( gas_in, year_in, do_plot 
 %
 %           vmrzonvar_dif: CELL OF ARRAYS - the differnce of the new and
 %           old standard deviation of the zonal vmrs for each month of the
-%           year. 
+%           year.
 %
 %           obscount_dif: CELL OF ARRAYS - the differnce of the new and old
 %           observation counts for each month of the year.
@@ -26,7 +26,7 @@ function [ ] = plot_ace_climatology_bygas_serialmonth( gas_in, year_in, do_plot 
 %           climstruct_in: STRUCTURE - contains the gas specific ACE
 %           climatology data. This structure can be created with
 %           'make_ace_climatology.m' or with
-%           'make_ace_climatology_multiple.m'. 
+%           'make_ace_climatology_multiple.m'.
 %
 % *OUTPUT*
 %           oldclim_in: netcdf - contains the gas specific climatology data
@@ -42,13 +42,13 @@ home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
 % newclim_dir = 'C:\Users\ryann\ACE\climdata_testing\';
 % newclim_dir = 'C:\Users\ryann\ACE\climdata\';
 % newclim_dir = 'C:\Users\ryann\MLS\climdata\';
-newclim_dir = 'C:\Users\ryann\ACE\\MAESTRO\climdata\';
+newclim_dir = 'C:\Users\ryann\ACE\climdata\';
 
 vmrzon = nan(48,36,12);
 if nargin > 2
-    yplot = do_plot;
+    dolog = do_log;
 else
-    yplot = 1;
+    dolog = 0;
 end
 gasname = gas_in;
 yearin = year_in;
@@ -72,33 +72,48 @@ for i = 1:12 % do all months
         vmrzon(:,:,i) = clim.vmr_zonal;
     end
 end
-%% Make the plots if you want
-if yplot == 1
-    % Do for the zonal vmr
-    figi = randi(100);
+
+vmrzon = vmrzon*1e6; % put into ppm
+%% If plotting in log
+cmax = max(vmrzon(:));
+if dolog == 1
+    c = [0.00001 0.00002 0.00005 0.0001 0.0002 0.0005 0.001 0.002 0.005 0.01 0.02 0.05 0.1 0.2 0.3 0.5 1]; % for tick marks
+    cstart = 4;
+    c = c(cstart:end);
+    c = cmax * c;
+    vmrzon(vmrzon <= 0) = nan;%c(1)*cmax;
+    vmrzon = log10(vmrzon);
+    cgrid = log10(c); % for caxis
+else
+    cgrid = linspace(0, cmax, 10);
+    c = cgrid; 
+end
+
+% Do for the zonal vmr
+figi = randi(100);
 %     figure(figi), set(gcf,'Position', [5,12,1096,704])
 %     figure(figi), set(gcf,'Position', [358,61,722,532])
-    figure(figi), set(gcf,'Position', [97,49,852,630])
-    suptitle(sprintf('%s zonal VMR, %i',gasname, yearin))
-    hold on
-    cmax1 = max(vmrzon(:));
-    for i = 1:12
-        subplot(4,3,i), plot_on_ace_clim_latlev_contourf( vmrzon(:,:,i), sprintf('%0.2i',months(i)) )
-        ylim([10^0,10^3])
-        caxis([0,cmax1]);
-        if i ~= 1 && i ~= 4 && i ~= 7 && i ~= 10
-            ylabel('')
-            set(gca,'yticklabel',{[]})
-        end
-        if i ~= 10 && i ~= 11 && i ~= 12
-            xlabel('')
-            set(gca,'xticklabel',{[]})
-        end
-        if i == 12
-            c = colorbar('location','eastoutside','position',[0.923 0.309 0.016 0.35]);
-            title(c,'VMR','Position', [8 -23 0])
-        end
+figure(figi), set(gcf,'Position', [97,49,852,630])
+suptitle(sprintf('%s zonal VMR, %i',gasname, yearin))
+hold on
+for i = 1:12
+    subplot(4,3,i), plot_on_ace_clim_latlev_contourf( vmrzon(:,:,i), sprintf('%0.2i',months(i)), cgrid )
+    ylim([10^0,10^3])
+    caxis([cgrid(1),cgrid(end)])
+    colormap(parula(length(cgrid) - 1))
+    if i ~= 1 && i ~= 4 && i ~= 7 && i ~= 10
+        ylabel('')
+        set(gca,'yticklabel',{[]})
     end
+    if i ~= 10 && i ~= 11 && i ~= 12
+        xlabel('')
+        set(gca,'xticklabel',{[]})
+    end
+    if i == 12
+        c = colorbar('YTick', cgrid, 'Yticklabel', c, 'location','eastoutside','position',[0.923 0.309 0.016 0.35]);
+        title(c,'VMR','Position', [8 -23 0])
+    end
+end
 %     figi = figi + 1;
 %     figure(figi), set(gcf,'Position', [5,12,1096,704])
 %     suptitle(sprintf('percent difference in %s zonal VMR',gasname))
@@ -128,7 +143,7 @@ if yplot == 1
 %         end
 %     end
 %     % Do for the observation count
-% 
+%
 %     figi = randi(100);
 %     figure(figi), set(gcf,'Position', [5,12,1096,704])
 %     suptitle(sprintf('difference in %s observation count',gasname))
@@ -142,7 +157,7 @@ if yplot == 1
 %             title(c,'VMR','Position', [8 -23 0])
 %         end
 %     end
-%     
+%
 %     % Plot a mean profile for reference
 %     figi = randi(100);
 %     for i = 1:4
@@ -156,8 +171,7 @@ if yplot == 1
 %         set(gca,'FontSize',16)
 %     end
 %     legend(string(newmonthnames))
-    
-end
+
 %
 end
 

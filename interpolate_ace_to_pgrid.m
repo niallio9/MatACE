@@ -90,6 +90,12 @@ end
 if isfield(gas,'eql')
    gasout.eql = nan(lgrid,lorbit); 
 end
+if isfield(gas,'spv')
+   gasout.spv = nan(lgrid,lorbit); 
+end
+if isfield(gas,'theta')
+   gasout.theta = nan(lgrid,lorbit); 
+end
 %% Interpolate the fields of the ace structure
 fprintf('\nInterpolating the data...')
 logpgridi = logpgrid(:,1); % set this initially outside the loop so it doesn't have to reset each time if pgrid is a vector
@@ -158,6 +164,28 @@ for i = 1:lorbit
             logpacei_s = logpacei(lgood); % reduce the size as well
             %interpolate the fields in log-pressure space
             gasout.eql(:,i) = interp1(logpacei_s,eqli,logpgridi,interptype, nan);
+        end
+    end
+    if isfield(gas,'spv')
+        spvi = gas.spv(:,i);
+        spvi(isnan(logpacei)) = nan;
+        lgood = ~isnan(spvi); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
+        if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
+            spvi = spvi(lgood); % reduce the size of the vector
+            logpacei_s = logpacei(lgood); % reduce the size as well
+            %interpolate the fields in log-pressure space
+            gasout.spv(:,i) = interp1(logpacei_s,spvi,logpgridi,interptype, nan);
+        end
+    end
+    if isfield(gas,'theta')
+        thetai = gas.theta(:,i);
+        thetai(isnan(logpacei)) = nan;
+        lgood = ~isnan(thetai); % the indices of the vmr field that do not contain nans. nans will be placed where there is no data using 'apply_ace_flags.m'
+        if sum(lgood) >= req_points % need at least 5 points to perform the interpolation
+            thetai = thetai(lgood); % reduce the size of the vector
+            logpacei_s = logpacei(lgood); % reduce the size as well
+            %interpolate the fields in log-pressure space
+            gasout.theta(:,i) = interp1(logpacei_s,thetai,logpgridi,interptype, nan);
         end
     end
 end

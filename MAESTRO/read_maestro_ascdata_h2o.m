@@ -17,7 +17,7 @@ function [ maestro_out ] = read_maestro_ascdata_h2o( path_to_file)
 filein = path_to_file;
 [~, fname, fext] = fileparts(filein); % for cases when the path to a file is also entered, as opposed to just the name of the file
 filein = strcat(fname,fext);
-out.source_file = filein;
+% out.source_file = filein;
 out.gas = 'H2O'; % this is fixed for now.
 lalt = 50; % choose a value that will be larger than the number of levels
 
@@ -70,7 +70,7 @@ min = str2double(time(3:4));
 sec = str2double(time(5:6));
 
 out.date_mjd = date2mjd(year,month,day,hour,min,sec); % calculate the MJD
-out.version = [];
+% out.version = [];
 
 %% get the data from inside the file
 % the data is in columns of 1:height  2:VMR  3:VMR_ERROR
@@ -114,8 +114,8 @@ fclose(fid1);
 
 %% sort the data by altitude
 [out.altitude_km, Ialt] = sort(out.altitude_km);
-out.vmr = out.vmr(Ialt);
-out.vmr_error = out.vmr_error(Ialt);
+out.vmr = out.vmr(Ialt) * 1e-6; % the values are originally in ppm
+out.vmr_error = out.vmr_error(Ialt) * 1e-6;
 out.quality_flags = out.quality_flags(Ialt);
 out.lat_tangent = nan;
 out.lon_tangent = nan;

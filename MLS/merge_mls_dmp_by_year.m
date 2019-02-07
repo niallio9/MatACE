@@ -1,68 +1,62 @@
-function [ mlsstruct_out ] = merge_mls_dmp_by_year( mlsstruct_in, years_in, to_save )
+function [ ] = merge_mls_dmp_by_year( gas_name, years_in, save_appendix )
 %A function to match the occultations of the ACE data and dmp structures.
 %This is done using the intersection of occultation numbers.
 
 % *INPUT*
-%           mlsstruct_in: STRUCTURE - a .MAT structure containing MLS
-%           data and metadata. It is usually created using
-%           'read_and_extract_mls_data'.
+%           mgas_name: STRUCTURE - the name of the gas about which the MLS
+%           file holds the data.
 %
 %           years_in: STRUCTURE - the years of the data that you want to
 %           find matches for.
 %
-% *OUTPUT*
-%           tanstruct_out: STRUCTURE - output has the same
-%           fields as the input, but with the data that coincides with the
-%           dmp info.
+%           save_appendix: STRING - an appendix on the name of the saved
+%           output file. Can be left blank.
 %
-%           dmpstruct_out: STRUCTURE - output has the same
-%           fields as the input, but with the data that coincides with the
-%           gas info.
+% *OUTPUT*
+%           Merged files are saved to the current directory with
+%           'merge_mls_dmp.m'.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 12/2018
 
 %% Define some things
-if nargin < 3
-    tosave = 0;
-else
-    tosave = to_save;
-end
-% dmp_dir = 'C:\Users\ryann\MLS\dmpdata\';
-dmp_dir = '/net/deluge/pb_1/users/nryan/MLS/dmpdata/';
-interptype = 'pchip';
+dmp_dir = 'C:\Users\ryann\MLS\dmpdata\';
+gas_dir = 'C:\Users\ryann\MLS\matdata\';
 if ~isdir(dmp_dir)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n', dmp_dir)
     error('The DMP directory couldn''t be found')
 end
-gas = mlsstruct_in;
-clear mlsstruct_in
-gas.spv = nan(size(gas.vmr));
+if ~isdir(gas_dir)
+    fprintf('\nIt doesn''t look like ''%s'' exists...\n', gas_dir)
+    error('The gas directory couldn''t be found')
+end
 yearsin = years_in;
 lyears = length(yearsin);
+filename_pre = 'MLS_v4p2_';
+filename_post = '.mat';
+if nargin < 3
+    save_appendix = '';
+else
+    if ~isempty(save_appendix)
+        save_appendix = strcat('_',save_appendix);
+    end
+end
 
-%% get the matching spv data
 for i = 1:lyears
-    fprintf('\nFor %i...\n',yearsin(i))
-    load(strcat(dmp_dir, 'MLS_v4p2_DMP_', num2str(yearsin(i)), '.mat'))
-    dmp = mlsstruct; % 'mlsstruct' will be the name of the loaded structure
-    [ ~, ~, ygas, ydmp ] = match_mls_data_dmp( gas, dmp ); % these are the repective indices of the data that match
-    disp('interpolating the sPV values to the pressure levels of the gas data...')
-    gas.spv(:,ygas) = interp1(dmp.pressure_hPa, dmp.spv(:,ydmp), gas.pressure_hPa, interptype, nan); % interpolate the spv to the gas pressure grid
-    disp('done')
+    fprintf('\nDoing %i...\n', yearsin(i))
+    saveappendix = strcat(num2str(yearsin(i)), save_appendix ); % put the year in the save name
+    gasfile = fullfile(gas_dir, strcat(filename_pre, gas_name, '_', num2str(yearsin(i)), filename_post));
+    if exist(gasfile,'file') ~= 2
+        error('cannot find %s', gasfile)
+    end
+    dmpfile = fullfile(dmp_dir, strcat(filename_pre, 'DMP', '_', num2str(yearsin(i)), filename_post));
+    if exist(dmpfile,'file') ~= 2
+        error('cannot find %s', dmpfile)
+    end
+    load(dmpfile);
+    dmpstruct = mlsstruct; % the variable loaded will be mlsstruct
+    load(gasfile); % the variable loaded will be mlsstruct
+    merge_mls_dmp( mlsstruct, dmpstruct, saveappendix );
 end
-clear mlsstruct dmp
-mlsstruct_out = gas;
-
-%% save the data
-if tosave == 1
-    mlsstruct = mlsstruct_out; % for the naming of the output variable
-    savedest = fullfile(pwd, strcat('MLS_v4p2_', mlsstruct_out.gas,'_dmp',num2str(yearsin(1)), num2str(yearsin(end)),'.mat'));
-    fprintf('saving data to %s\n', savedest);
-    save(savedest,'mlsstruct','-v7.3');
-    fprintf('done\n')
-end
-
-disp('all done :)')
 %
 end
 

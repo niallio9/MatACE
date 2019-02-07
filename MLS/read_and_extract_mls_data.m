@@ -20,7 +20,7 @@ function [ mls_out ] = read_and_extract_mls_data( mls_list, swath, save_name )
 if nargin < 3
     savename = [];
 else
-    save_dir = 'C:\Users\ryann\MLS\dmpdata\'; % this may need to changed sometimes
+    save_dir = 'C:\Users\ryann\MLS\matdata\'; % this may need to changed sometimes
     savename = save_name;
     if ~isdir(save_dir)
         fprintf('\nIt doesn''t look like ''%s'' exists...\n',save_dir)

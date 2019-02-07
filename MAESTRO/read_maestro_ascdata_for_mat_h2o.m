@@ -41,15 +41,15 @@ if isdir(matdirectory)
     % I have set and overestimate of 50 levels of H2O data for now.
     rownum = 50;
     colnum = 2e5; % i think there's about 1.2e5 measurements from maestro at the moment, so this is an overshoot
-    out.source_file = cell(1,colnum); %string
-    out.version = cell(1,colnum); % string
+%     out.source_file = cell(1,colnum); %string
+%     out.version = cell(1,colnum); % string
 %     out.source_file = cell(1,1);
 %     out.version = cell(1,1);
     out.occultation = nan(1,colnum);
     out.sr1ss0 = nan(1,colnum);
     out.beta_angle = nan(1,colnum);
     out.date_mjd = nan(1,colnum);
-    out.gas ='H2O'; % this is fixed for now as I'm only doing O3 at the moment
+    out.gas ='H2Omaestro'; % this is fixed for now as I'm only doing O3 at the moment
     out.altitude_km = nan(rownum,colnum);
     out.vmr = nan(rownum,colnum);
     out.vmr_error = nan(rownum,colnum);
@@ -72,8 +72,8 @@ if isdir(matdirectory)
             %             fprintf('%s\n',filei);
             [ maestroi ] = read_maestro_ascdata_h2o(filei);
             if isstruct(maestroi)
-                out.source_file{itotal} = maestroi.source_file;
-                out.version{itotal} = maestroi.version;
+%                 out.source_file{itotal} = maestroi.source_file;
+%                 out.version{itotal} = maestroi.version;
                 out.occultation(itotal) = maestroi.occultation;
                 out.sr1ss0(itotal) = maestroi.sr1ss0;
                 out.date_mjd(itotal) = maestroi.date_mjd;
@@ -90,8 +90,8 @@ if isdir(matdirectory)
             end
         end
     end
-    out.source_file = out.source_file(1:itotal);
-    out.version = out.version(1:itotal);
+%     out.source_file = out.source_file(1:itotal);
+%     out.version = out.version(1:itotal);
     tanstruct = reduce_tanstruct_by_rowindex(out, 1:itotal); % remove the columns that werent filled with data
     
     savedest = strcat(matdirectory,'/',savename);

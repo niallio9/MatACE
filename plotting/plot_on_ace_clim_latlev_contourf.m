@@ -1,4 +1,4 @@
-function [ ] = plot_on_ace_clim_latlev_contourf( climdata_in, title_in, colour_info )
+function [ C, h ] = plot_on_ace_clim_latlev_contourf( climdata_in, title_in, c_grid )
 %A function to plot the climatology data for ACE. The function uses
 %'pcolor'.
 %
@@ -17,7 +17,8 @@ function [ ] = plot_on_ace_clim_latlev_contourf( climdata_in, title_in, colour_i
 
 %% define some things
 fs = 12;
-ytickspace = [10^-4 10^-2 1 10^2];
+% ytickspace = [10^-4 10^-2 1 10^2];
+ytickspace = [10^-4 10^-3 10^-2 10^-1 1 10 30 60 10^2 200 500];
 % yticknames = ['10^-4','10^-2',]
 lat = -87.5:5:87.5;
 plev = [1000 850 700 500 400 300 250 200 170 150 130 115 100 90 80 70 50 30 20 ...
@@ -26,15 +27,17 @@ plev = [1000 850 700 500 400 300 250 200 170 150 130 115 100 90 80 70 50 30 20 .
 
 %% make the plot for the input variable
 if nargin > 2
-    colourmin = colour_info(1);
-    colourmax = colour_info(2);
-    numcolours = colour_info(3);
+    cgrid = c_grid;
 else
     colourmin = min(climdata_in(:));
     colourmax = max(climdata_in(:));
     numcolours = 10;
+    cgrid = linspace(colourmin,colourmax,numcolours);
 end
-contourf(lat, plev, climdata_in,linspace(colourmin,colourmax,numcolours));
+[C,h] = contourf(lat, plev, climdata_in, cgrid);
+% h.LevelList = 10.^h.LevelList;
+% h.ZData = 10.^h.ZData;
+% clabel(C,h)
 if nargin > 1
     title(title_in)
 end

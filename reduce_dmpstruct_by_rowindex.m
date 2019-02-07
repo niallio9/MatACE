@@ -33,7 +33,7 @@ if length(dmpout.pressure_hPa(1,:)) > 1
 end
 dmpout.lon = dmpout.lon(:,ydmp);
 dmpout.lat = dmpout.lat(:,ydmp);
-dmpout.Theta = dmpout.Theta(:,ydmp);
+dmpout.theta = dmpout.theta(:,ydmp);
 dmpout.spv = dmpout.spv(:,ydmp);
 dmpout.eql = dmpout.eql(:,ydmp);
 if length(dmpout.altitude_km(1,:)) > 1 % for the data that has been interpolated to a pressure grid
