@@ -28,7 +28,7 @@ home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 % matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
 % matdirectory = '/Users/niall/ACE/matdata';
-matdirectory = 'C:\Users\ryann\ACE\matdata';
+matdirectory = 'C:\Users\ryann\ACE\matdata\';
 % matdirectory = strcat(home_deluge,'ACE/','matdata/');
 if ~isdir(matdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',matdirectory)

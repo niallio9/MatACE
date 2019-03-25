@@ -1,4 +1,4 @@
-function [mlsstruct_acesample, chosen_rowcolumn] = sample_and_scale_mls_for_ace(mlsstruct_in, tanstruct_in, pratstruct, output_appendix, use_maxmin)
+function [mlsstruct_acesample, chosen_rowcolumn] = sample_and_scale_mls_for_ace(mlsstruct_in, tanstruct_in, pratstruct, output_appendix, minmax_mls)
 %A function to sample MLS data according to the time/lat/lon/alt of ACE
 %measurements. Data from a chemical box model is to scale the data.
 
@@ -42,6 +42,7 @@ lalt_ace = length(ace.altitude_km(:,1));
 % lalt_mls = length(mls.pressure_hPa(:,1));
 prat = pratstruct; %#ok<NASGU>
 pratmo_ratio_limit = Inf;
+fprintf('A maximum scaling ratio of %f will be used\n', pratmo_ratio_limit)
 % pratmo_ratio_limit = pratmo_limit;
 % vmr_limit = 2e-9;
 % if nargin > 3
@@ -60,40 +61,25 @@ end
 
 
 %% make a max and min for MLS data in latitude bounds
-if use_maxmin == 1
-    disp('loading MLS minumum and maximum data...')
-    load('C:\Users\ryann\MLS\matdata\MLS_v4p2_ClO_maxmin_by_lat_20042010.mat') % this loads 'mls_maxvmr_latbins' and 'mls_minvmr_latbins' and 'latbins' and 'latbnds'
-%     load('C:\Users\ryann\MLS\matdata\MLS_v4p2_HOCl_maxmin_by_lat_20042010.mat')
-    disp('done')
+if nargin > 4
+    if ~isempty(minmax_mls)
+    use_minmax = 1;
+    lat_bounds = minmax_mls.lat_bounds;
+    lat_bins = minmax_mls.lat_bins;
+    mls_maxvmr_latbins = minmax_mls.max_val;
+    disp('hard maxima chosen for the output')
+%     disp('loading MLS minumum and maximum data...')
+%     load('C:\Users\ryann\MLS\matdata\MLS_v4p2_ClO_maxmin_by_lat_20042010.mat') % this loads 'mls_maxvmr_latbins' and 'mls_minvmr_latbins' and 'latbins' and 'latbnds'
+% %     load('C:\Users\ryann\MLS\matdata\MLS_v4p2_HOCl_maxmin_by_lat_20042010.mat')
+%     disp('done')
+    else
+        use_minmax = 0;
+        disp('no hard maxima chosen for the output')
+    end
+else
+    use_minmax = 0;
+    disp('no hard maxima chosen for the output')
 end
-
-% disp('finding min and max values for mls by latitude...')
-% latbnds = -90:5:90;
-% llatbins = length(latbnds) - 1;
-% latbins = nan(1,llatbins);
-% mls_minvmr_latbins = nan(lalt_mls,llatbins);
-% mls_maxvmr_latbins = nan(lalt_mls,llatbins);
-% for i = 1:llatbins
-%     latbins(i) = mean([latbnds(i),latbnds(i+1)]); %get the midpoints of the latitude bins
-% end
-% for i = 2 : llatbins - 1 % mls doesnt measure higher latitudes that 85 N/S
-%     i
-%     mls_lati = subset_ace_by_lat_tangent(mls, latbnds(i), latbnds(i+1));
-%     mls_minvmr_latbins(:,i) = min(mls_lati.vmr,[],2); % by altitude
-%     mls_maxvmr_latbins(:,i) = max(mls_lati.vmr,[],2); % by altitude
-% end
-% clear mls_lati
-% mls_minvmr_latbins(:,1) = mls_minvmr_latbins(:,2); % mls doesnt measure higher latitudes that 85 N/S
-% mls_minvmr_latbins(:,end) = mls_minvmr_latbins(:,end-1);
-% mls_maxvmr_latbins(:,1) = mls_maxvmr_latbins(:,2); % mls doesnt measure higher latitudes that 85 N/S
-% mls_maxvmr_latbins(:,end) = mls_maxvmr_latbins(:,end-1);
-% disp('done')
-% %%
-% % mls_maxvmr_latbins = mls_maxvmr_latbins * 1.5; % adding this in to give some more freedom to the south pole
-% % mls_maxvmr_latbins = mls_maxvmr_latbins * inf;
-% %%
-% % test1 = mls_minvmr_latbins;
-% % test2 = mls_maxvmr_latbins;
 
 %% output structure
 out.source_file = mls.source_file;
@@ -131,20 +117,20 @@ for n = starton : nocc
     ace_n = reduce_tanstruct_by_rowindex(ace,n);
     lstace_n     = mjd2lst(ace_n.date_mjd, ace_n.lon); % vector of LSTs for nth ace occultation
     
-    if use_maxmin == 1
+    if use_minmax == 1
         %% find the min and max vmr limits from the mls binned data
-        [~,Imin] = min(ace_n.lat_tangent - latbins);
-        if ace_n.lat_tangent >= latbnds(Imin)
+        [~,Imin] = min(ace_n.lat_tangent - lat_bins);
+        if ace_n.lat_tangent >= lat_bounds(Imin)
             latbin_number = Imin;
         else
             latbin_number = Imin - 1;
         end
 %         vmr_limit_min = mls_minvmr_latbins(:,latbin_number);
-        vmr_limit_max = mls_maxvmr_latbins(:,latbin_number); %#ok<NODEF> % the variable is loaded above
+        vmr_limit_max = mls_maxvmr_latbins(:,latbin_number); % the variable is loaded above
 %         vmr_limit_min = interp1(mls.pressure_hPa(:,1), vmr_limit_min, ace.pressure_hPa(:,n)); %interpolate these limits to the ace pressure grid
         vmr_limit_max = interp1(mls.pressure_hPa(:,1), vmr_limit_max, ace.pressure_hPa(:,n));
     else
-        vmr_limit_max = Inf;
+        vmr_limit_max = Inf(size(ace.pressure_hPa(:,n)));
 %         vmr_limit_min = -Inf;
     end
     

@@ -20,6 +20,9 @@ function [ tanstruct_maestro_out ] = merge_maestro_ace_pressure( tanstruct_maest
 %           longitude.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NJR - 05/2018
+% NJR - 03/2019 - now also reads the glc information if it is present in
+% the fts data
+
 tic
 %% define some things
 interptype = 'pchip';
@@ -35,6 +38,18 @@ for i = 1:length(maestro.occultation)
     logpmaestroi = interp1(ace.altitude_km(:,1), logpace(:,i), maestro.altitude_km(:,i), interptype, nan);
     maestro.pressure_hPa(:,i) = exp(logpmaestroi);
     % maestro.altitude_km = maestro.altitude_km(:,1);
+end
+if isfield(maestro,'lon')
+    maestro.lon = nan(size(maestro.vmr));
+    maestro.lat = nan(size(maestro.vmr));
+    for i = 1:length(maestro.occultation)
+        maestro.lat(:,i) = interp1(ace.altitude_km(:,1), ace.lat(:,i), maestro.altitude_km(:,i), interptype, nan);
+        maestro.lon(:,i) = interp1(ace.altitude_km(:,1), ace.lon(:,i), maestro.altitude_km(:,i), interptype, nan);
+    end
+    maestro.lat_tangent = ace.lat_tangent;
+    maestro.lon_tangent = ace.lon_tangent;
+else
+    warning('there is no lat/lon data in the ACE-FTS data so no glc info is added to the maestro data')
 end
 
 %% deal with NaN pressures created from the interpolation
@@ -54,14 +69,6 @@ goodcol = find(nansum(maestro.vmr) ~= 0);
 maestro = reduce_tanstruct_by_rowindex(maestro, goodcol);
 goodcol = find(nansum(maestro.vmr_error) ~= 0); % same for the errors columns that are all nans
 maestro = reduce_tanstruct_by_rowindex(maestro, goodcol);
-
-%% filter out any data for which the vmr error is larger than 50% of the vmr
-if ~strcmp(maestro.gas,'H2Omaestro') % don't do this or the H2O data because the error is massive for that product
-    vmrdif = (abs(maestro.vmr) - abs(maestro.vmr_error))./abs(maestro.vmr);
-    goodcol = find(vmrdif > 0.5 & maestro.vmr_error > 0 & maestro.vmr < 20e-6);
-    % whos
-    maestro = reduce_tanstruct_data_by_index(maestro, goodcol);
-end
 
 %% for the version 1.2 data, SPARC book says that the altitude range is 5-60km.
 badrow = find(maestro.altitude_km(:,1) > 60);

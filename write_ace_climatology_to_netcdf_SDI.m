@@ -122,32 +122,17 @@ if isdir(ncdir)
                         climstruct = reduce_climstruct_data_by_obs_nr(climstruct, min_obs);
                         %get the data you need for the netcdf file
                         vmr_out(:,:,k) = climstruct.vmr_zonal(levind,:)'; %36x48 array
-                        vmr_out = flip(vmr_out,1); % flip the latitude dimension to be from north to south
-                        vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
                         vmr_std_out(:,:,k) = sqrt(climstruct.vmr_zonal_var(levind,:)'); % want the standard deviation here
-                        vmr_std_out = flip(vmr_std_out,1); % flip the latitude dimension to be from north to south
-                        vmr_std_out(isnan(vmr_std_out)) = -999;
                         vmr_obs_out(:,:,k) = climstruct.obs_count(levind,:)';
-                        vmr_obs_out = flip(vmr_obs_out,1); % flip the latitude dimension to be from north to south
-                        vmr_obs_out(isnan(vmr_obs_out)) = -999;
                         lst_mean(:,k) = climstruct.lst_mean;
-                        lst_mean = flip(lst_mean,1); % flip the latitude dimension to be from north to south
-                        lst_mean(isnan(lst_mean)) = -999;
                         lst_max(:,k) = climstruct.lst_max;
-                        lst_max = flip(lst_max,1); % flip the latitude dimension to be from north to south
-                        lst_max(isnan(lst_max)) = -999;
                         lst_min(:,k) = climstruct.lst_min;
-                        lst_min = flip(lst_min,1); % flip the latitude dimension to be from north to south
-                        lst_min(isnan(lst_min)) = -999;
                         repyear = repmat(climstruct.time(1),1,length(climstruct.doy_mean));
                         ave_dom(:,k) = day(doy2date(climstruct.doy_mean, repyear));
-                        ave_dom = flip(ave_dom,1); % flip the latitude dimension to be from north to south
-                        ave_dom(isnan(ave_dom)) = -999;
                         ave_lat(:,k) = climstruct.lat_tangent_mean;
-                        ave_lat = flip(ave_lat,1); % flip the latitude dimension to be from north to south
-                        ave_lat(isnan(ave_lat)) = -999;
-                        lat(:) = flip(climstruct.lat); % flip the latitude dimension to be from north to south
-                        plev(:) = climstruct.pressure_hPa(levind,:);
+
+%                         lat = climstruct.lat;
+                        
                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
 %                         vmr_out(k,:,:) = climstruct.vmr_zonal; %48x36 array
 %                         vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
@@ -171,6 +156,27 @@ if isdir(ncdir)
 %                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
                     end
                 end
+                vmr_out = flip(vmr_out,1); % flip the latitude dimension to be from north to south
+                vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
+                vmr_std_out = flip(vmr_std_out,1); % flip the latitude dimension to be from north to south
+                vmr_std_out(isnan(vmr_std_out)) = -999;
+                vmr_obs_out = flip(vmr_obs_out,1); % flip the latitude dimension to be from north to south
+                vmr_obs_out(isnan(vmr_obs_out)) = -999;
+                lst_mean = flip(lst_mean,1); % flip the latitude dimension to be from north to south
+                lst_mean(isnan(lst_mean)) = -999;
+                lst_max = flip(lst_max,1); % flip the latitude dimension to be from north to south
+                lst_max(isnan(lst_max)) = -999;
+                lst_min = flip(lst_min,1); % flip the latitude dimension to be from north to south
+                lst_min(isnan(lst_min)) = -999;
+                ave_dom = flip(ave_dom,1); % flip the latitude dimension to be from north to south
+                ave_dom(isnan(ave_dom)) = -999;
+                ave_lat = flip(ave_lat,1); % flip the latitude dimension to be from north to south
+                ave_lat(isnan(ave_lat)) = -999;
+                
+                lat(:) = flip(climstruct.lat); % flip the latitude dimension to be from north to south
+                plev(:) = climstruct.pressure_hPa(levind,:);
+                
+                
                 % get the name of the gas for the output file
                 if length(gasfolder{i}) > 10 && strcmp(gasfolder{i}(end-8:end-6), 'sap') % for '_sap_s10am' and '_sap_s10pm', etc.
                     gasfolder_short = gasfolder{i}(1:end-10);

@@ -29,10 +29,22 @@ gasout = tanstruct_in;
 ygas = rowindices;
 gasout.occultation = gasout.occultation(:,ygas);
 gasout.sr1ss0 = gasout.sr1ss0(:,ygas);
-gasout.beta_angle = gasout.beta_angle(:,ygas);
+if isfield (gasout,'beta_angle')
+    gasout.beta_angle = gasout.beta_angle(:,ygas);
+end
 gasout.date_mjd = gasout.date_mjd(:,ygas);
-gasout.vmr = gasout.vmr(:,ygas);
-gasout.vmr_error = gasout.vmr_error(:,ygas);
+%% the vmr field can have more than 2 dimensions in special cases.
+if length(size(gasout.vmr)) == 2
+    gasout.vmr = gasout.vmr(:,ygas);
+elseif length(size(gasout.vmr)) == 3
+    gasout.vmr = gasout.vmr(:,:,ygas);
+else
+    error('The scripts are set up to allow vmr arrays of 2 or 3 dimensions. There are %i dimensions here', length(size(gasout.vmr)))
+end
+%%
+if isfield (gasout,'vmr_error')
+    gasout.vmr_error = gasout.vmr_error(:,ygas);
+end
 gasout.lat_tangent = gasout.lat_tangent(:,ygas);
 gasout.lon_tangent = gasout.lon_tangent(:,ygas);
 % if isfield (gasout,'source_file')
@@ -75,6 +87,9 @@ if isfield(gasout,'time_diff')
 end
 if isfield(gasout,'lst_ratio')
     gasout.lst_ratio = gasout.lst_ratio(:,ygas);
+end
+if isfield(gasout,'lst')
+    gasout.lst = gasout.lst(:,ygas);
 end
 
 tanstruct_out = gasout;

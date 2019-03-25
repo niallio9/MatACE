@@ -23,7 +23,7 @@ i = 0;
 disp('reading filenames...')
 while (feof(filein) ~= 1)
       i = i+1;
-      filename{i} = fgetl(filein) %don't know how many files are in the list
+      filename{i} = fgetl(filein); %don't know how many files are in the list
       yeari = filename{i}(end-11:end-8);
       dayi = filename{i}(end-6:end-4);
       % if the data is a subset

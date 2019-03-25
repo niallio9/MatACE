@@ -1,4 +1,4 @@
-function [ ] = plot_on_ace_SDI_latlev( climdata_in, title_in )
+function [ ] = plot_on_ace_SDI_latlev_pcolor( climdata_in, title_in )
 %A function to plot the climatology data for ACE. The function uses
 %'pcolor'.
 %
@@ -25,7 +25,8 @@ plev = [300 250 200 170 150 130 115 100 90 80 70 50 30 20 ...
 
 %% make the plot for the input variable
 % whos
-pcolor(lat, plev, climdata_in');
+% pcolor(lat, plev, climdata_in);
+pcolor(lat, plev, climdata_in);
 if nargin > 1
     title(title_in)
 end

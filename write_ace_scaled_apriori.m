@@ -30,7 +30,7 @@ home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
 home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 
-matdirectory = 'C:\Users\ryann\ACE\matdata';
+matdirectory = 'C:\Users\ryann\ACE\matdata\';
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
 % matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
@@ -62,7 +62,8 @@ fileout_pre = filein_pre;
                 savedest = strcat(matdirectory,fileout_pre,gasin,'_sap');
                 fprintf('saving %s_sap data to %s\n', gasin, savedest);
                 tanstruct = gasi_sap;
-                tanstruct.gas = strcat(gasin,'_sap');
+%                 tanstruct.gas = strcat(gasin,'_sap'); % this is already
+%                 done in the above function
                 save(savedest,'tanstruct');
                 fprintf('done\n')
             else
@@ -84,7 +85,8 @@ fileout_pre = filein_pre;
                         savedest = strcat(matdirectory,fileout_pre,gasin,'_sap');
                         fprintf('saving %s_sap data to %s\n', gasin, savedest);
                         tanstruct = gasi_sap;
-                        tanstruct.gas = strcat(gasin,'_sap');
+%                         tanstruct.gas = strcat(gasin,'_sap'); % this is already
+%                           done in the above function
                         save(savedest,'tanstruct');
                         fprintf('done\n')
                         clear tanstruct gasi
@@ -107,7 +109,8 @@ fileout_pre = filein_pre;
                 savedest = strcat(matdirectory,fileout_pre,gasin,'_sap');
                 fprintf('saving %s_sap data to %s\n', gasin, savedest);
                 tanstruct = gasi_sap; 
-                tanstruct.gas = strcat(gasin,'_sap');
+%                 tanstruct.gas = strcat(gasin,'_sap'); % this is already
+%                 done in the above function
                 save(savedest,'tanstruct');
                 fprintf('done\n')
                 clear tanstruct gasi

@@ -116,7 +116,12 @@ ncwriteatt(filename,'time','units', 'days since 1950-01-01 00:00:00');
 
 %global attributes
 ncwriteatt(filename,'/','Experiment', 'ACE-MAESTRO');
-ncwriteatt(filename,'/','Version', '3.13');
+switch gasname
+    case 'O3'
+        ncwriteatt(filename,'/','Version', '3.13, visible'); % for ozone
+    case 'H2O'
+        ncwriteatt(filename,'/','Version', '31, visible'); % for water vapour
+end
 ncwriteatt(filename,'/','Organisation', 'CSA');
 ncwriteatt(filename,'/','Type_of_Data', 'MEASUREMENTS');
 ncwriteatt(filename,'/','Platform', 'SATELLITE');
@@ -137,7 +142,7 @@ ncwriteatt(filename,'/','LST_level', '7 hPa'); %%%************************gotta 
 ncwriteatt(filename,'/','AVE_DOM_Level', '7 hPa');
 ncwriteatt(filename,'/','AVE_LAT_level', '7 hPa');
 ncwriteatt(filename,'/','history', sprintf('%s:  Creating netCDF', datestr(now)));
-ncwriteatt(filename,'/','Author', 'Niall Ryan');
+% ncwriteatt(filename,'/','Author', 'Niall Ryan');
 
 fprintf('\nDone\n')
 

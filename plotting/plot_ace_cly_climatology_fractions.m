@@ -46,7 +46,7 @@ switch datasource
         clono2 = {'ClONO2cmam'};
         %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlspratlatnegfixkw2ampmvortex_sap','ClOcmam'};
+        clo = {'ClOmlspratlatfiltermeanpolenegfixkw2ampmvortex_sap','ClOcmam'};
         hocl = {'HOClmlspratlatnegfixkw2ampmvortex_sap','HOClcmam'};
         hcl = {'HCl','HClcmam'};
         clono2 = {'ClONO2','ClONO2cmam'};
@@ -265,7 +265,7 @@ for n = 1:length(clo)
 %         figpos = [97,49,852,630];
         % Do for the zonal vmr
         %     figi = randi(100);
-        figi = 19;
+        figi = 50;
         %     figure(figi), set(gcf,'Position', [5,12,1096,704])
         %     figure(figi), set(gcf,'Position', [358,61,722,532])
         figure(figi), set(gcf,'Position', figpos), box on

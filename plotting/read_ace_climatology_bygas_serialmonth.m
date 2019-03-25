@@ -1,4 +1,4 @@
-function [ vmrzon, pace, lat ] = plot_ace_climatology_bygas_serialmonth_timeseries( gasname_in, years_in, lat_minmax, do_plot )
+function [ vmrzon, pace, lat ] = read_ace_climatology_bygas_serialmonth( gasname_in, years_in, lat_minmax, do_plot )
 %A funcion to plot the serialmonth climatologies as a timeseries.
 
 % *INPUT*
@@ -22,8 +22,8 @@ home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
 clim_dir = 'C:\Users\ryann\ACE\climdata\';
-% clim_dir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
-% clim_dir = '/Users/niall/Dropbox/'; %#ok<NASGU>
+clim_dir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
+clim_dir = '/Users/niall/Dropbox/'; %#ok<NASGU>
 
 latmin = lat_minmax(1);
 latmax = lat_minmax(2);
@@ -37,7 +37,7 @@ months = 1:12;
 % lmonths = length(months);
 sdates = nan(1,12*lyears);
 
-vmrzon = nan(48,36,12*lyears);
+vmrzon = nan(12,36,28,12*lyears);
 vmrzon_error = nan(48,36,12*lyears);
 
 if nargin > 3
@@ -51,7 +51,6 @@ file_post = '.mat';
 %         20km, 30km, 40km, 50km
 %         50hPa, 10hPa, 2hPa, .5hPa
 ipplot = [17, 21, 25, 29]; % the indexes of the pressure levels on which to plot
-ipplot = [17, 21, 24, 27]; % the indexes of the pressure levels on which to plot
 ipplot = flip(ipplot); % flip around the pressure levels for plotting
 
 %% loop through the years and months and fill in the cells of arrays
@@ -83,7 +82,7 @@ for j = 1:lyears
 end
 pace = clim.pressure_hPa;
 zace = clim.altitude_km_mean;
-% return
+return
 %% subset according to the chosen lat limits
 % average over some latitude bins if needed
 lat_bounds = clim.lat_bounds;
@@ -101,7 +100,7 @@ vmrzon_error = squeeze(nanmean(vmrzon_error(:,ilatmin:ilatmax,:), 2 )) * 1e9;
 
 %% Make the plots if you want
 lw = 1;
-ms = 6;
+ms = 2;
 % whos
 %% line plot
 nalt = length(ipplot);
@@ -144,8 +143,7 @@ if yplot == 1
 %     colourmin = min(vmrzon(:));
     colourmin = 0;
 %     colourmax = 0.346;
-    vmrzon_short = vmrzon(6:33,:);
-    colourmax = max(vmrzon_short(:))
+    colourmax = max(vmrzon(:));
     numcolours = 10;
     cgrid = linspace(colourmin,colourmax,numcolours);
 %     fs_title = 8;
@@ -157,8 +155,8 @@ if yplot == 1
     figii = figi + 2;
     figure(figii), set(gcf,'Position', [-1163 506 874 309])
     
-    ylim2 = 300;
-    ylim1 = 10^-1;
+%     ylim2 = 300;
+%     ylim1 = 10^-1;
     
     figure(figii);
     disp('plotting contour series')

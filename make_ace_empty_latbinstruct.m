@@ -59,7 +59,11 @@ end
 %maxl = lorbit*lgrid; % this is the maximum number of points that can go into a bin
 
 %% Set up the output structure
-gaslatbin.source_file = gas.source_file; % the same original source of the data
+if isfield(gas,'source_file')
+    gaslatbin.source_file = gas.source_file; % the same original source of the data
+else
+    gaslatbin.source_file = {};
+end
 gaslatbin.beta_angle_mean = nan(1,llat); % one average per month
 gaslatbin.beta_angle_var = nan(1,llat); % one average per month
 gaslatbin.doy_mean = nan(1,llat); % this has been added to get the mean day of the year. can be used to make mean day of month later

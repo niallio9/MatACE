@@ -31,6 +31,7 @@ end
 %the name of the output files
 % savename_pre = 'CMAM_CLIM_MLSsample_lat_';
 savename_pre = 'ACEFTS_CLIM_v3_lat_';
+% savename_pre = 'ACEMAESTRO_CLIM_v3_lat_';
 % cells with the names of the month
 monthnames = {'January', 'February', 'March', 'April', 'May', 'June', ...
     'July', 'August', 'September', 'October', 'November', 'December'};

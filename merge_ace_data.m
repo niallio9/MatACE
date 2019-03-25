@@ -57,10 +57,18 @@ if ~strcmp(gas1.gas, gas2.gas)
 end
 
 %% merge the data
-gasout.source_file = strcat(gas1.source_file, ', ', gas2.source_file);
+if isfield(gas1,'source_file') && isfield(gas2,'source_file') % when there is DMP data included in the tanstruct
+    gasout.source_file = sstrcat(gas1.source_file, ', ', gas2.source_file);
+else
+    fprintf('the ''source_file'' fields were not merged because it is not present in both inputs\n')
+end
 gasout.occultation = [gas1.occultation, gas2.occultation];
 gasout.sr1ss0 = [gas1.sr1ss0, gas2.sr1ss0];
-gasout.beta_angle = [gas1.beta_angle, gas2.beta_angle];
+if isfield(gas1,'beta_angle') && isfield(gas2,'beta_angle')  % when there is glc data included
+    gasout.beta_angle = [gas1.beta_angle, gas2.beta_angle];
+else
+    fprintf('the ''beta_angle'' fields were not merged because it is not present in both inputs\n')
+end
 gasout.date_mjd = [gas1.date_mjd, gas2.date_mjd];
 gasout.gas = gas1.gas;
 if isequal(gas1.altitude_km, gas2.altitude_km) % if the altitude arrays are equal
@@ -76,8 +84,17 @@ else % if the arrays are not equal
         gasout.altitude_km = [gas1.altitude_km, gas2.altitude_km];
     end
 end
-gasout.vmr = [gas1.vmr, gas2.vmr];
-gasout.vmr_error = [gas1.vmr_error, gas2.vmr_error];
+%% the vmr field can have more than 2 dimensions in special cases.
+% size(gas1.vmr)
+% size(gas2.vmr)
+gasout.vmr = cat(length(size(gas1.vmr)), gas1.vmr, gas2.vmr); % concatenate the vmr array ilong the last dimension, which should be time
+% gasout.vmr = [gas1.vmr, gas2.vmr];
+%%
+if isfield(gas1,'vmr_error') && isfield(gas2,'vmr_error')  % when there is glc data included
+    gasout.vmr_error = [gas1.vmr_error, gas2.vmr_error];
+else
+    fprintf('the ''vmr_error'' fields were not merged because it is not present in both inputs\n')
+end
 gasout.lat_tangent = [gas1.lat_tangent, gas2.lat_tangent];
 gasout.lon_tangent = [gas1.lon_tangent, gas2.lon_tangent];
 if isfield(gas1,'quality_flags') && isfield(gas2,'quality_flags')
@@ -100,7 +117,7 @@ if isfield(gas1,'pressure_hPa') && isfield(gas2,'pressure_hPa') % for the data t
         end
     end
 else
-    error('one or both of the inputs don''t contain the ''pressure_hPa'' field\n')
+    warning('one or both of the inputs don''t contain the ''pressure_hPa'' field')
 end
 if isfield(gas1,'lon') && isfield(gas2,'lon')  % when there is glc data included
     gasout.lon = [gas1.lon, gas2.lon];
@@ -116,7 +133,7 @@ end
 if isfield(gas1,'spv') && isfield(gas2,'spv') % when there is DMP data included in the tanstruct
     gasout.spv = [gas1.spv, gas2.spv];
 else
-    fprintf('the ''eql'' fields were not merged because it is not present in both inputs\n')
+    fprintf('the ''spv'' fields were not merged because it is not present in both inputs\n')
 end
 if isfield(gas1,'distance') && isfield(gas2,'distance')
     gasout.distance = [gas1.distance, gas2.distance];
@@ -133,14 +150,20 @@ if isfield(gas1,'lst_ratio') && isfield(gas2,'lst_ratio')
 else
     fprintf('the ''lst_ratio'' fields were not merged because it is not present in both inputs\n');
 end
+if isfield(gas1,'lst') && isfield(gas2,'lst')
+    gasout.lst = [gas1.lst, gas2.lst];
+else
+    fprintf('the ''lst'' fields were not merged because it is not present in both inputs\n');
+end
 
 %% remove duplicate occultations
 disp('removing duplicate occultations...')
 % orbitnames = get_ace_occultation_names(gasout);
+%the next line also automatically sorts the data
 [~,igood] = unique(gasout.date_mjd(1,:)); % included an indexing here because the sampled MLS data has an 'alt x occ' array of times 
-gasout
-size(igood)
+% size(igood)
 gasout = reduce_tanstruct_by_rowindex(gasout, igood);
+disp(gasout)
 
 %%
 tanstruct_out = gasout;

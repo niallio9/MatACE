@@ -1,4 +1,4 @@
-function [ lst_out ] = get_ace_lst( tanstruct_in )
+function [ lst_out, eot_correction ] = get_ace_lst( tanstruct_in, do_EOT )
 %A function to calculate the local solar time (LST) of ace measurements
 %using the ace measurement times and the longitudes.
 %Longitude information can be added to an ace structure using
@@ -19,7 +19,7 @@ gas = tanstruct_in;
 
 %% create the lst vector
 
-lst = mjd2lst(gas.date_mjd, gas.lon);
+[lst, eot_correction] = mjd2lst(gas.date_mjd, gas.lon, do_EOT);
 
 lst_out = lst;
 %

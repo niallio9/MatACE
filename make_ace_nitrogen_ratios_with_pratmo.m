@@ -41,12 +41,12 @@ lst_in = lst_input; % changed this so that it is an input to the function
 %STANDARD
 if lst_in < 12
     fprintf('\nchosen LST < 12. Subsetting data to AM times\n')
-    [aceo3,~] = subset_ace_by_lst_tangent(tanstruct_o3_in);
-    [aceT,~] = subset_ace_by_lst_tangent(tanstruct_T_in);
+    [aceo3,~] = split_ace_by_lst_tangent(tanstruct_o3_in);
+    [aceT,~] = split_ace_by_lst_tangent(tanstruct_T_in);
 else
     fprintf('\nChosen LST > 12. Subsetting data to PM times\n')
-    [~, aceo3] = subset_ace_by_lst_tangent(tanstruct_o3_in);
-    [~, aceT] = subset_ace_by_lst_tangent(tanstruct_T_in);
+    [~, aceo3] = split_ace_by_lst_tangent(tanstruct_o3_in);
+    [~, aceT] = split_ace_by_lst_tangent(tanstruct_T_in);
 end
 aceo3 = apply_ace_flags(aceo3);
 aceT = apply_ace_flags(aceT);
@@ -66,7 +66,7 @@ o3 = aceo3.vmr(zlowi,:);
 T = aceT.vmr(zlowi,:);
 P = aceo3.pressure_hPa(zlowi,:);
 kb = 1.38064852e-23; % Boltzmann's constant
-Nair = (P./(T * kb))*1e-6; % this is the air density in cm^3
+Nair = ( 100*P ./ ( (T + 273.15) * kb) )*1e-6; % this is the air density in cm^3
 o3 = o3.*Nair;
 lat = aceo3.lat_tangent;
 lon = aceo3.lon_tangent;
@@ -162,7 +162,7 @@ ratios = out;
 disp('All done :)')
 
 % save for now in case matlab closes or some shit
-savedest = sprintf('ACE_v3p6_pratmo_nitrogen_ratios_%2.0fLST',lst_in);
+savedest = sprintf('ACE_v3p6_pratmo_nitrogen_ratios_%2.0fLST_2018',lst_in);
 fprintf('saving nitrogen data to %s\n', savedest);
 save(savedest,'ratios')
 %

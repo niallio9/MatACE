@@ -1,6 +1,6 @@
 function [ tanstruct_out ] = remove_ace_data_by_index( tanstruct_in, indices, delete_rows )
 %A function to reduce the ace data according to the provided
-%indicies. Data that do not correspond to the indices are changed to NaNs.
+%indices. Data that do not correspond to the indices are changed to NaNs.
 %If a whole row (occultation) of data is converted to NaNs, then that 
 %occultation is removed from the structure.
 

@@ -40,8 +40,8 @@ aceT = tanstruct_T_in;
 disp('applying flags')
 aceo3 = apply_ace_flags(aceo3);
 aceT = apply_ace_flags(aceT);
-% disp('filtering dodgy latitudes')
-% aceo3 = filter_ace_bad_lat(aceo3);
+disp('filtering dodgy latitudes')
+aceo3 = filter_ace_bad_lat(aceo3);
 % aceT = filter_ace_bad_lat(aceT);
 
 %% match the ace data
@@ -107,8 +107,8 @@ for j = 1:nace
     init.albedo = a;
     init.ndmr = 0;  % 0=save as vmr; 1=number density
     %% IMPORTANT CHOICE FOR ATMOSPHERIC VARIABLES
-        init.atmos = [zlow T(:,j) Nair(:,j) o3(:,j) NOy N2O Bry];
-% % %     init.atmos = []; % use default pratmo climatologies
+    % % %     init.atmos = [zlow T(:,j) Nair(:,j) o3(:,j) NOy N2O Bry];
+    init.atmos = []; % use default pratmo climatologies
     %%
     init.aero_scalefactor = 1;
     init.diurnalO3 = 0;

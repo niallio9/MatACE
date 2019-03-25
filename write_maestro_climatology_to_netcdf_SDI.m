@@ -1,6 +1,6 @@
-function [ ] = write_maestro_climatology_to_netcdf( varargin )
- %A function to create an ACE MAESTRO climatology netCDF file from the information
- %contained in the ACE MAESTRO climstruct .mat file.
+function [ ] = write_maestro_climatology_to_netcdf_SDI( varargin )
+ %A function to create an ACE climatology netCDF file from the information
+ %contained in the ACE climstruct .mat file.
 %
 % *INPUT*
 %
@@ -16,13 +16,12 @@ function [ ] = write_maestro_climatology_to_netcdf( varargin )
 %           'ncdir', as defined below by the user.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   NJR - 05/18
+%   NJR - 03/18
 
 %% define some things
 %USER DEFINED
 % climdir = '/Users/niall/Dropbox/climatology/nryan/climdata/'; % edit this to your directory that contains the ACE netcdf data
 % climdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
-% climdir = 'C:\Users\ryann\ACE\climdata';
 climdir = 'C:\Users\ryann\ACE\MAESTRO\climdata';
 % climdir = 'F:\ACE\climdata\';
 % climdir = '/net/deluge/pb_1/users/nryan/ACE/climdata/';
@@ -32,7 +31,6 @@ if ~isdir(climdir)
 end
 % ncdir = '/Users/niall/Dropbox/climatology/nryan/climdata_netcdf/'; % edit this to your output directory
 % ncdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata_netcdf/';
-% ncdir = 'C:\Users\ryann\ACE\climdata_netcdf';
 ncdir = 'C:\Users\ryann\ACE\MAESTRO\climdata_netcdf';
 % ncdir = 'F:\ACE\climdata_netcdf\';
 % ncdir = '/net/deluge/pb_1/users/nryan/ACE/climdata_netcdf/';
@@ -116,7 +114,12 @@ if isdir(ncdir)
                 for k = 1:12
                     %the .mat climatolgy files are of the type
                     %"ACEFTS_CLIM_v3_eql_NO2_2013_06.mat"
-                    climfile_yearandmonth = sprintf('ACEMAESTRO_CLIM_v3_lat_%s_%i_%02.0f.mat',gasfolder{i},data_years_unique(j),k);
+                    switch gasfolder{i}
+                        case 'O3'
+                            climfile_yearandmonth = sprintf('ACEMAESTRO_CLIM_v3_lat_%s_%i_%02.0f.mat',gasfolder{i},data_years_unique(j),k); % for ozone
+                        case 'H2O'
+                            climfile_yearandmonth = sprintf('ACEMAESTRO_CLIM_v1_lat_%s_%i_%02.0f.mat',gasfolder{i},data_years_unique(j),k); % for water vapour
+                    end
                     climfile_k = fullfile(gasdir_i,'serial_month', climfile_yearandmonth); % the name of a climatology file
                     if exist(climfile_k,'file') == 2 % check if the file exists for that month
                         load(climfile_k); % loads a variable called climstruct
@@ -124,32 +127,17 @@ if isdir(ncdir)
                         climstruct = reduce_climstruct_data_by_obs_nr(climstruct, min_obs);
                         %get the data you need for the netcdf file
                         vmr_out(:,:,k) = climstruct.vmr_zonal(levind,:)'; %36x48 array
-                        vmr_out = flip(vmr_out,1); % flip the latitude dimension to be from north to south
-                        vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
                         vmr_std_out(:,:,k) = sqrt(climstruct.vmr_zonal_var(levind,:)'); % want the standard deviation here
-                        vmr_std_out = flip(vmr_std_out,1); % flip the latitude dimension to be from north to south
-                        vmr_std_out(isnan(vmr_std_out)) = -999;
                         vmr_obs_out(:,:,k) = climstruct.obs_count(levind,:)';
-                        vmr_obs_out = flip(vmr_obs_out,1); % flip the latitude dimension to be from north to south
-                        vmr_obs_out(isnan(vmr_obs_out)) = -999;
                         lst_mean(:,k) = climstruct.lst_mean;
-                        lst_mean = flip(lst_mean,1); % flip the latitude dimension to be from north to south
-                        lst_mean(isnan(lst_mean)) = -999;
                         lst_max(:,k) = climstruct.lst_max;
-                        lst_max = flip(lst_max,1); % flip the latitude dimension to be from north to south
-                        lst_max(isnan(lst_max)) = -999;
                         lst_min(:,k) = climstruct.lst_min;
-                        lst_min = flip(lst_min,1); % flip the latitude dimension to be from north to south
-                        lst_min(isnan(lst_min)) = -999;
                         repyear = repmat(climstruct.time(1),1,length(climstruct.doy_mean));
                         ave_dom(:,k) = day(doy2date(climstruct.doy_mean, repyear));
-                        ave_dom = flip(ave_dom,1); % flip the latitude dimension to be from north to south
-                        ave_dom(isnan(ave_dom)) = -999;
                         ave_lat(:,k) = climstruct.lat_tangent_mean;
-                        ave_lat = flip(ave_lat,1); % flip the latitude dimension to be from north to south
-                        ave_lat(isnan(ave_lat)) = -999;
-                        lat(:) = flip(climstruct.lat); % flip the latitude dimension to be from north to south
-                        plev(:) = climstruct.pressure_hPa(levind,:);
+
+%                         lat = climstruct.lat;
+                        
                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
 %                         vmr_out(k,:,:) = climstruct.vmr_zonal; %48x36 array
 %                         vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
@@ -171,10 +159,29 @@ if isdir(ncdir)
 %                         lat(:) = climstruct.lat;
 %                         plev(:) = climstruct.pressure_hPa;
 %                         time(k) = datenum(data_years_unique(j), k, 15) - sdate1950;
-                    else
-                        fprintf('\nCould not find %s\n', climfile_k)
                     end
                 end
+                vmr_out = flip(vmr_out,1); % flip the latitude dimension to be from north to south
+                vmr_out(isnan(vmr_out)) = -999; % change the nans to -999 values. ***should make this more efficient here***
+                vmr_std_out = flip(vmr_std_out,1); % flip the latitude dimension to be from north to south
+                vmr_std_out(isnan(vmr_std_out)) = -999;
+                vmr_obs_out = flip(vmr_obs_out,1); % flip the latitude dimension to be from north to south
+                vmr_obs_out(isnan(vmr_obs_out)) = -999;
+                lst_mean = flip(lst_mean,1); % flip the latitude dimension to be from north to south
+                lst_mean(isnan(lst_mean)) = -999;
+                lst_max = flip(lst_max,1); % flip the latitude dimension to be from north to south
+                lst_max(isnan(lst_max)) = -999;
+                lst_min = flip(lst_min,1); % flip the latitude dimension to be from north to south
+                lst_min(isnan(lst_min)) = -999;
+                ave_dom = flip(ave_dom,1); % flip the latitude dimension to be from north to south
+                ave_dom(isnan(ave_dom)) = -999;
+                ave_lat = flip(ave_lat,1); % flip the latitude dimension to be from north to south
+                ave_lat(isnan(ave_lat)) = -999;
+                
+                lat(:) = flip(climstruct.lat); % flip the latitude dimension to be from north to south
+                plev(:) = climstruct.pressure_hPa(levind,:);
+                
+                
                 % get the name of the gas for the output file
                 if length(gasfolder{i}) > 10 && strcmp(gasfolder{i}(end-8:end-6), 'sap') % for '_sap_s10am' and '_sap_s10pm', etc.
                     gasfolder_short = gasfolder{i}(1:end-10);
@@ -192,7 +199,12 @@ if isdir(ncdir)
                     gasfolder_short = gasfolder{i};
                 end
                 % create and add the data to the file
-                ncfilename_j = sprintf('SPARC_DI_T2Mz_%s_%i_ACEMAESTRO_v3.13_i01.nc', gasfolder{i}, data_years_unique(j));
+                switch gasfolder{i}
+                    case 'O3'
+                        ncfilename_j = sprintf('SPARC_DI_T2Mz_%s_%i_ACEMAESTRO_v3.13_i01.nc', gasfolder{i}, data_years_unique(j)); % for ozone
+                    case 'H2O'
+                        ncfilename_j = sprintf('SPARC_DI_T2Mz_%s_%i_ACEMAESTRO_v31_i01.nc', gasfolder{i}, data_years_unique(j)); % for water vapour
+                end
                 outdir = fullfile(ncdir, gasfolder_short);
                 if exist(outdir,'dir') ~= 7
                     mkdir(outdir);

@@ -20,6 +20,8 @@ dataout = tanstruct_in;
 % corresponds to the vmr value. NJR - 08/2018
 dataout.vmr_error(dataout.quality_flags == 8) = 0;
 dataout.quality_flags(dataout.quality_flags == 8) = 0;
+% append the name of the gas with '_sap'
+dataout.gas = strcat(dataout.gas,'_sap');
 
 %%
 tanstruct_out = dataout;

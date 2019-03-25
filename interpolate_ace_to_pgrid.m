@@ -59,7 +59,9 @@ if colgrid > 1 && colgrid ~= lorbit
 end
 
 % the fields of the new data file that are the same
-gasout.source_file = gas.source_file;
+if isfield(gas,'source_file')
+    gasout.source_file = gas.source_file;
+end
 gasout.occultation = gas.occultation;
 gasout.sr1ss0 = gas.sr1ss0;
 gasout.beta_angle = gas.beta_angle;

@@ -89,6 +89,10 @@ if isvector(ygas)
         gasout.lst_ratio = nan(datasize);
         gasout.lst_ratio(ygas) = gasin.lst_ratio(ygas);
     end
+    if isfield(gasout,'lst') % for structures that have been created from other datasets using coincidence criteria, etc.
+        gasout.lst = nan(datasize);
+        gasout.lst(ygas) = gasin.lst(ygas);
+    end
     
     if nargin < 3 || delete_rows == 1
         % now remove any colums that are all NaNs

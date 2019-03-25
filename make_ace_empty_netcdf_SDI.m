@@ -137,7 +137,7 @@ ncwriteatt(filename,'/','LST_level', '7 hPa'); %%%************************gotta 
 ncwriteatt(filename,'/','AVE_DOM_Level', '7 hPa');
 ncwriteatt(filename,'/','AVE_LAT_level', '7 hPa');
 ncwriteatt(filename,'/','history', sprintf('%s:  Creating netCDF', datestr(now)));
-ncwriteatt(filename,'/','Author', 'Niall Ryan');
+% ncwriteatt(filename,'/','Author', 'Niall Ryan');
 
 fprintf('\nDone\n')
 

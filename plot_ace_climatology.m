@@ -16,6 +16,7 @@ function [ ] = plot_ace_climatology( climstruct_in )
 clim = climstruct_in;
 gas = clim.gas;
 climdata = clim.vmr_zonal;
+climdata = climdata(1:33,:);
 if isfield(clim,'lat')
     lat = clim.lat;
 %     lattitle = 'lat';
@@ -40,6 +41,7 @@ if isfield(clim,'climatology_type')
 end
 plev = clim.pressure_hPa;
 fs = 16;
+plev = plev(1:33);
 % yticknames = ['10^-4','10^-2',]
 ytickspace = [10^-4 10^-2 1 10^2];
 
@@ -55,6 +57,32 @@ yticks(ytickspace);
 xlabel(latlabel)
 ylabel('pressure [hPa]')
 c = colorbar;
+% caxis([0,100]); % ONLY FOR SPECIFIC CASES***************************************************************
+% c = colorbar('location','eastoutside','position',[0.923 0.309 0.016 0.35]);
+if strcmp(gas,'T')
+    title(c,'K [deg]','Position', [12 -23 0])
+else
+    title(c,'VMR','Position', [12 -23 0])
+end
+%     cmap = lbmap(80,'RedBlue');
+%     colormap(cmap);
+%     caxis([-cmax,cmax]);
+set(gca,'FontSize',fs)
+
+%% make the plot for the input variable
+figure, contourf(lat, plev, climdata);
+if isfield(clim,'climatology_type')
+    title(climtitle)
+else
+    title(gas,'interpreter','none')
+end
+set(gca, 'Ydir','reverse', 'YScale', 'log', 'YMinorTick','on');
+yticks(ytickspace);
+xlabel(latlabel)
+ylabel('pressure [hPa]')
+c = colorbar;
+% colormap jet
+caxis([0,10e-9])
 % caxis([0,100]); % ONLY FOR SPECIFIC CASES***************************************************************
 % c = colorbar('location','eastoutside','position',[0.923 0.309 0.016 0.35]);
 if strcmp(gas,'T')

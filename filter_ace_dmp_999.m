@@ -1,4 +1,4 @@
-function [ dmpstruct_out ] = remove999_ace_dmp( dmpstruct_in )
+function [ dmpstruct_out ] = filter_ace_dmp_999( dmpstruct_in )
 %A function to replace the -999 values in the ACE DMP data with NaNs. Will
 %also replace the fill values of ... x 1e15.
 %

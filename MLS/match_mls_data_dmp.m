@@ -45,7 +45,7 @@ vdate_dmp(:,6) = [];
 
 % check to see if they already match
 if isequal(vdate_gas(:,1:4), vdate_dmp(:,1:4))
-    disp('the occultation numbers already match')
+    disp('the date numbers already match')
     mlsstruct_out = gas;
     dmpstruct_out = dmp;
 else

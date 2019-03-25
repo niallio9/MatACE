@@ -29,7 +29,7 @@ file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 file_post = '_20042010.mat';
 
 % dataX = {clo, hocl, hcl, clono2, Cly}; the Cly name is a dummy for later
-gasnames1 = {'ClOmlspratlatnegfixkw2ampmvortex_sap','HOClmlspratlatnegfixkw2ampmvortex_sap','HCl','ClONO2'};
+gasnames1 = {'ClOmlspratlatfiltermeanpolenegfixkw2ampmvortex_sap','HOClmlspratlatnegfixkw2ampmvortex_sap','HCl','ClONO2'};
 gasnames2 = {'ClOcmam','HOClcmam','HClcmam','ClONO2cmam'};
 
 %% define some things
@@ -256,7 +256,8 @@ if yplot == 1
     fignames = {'ClO\_%dif', 'HOCl\_%dif', 'HCl\_%dif', 'ClONO2\_%dif', 'Cly\_%dif'};
     for i = 1:ngas
         axx1(i) = subplot(ngas,1,i);
-        contourf(axx1(i), latace, pace, vmrzondifp(:,:,i), cgridpercent, 'ShowText', 'on'); caxis([-50,50])%caxis([cgridpercent(1),cgridpercent(end)])
+%         contourf(axx1(i), latace, pace, vmrzondifp(:,:,i), cgridpercent, 'ShowText', 'on'); caxis([cgridpercent(1),cgridpercent(end)])
+        contourf(axx1(i), latace, pace, vmrzondifp(:,:,i), -50:10:50, 'ShowText', 'on'); caxis([-50,50])
         title(fignames{i})
         set(gca, 'Ydir','reverse', 'YScale', 'log', 'YMinorTick','on','YMinorGrid','ON','XMinorTick','on', 'XMinorGrid', 'ON', 'YGrid', 'ON', 'FontSize',fs);
         yticks(ytickspace); ylim([ylim1 ylim2]);
@@ -271,7 +272,8 @@ if yplot == 1
             set(gca,'xticklabel',{[]})
         end
         if i == 5
-            colorbar('YTick', cgridpercent, 'Yticklabel', cpercent, 'Location','southoutside')
+            colorbar('YTick', -50:10:50, 'Yticklabel', -50:10:50, 'Location','southoutside')
+            colorbar('YTick', -50:10:50, 'Yticklabel', -50:10:50, 'Location','southoutside')
 %             colorbar('Location','southoutside')
             xlabel('latitude bins [deg N]')
             ylabel('pressure [hPa]')

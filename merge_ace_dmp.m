@@ -22,7 +22,7 @@ tic
 %% Only do if the lat and lon info isnt already there
 gas = tanstruct_in;
 dmp = dmpstruct_in;
-dmp = remove999_ace_dmp(dmp);
+dmp = filter_ace_dmp_999(dmp);
 
 tanstruct_out = gas;
 tanstruct_out.spv = nan(size(gas.vmr));

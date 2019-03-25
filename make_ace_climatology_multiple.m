@@ -38,7 +38,7 @@ function [ ] = make_ace_climatology_multiple( clim_type, varargin )
 home_linux = '/home/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/nryan/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\Dropbox\climatology\nryan\'; %#ok<NASGU>
-home_deluge = '/net/deluge/pb_1/users/nryan/';
+home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 
 % matdirectory = '/Volumes/Seagate Backup Plus Drive/ACE/matdata/';
 % matdirectory = 'F:\ACE\matdata\';
@@ -54,7 +54,8 @@ end
 % climdirectory = 'F:\ACE\climdata\';
 % climdirectory = strcat(home_mac,'climdata/');
 % climdirectory = strcat(home_deluge,'ACE/','climdata/');
-climdirectory = 'C:\Users\ryann\ACE\climdata_testing\time_matched_climatology\';
+% climdirectory = 'C:\Users\ryann\ACE\climdata_testing\time_matched_climatology\';
+climdirectory = 'C:\Users\ryann\ACE\climdata\';
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';
@@ -109,7 +110,7 @@ if isdir(climdirectory)
             if ~isempty(fileall)
                 for i = 1:length(fileall)
                     filein = strcat(matdirectory,fileall{i}); % get the path to the ith file in the list
-                    if ~strcmp(fileall{i}(10:end-4), 'GLC') && ~strcmp(fileall{i}(10:end-4), 'DMPv2p0')
+                    if ~strcmp(fileall{i}(10:end-4), 'GLC') && ~strcmp(fileall{i}(10:end-4), 'DMPv2p0') && ~strcmp(fileall{i}(10:end-4), 'DMPv2p0_fromtext') && ~strcmp(fileall{i}(10:end-4), 'DMP')
                         fprintf('\nPROCESSING %s\n',fileall{i}(10:end-4))
                         gasi = load(filein); gasi = gasi.tanstruct;
                         gasiglc = merge_ace_glc(gasi,glc);
