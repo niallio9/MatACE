@@ -44,7 +44,7 @@ if nargin > 2
     filter = filter_in;
     if strcmp(filter,'fraction') == 1
         fraction_val = 0.0015;
-%         fraction_val = 0.005;
+        fraction_val = 0.01;
     end
 else
     filter = 'none';

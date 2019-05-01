@@ -1,4 +1,4 @@
-function [mlsstruct_acesample, chosen_rowcolumn] = sample_and_scale_mls_for_ace(mlsstruct_in, tanstruct_in, pratstruct, output_appendix, minmax_mls)
+function [mlsstruct_acesample, chosen_rowcolumn] = sample_and_scale_mls_for_ace(mlsstruct_in, tanstruct_in, gas_name, pratstruct, output_appendix, minmax_mls)
 %A function to sample MLS data according to the time/lat/lon/alt of ACE
 %measurements. Data from a chemical box model is to scale the data.
 
@@ -10,9 +10,22 @@ function [mlsstruct_acesample, chosen_rowcolumn] = sample_and_scale_mls_for_ace(
 %           This structure can be created with 'read_ace_ncdata.m' or with
 %           'read_ace_ncdata_for_mat.m'.
 %
+%           pratstruct: STRUCTURE - contains the gas specific data for VMR
+%           as a function of local solar time. Created using the script
+%           'make_ace_gas_vmrs_with_pratmo(_by_year).mat'
+%
+%           output_appendix: STRING - an appendix to the name of the saved
+%           output file. OPTIONAL.
+%
+%           minmax_mls: STRUCTURE - contains the gas specific information
+%           about the maximum and minumum allowed values for gas at each
+%           altitude and latitude bin. This is a rather specific structure.
+%           The fields of the structure can be created using
+%           'get_ace_maxmin_by_lat_tangent.m'. OPTIONAL
+%
 % *OUTPUT*
-%           cmam_sample: STRUCTURE - with the data that has been sampled
-%           from CMAM.
+%           mlsstruct_acesample: STRUCTURE - with the data that has been
+%           sampled from MLS.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 04/18
 tic
@@ -39,18 +52,19 @@ disp('done')
 
 nocc = length(ace.occultation);
 lalt_ace = length(ace.altitude_km(:,1));
-% lalt_mls = length(mls.pressure_hPa(:,1));
+lalt_mls = length(mls.pressure_hPa(:,1));
+
 prat = pratstruct; %#ok<NASGU>
-pratmo_ratio_limit = Inf;
+pratmo_ratio_limit = 10;
 fprintf('A maximum scaling ratio of %f will be used\n', pratmo_ratio_limit)
 % pratmo_ratio_limit = pratmo_limit;
 % vmr_limit = 2e-9;
 % if nargin > 3
 %     vmr_minmax = vmr_minmax_in;
 % end
-savedest = 'MLS_v4p2_ClO_acesample_12h_1000km';
-% savedest = 'MLS_v4p2_HOCl_acesample_12h_1000km';
-if nargin > 3
+
+savedest = sprintf('MLS_v4p2_%s_acesample_12h_1000km', gas_name);
+if nargin > 4
     if ~isempty(output_appendix)
         output_appendix = strcat('_',output_appendix);
     end
@@ -61,24 +75,34 @@ end
 
 
 %% make a max and min for MLS data in latitude bounds
-if nargin > 4
+if nargin > 5
     if ~isempty(minmax_mls)
-    use_minmax = 1;
-    lat_bounds = minmax_mls.lat_bounds;
-    lat_bins = minmax_mls.lat_bins;
-    mls_maxvmr_latbins = minmax_mls.max_val;
-    disp('hard maxima chosen for the output')
-%     disp('loading MLS minumum and maximum data...')
-%     load('C:\Users\ryann\MLS\matdata\MLS_v4p2_ClO_maxmin_by_lat_20042010.mat') % this loads 'mls_maxvmr_latbins' and 'mls_minvmr_latbins' and 'latbins' and 'latbnds'
-% %     load('C:\Users\ryann\MLS\matdata\MLS_v4p2_HOCl_maxmin_by_lat_20042010.mat')
-%     disp('done')
+        if isscalar(minmax_mls)
+            use_minmax = 1;
+            lat_bounds = -90 : 5 : 90;
+            lat_bins = -87.5 : 5 : 87.5;
+            mls_maxvmr_latbins = ones(lalt_mls, length(lat_bins)) * minmax_mls;
+%             size(mls_maxvmr_latbins)
+            fprintf('hard maximum of %fppb chosen for the output\n', minmax_mls * 1e9)
+        elseif isstruct(minmax_mls)
+            use_minmax = 1;
+            lat_bounds = minmax_mls.lat_bounds;
+            lat_bins = minmax_mls.lat_bins;
+            mls_maxvmr_latbins = minmax_mls.max_val;
+            disp('hard maxima chosen for the output')
+            disp('')
+        else
+            error('unknown style of input for minmax_mls')
+        end
     else
         use_minmax = 0;
         disp('no hard maxima chosen for the output')
+        disp('')
     end
 else
     use_minmax = 0;
     disp('no hard maxima chosen for the output')
+    disp('')
 end
 
 %% output structure
@@ -108,10 +132,11 @@ k = 0;
 
 %% go through ace occultations
 disp('going through ACE occultations to find coincident MLS points...')
+disp('')
 starton = 1;
 for n = starton : nocc
     %         n
-    if ~rem(n,10) || n == 1
+    if ~rem(n,100) || n == 1
         fprintf('past occultation %i of %i\n', n, nocc);
     end
     ace_n = reduce_tanstruct_by_rowindex(ace,n);
@@ -209,6 +234,8 @@ for n = starton : nocc
                         % as if it were positive and subtract the initial
                         % vmr value. So scale the value into the positive,
                         % but keep the intial negative part too.
+%                         size(mls_h_int_d_vj.vmr(j,:))
+%                         whos
                         ifound = find(mls_h_int_d_vj.vmr(j,:) < 0 & ratio_prat_h_int_d_vj > 1); % vmr < 0, pratmo > 1
                         if ~isempty(ifound)
                             %                         disp('making some negative vmrs positive for >1 scaling.')
@@ -243,7 +270,7 @@ for n = starton : nocc
                             % crtiteria
                             inonan = find(~isnan(dj) & ~isnan(ratio_prat_h_int_d_vj) & ratio_prat_h_int_d_vj < pratmo_ratio_limit & vmr_x_prat_dj <= vmr_limit_max(j));% & vmr_x_prat_dj >= vmr_limit_min(j); % the indexes of the columns of dj that aren't nans
                             %                         size(dj)
-                            dj = dj(inonan); % remove nan values
+                            dj = dj(inonan); % remove nan values, and those that don't fit the criteria in the above line
                             %                         size(dj)
                             if ~isempty(dj)
                                 mls_h_int_d_vj = reduce_tanstruct_by_rowindex(mls_h_int_d_vj, inonan); % reduce the data to the rows that aren't nans at that altitude
@@ -276,6 +303,8 @@ for n = starton : nocc
                                     chosen_rowcolumn(k,:) = chosen_rowcolumn_n;
                                     out.lst_ratio(j,n) = ratio_prat_h_int_d_vj(idjmin);
                                 end
+                            else
+                                fprintf('no values meet the fractional and absolute limit criteria, n = %i. j = %i\n', n, j)
                             end
                         end
                     end
@@ -294,16 +323,17 @@ for n = starton : nocc
         fprintf('no data points lie within %f days. n = %i.\n', time_lim, n)
         % the nth 'out' column will remain all NaNs in this case
     end
-    if mod(n,1000) == 0 || n == 1
-        %         partialsave = sprintf('mlsstruct_acesample_%i_%i', starton, n);
-        mlsstruct_acesample_partialsave = out; %#ok<NASGU>
-        disp('partial save made without scaling applied')
-        save(savedest,'mlsstruct_acesample_partialsave');
-    else
-    end
+%     if mod(n,1000) == 0 || n == 1
+%         %         partialsave = sprintf('mlsstruct_acesample_%i_%i', starton, n);
+%         mlsstruct_acesample_partialsave = out; %#ok<NASGU>
+%         disp('partial save made without scaling applied')
+%         save(savedest,'mlsstruct_acesample_partialsave');
+%     else
+%     end
 end
 out.vmr = out.vmr .* out.lst_ratio;
 out.vmr_error = out.vmr_error .* out.lst_ratio;
+out.ratio_applied = true;
 
 mlsstruct_acesample = out;
 fprintf('\nSaving sampled data with scaling applied to %s\n', savedest);

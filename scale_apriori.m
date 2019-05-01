@@ -1,4 +1,4 @@
-function [ apriori_out, tanstruct_out ] = scale_apriori( apriori_in, tanstruct_in, pressure_hPa_limits )
+function [ apriori_out, tanstruct_out ] = scale_apriori( apriori_in, tanstruct_in, altitude_or_pressure, limits )
 %A function to scale an a priori vmr profile to approximate the input data
 %profiles, and add the scaled data to areas outside the pressure limits of
 %the input data.
@@ -34,12 +34,12 @@ prior = apriori_in;
 gas = tanstruct_in;
 norbit = length(gas.occultation);
 prior_out = nan(size(gas.vmr));
-factor_limit = 10;
+factor_limit = Inf;
 failure_low = 0;
 failure_high = 0;
 for n = 1 : norbit
 %     n
-    inonan = find(~isnan(gas.vmr(:,n))); %the indices of vmr values that are not nans
+    inonan = find(~isnan(gas.vmr(:,n)) & gas.vmr(:,n) ~=0); %the indices of vmr values that are not nans
     if ~isempty(inonan)
         %         whos
         factor_low = gas.vmr(inonan(1),n) ./ prior(inonan(1));
@@ -69,28 +69,49 @@ end
 if nargin > 2
     disp('adding scaled a priori data to tanstruct')
     gasout = gas;
-    % fill in the values outside the limits with the scaled apriori 
-    limit_low = pressure_hPa_limits(1);
-    limit_high = pressure_hPa_limits(2);
-    for n = 1 : norbit
-        %low altitude values
-        ilow = find(gasout.pressure_hPa(:,n) > limit_low);
-        gasout.vmr(ilow,n) = prior_out(ilow,n);
-        gasout.vmr_error(ilow,n) = -888;
-        gasout.quality_flags(ilow,n) = 8;
-        %high altitude values
-        ihigh = find(gasout.pressure_hPa(:,n) < limit_high);
-        gasout.vmr(ihigh,n) = prior_out(ihigh,n);
-        gasout.vmr_error(ihigh,n) = -888;
-        gasout.quality_flags(ihigh,n) = 8; 
+    switch altitude_or_pressure
+        case 'pressure'
+            disp('using entered pressure limits (hPa)')
+            % fill in the values outside the limits with the scaled apriori
+            limit_low = limits(1);
+            limit_high = limits(2);
+            for n = 1 : norbit
+                %low altitude values
+                ilow = find(gasout.pressure_hPa(:,n) > limit_low);
+                gasout.vmr(ilow,n) = prior_out(ilow,n);
+                gasout.vmr_error(ilow,n) = -888;
+                gasout.quality_flags(ilow,n) = 8;
+                %high altitude values
+                ihigh = find(gasout.pressure_hPa(:,n) < limit_high);
+                gasout.vmr(ihigh,n) = prior_out(ihigh,n);
+                gasout.vmr_error(ihigh,n) = -888;
+                gasout.quality_flags(ihigh,n) = 8;
+            end
+        case 'altitude'
+            disp('using entered altitude limits (km)')
+            % fill in the values outside the limits with the scaled apriori
+            limit_low = limits(1);
+            limit_high = limits(2);
+            for n = 1 : norbit
+                %low altitude values
+                ilow = find(gasout.altitude_km < limit_low);
+                gasout.vmr(ilow,n) = prior_out(ilow,n);
+                gasout.vmr_error(ilow,n) = -888;
+                gasout.quality_flags(ilow,n) = 8;
+                %high altitude values
+                ihigh = find(gasout.altitude_km > limit_high);
+                gasout.vmr(ihigh,n) = prior_out(ihigh,n);
+                gasout.vmr_error(ihigh,n) = -888;
+                gasout.quality_flags(ihigh,n) = 8;
+            end
     end
     tanstruct_out = gasout;
     
 end
 
 apriori_out = prior_out;
-failure_low
-failure_high
+disp(failure_low)
+disp(failure_high)
 %
 end
 

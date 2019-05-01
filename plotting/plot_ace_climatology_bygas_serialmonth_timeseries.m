@@ -21,7 +21,9 @@ gasname = gasname_in;
 home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
-clim_dir = 'C:\Users\ryann\ACE\climdata\';
+clim_dir = 'C:\Users\ryann\ACE\climdata\scaled_with_all_data\';
+% clim_dir = '/Users/niall/ACE/climdata_pratmo_scaled/';
+
 % clim_dir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
 % clim_dir = '/Users/niall/Dropbox/'; %#ok<NASGU>
 
@@ -39,6 +41,7 @@ sdates = nan(1,12*lyears);
 
 vmrzon = nan(48,36,12*lyears);
 vmrzon_error = nan(48,36,12*lyears);
+vmrzon_obscount = nan(48,36,12*lyears);
 
 if nargin > 3
     yplot = do_plot;
@@ -68,16 +71,18 @@ for j = 1:lyears
                 fprintf('There is no file for %s_%i_%0.2i. Moving on...\n', gasname, yearsin(j), i)
                 vmrzon(:,:,ij) = nan(48,36); % this is hardcoded here, for now.
                 vmrzon_error(:,:,ij) = nan(48,36);
-                %                 vmrzon_obscount(:,:,ij) = nan(48,36);
+                vmrzon_obscount(:,:,ij) = nan(48,36);
             else
                 clim = load(filein); clim = clim.climstruct; % the variable is called climstruct in the new data
+%                 clim = reduce_climstruct_data_by_obs_nr(clim, 5);
                 vmrzon(:,:,ij) = clim.vmr_zonal;
                 vmrzon_error(:,:,ij) = sqrt(clim.vmr_zonal_var);
-                %                 vmrzon_obscount(:,:,ij) = clim.obs_count;
+                vmrzon_obscount(:,:,ij) = clim.obs_count;
             end
         else
             vmrzon(:,:,ij) = nan(48,36); % this is hardcoded here, for now.
             vmrzon_error(:,:,ij) = nan(48,36);
+            vmrzon_obscount(:,:,ij) = nan(48,36);
         end
     end
 end
@@ -97,7 +102,8 @@ ilatmin = find(lat_bounds == latmin);
 ilatmax = find(lat_bounds == latmax) - 1;
 
 vmrzon = squeeze(nanmean(vmrzon(:,ilatmin:ilatmax,:), 2 )) * 1e9;
-vmrzon_error = squeeze(nanmean(vmrzon_error(:,ilatmin:ilatmax,:), 2 )) * 1e9;
+vmrzon_error = squeeze(nanmean(vmrzon_error(:,ilatmin:ilatmax,:), 2 )) * 1e9; % this needs to be fixed for proper error propagation
+vmrzon_obscount = squeeze(nansum(vmrzon_obscount(:,ilatmin:ilatmax,:), 2 ));
 
 %% Make the plots if you want
 lw = 1;
@@ -124,6 +130,36 @@ if yplot == 1
 %         set(gca,'XTickLabel',[]);
         if i == 1
             title(sprintf('%s zonal VMR, %i-%i%c latitude', gasname, latmin, latmax, char(176)))
+        end
+%         dynamicDateTicks([],'x','mm')
+        if i == 4
+            dynamicDateTicks([],'x','mm')
+            %                 dynamicDateTicks
+            xlabel('year')
+            linkaxes(axx,'x')
+        else
+%                             datetick('x','mmyy')
+            set(gca,'xticklabel',{[]})
+        end
+    end
+    
+    % Do for the zonal vmr
+        figi = figi + 1;
+%     figi = 19;
+    figure(figi), set(gcf,'Position', [97,49,852,630])
+    axx = nan(nalt,1);
+    disp('plotting by altitude')
+    for i = 1:nalt
+        figure(figi), axx(i) = subplot(nalt,1,i); hold(axx(i),'on')
+        stem(axx(i),sdates, vmrzon_obscount(ipplot(i),:),'bo-', 'Linewidth', lw, 'MarkerSize', ms )
+        dynamicDateTicks([],'x','mm')
+        %             ylim([0,4.0])
+        ytext = max(vmrzon_obscount(ipplot(i),:))*1.1; % the position for the text in the plots, in ppbv
+        text(sdates(5), ytext, sprintf('%0.1f hPa (~%0.1f km)', pace(ipplot(i)), zace(ipplot(i)) ));
+        ylabel('# of obs''')
+%         set(gca,'XTickLabel',[]);
+        if i == 1
+            title(sprintf('%s zonal observation count, %i-%i%c latitude', gasname, latmin, latmax, char(176)))
         end
 %         dynamicDateTicks([],'x','mm')
         if i == 4

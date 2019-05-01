@@ -37,6 +37,11 @@ lgases = length(gasnames); % number of gases to read
 fprintf('\nWill be calculating VMRs for %i gases...\n', lgases)
 aceo3 = tanstruct_o3_in;
 aceT = tanstruct_T_in;
+% include the scaled apriori data
+disp('inlcuding scaled a priori data')
+aceo3 = include_ace_scaled_apriori(aceo3);
+aceT = include_ace_scaled_apriori(aceT);
+% apply flags
 disp('applying flags')
 aceo3 = apply_ace_flags(aceo3);
 aceT = apply_ace_flags(aceT);
@@ -54,10 +59,10 @@ zlowi = aceo3.altitude_km < 75; % get data below 75km. for the box model, i thin
 zlow = aceo3.altitude_km(zlowi);
 lzlow = length(zlow);
 o3 = aceo3.vmr(zlowi,:);
-T = aceT.vmr(zlowi,:);
-P = aceo3.pressure_hPa(zlowi,:);
+T = aceT.vmr(zlowi,:); % in Kelvin
+P = aceo3.pressure_hPa(zlowi,:); % in hPa
 kb = 1.38064852e-23; % Boltzmann's constant
-Nair = ( 100*P ./ ( (T + 273.15) * kb) )*1e-6; % this is the air density in cm^3
+Nair = ( 100*P ./ ( T * kb) )*1e-6; % this is the air density in cm^3
 o3 = o3.*Nair;
 lat = aceo3.lat_tangent;
 lon = aceo3.lon_tangent;
@@ -107,7 +112,7 @@ for j = 1:nace
     init.albedo = a;
     init.ndmr = 0;  % 0=save as vmr; 1=number density
     %% IMPORTANT CHOICE FOR ATMOSPHERIC VARIABLES
-        init.atmos = [zlow T(:,j) Nair(:,j) o3(:,j) NOy N2O Bry];
+    init.atmos = [zlow T(:,j) Nair(:,j) o3(:,j) NOy N2O Bry];
 % % %     init.atmos = []; % use default pratmo climatologies
     %%
     init.aero_scalefactor = 1;
@@ -116,7 +121,8 @@ for j = 1:nace
     
     % run with O3 held constant
     [box0] = run_boxmodel_njr(init);
-%     test = box0;
+% %     test = box0;
+% % return
     
     %find the profile values at the LSTs of ACE and get the
     %scaling fraction

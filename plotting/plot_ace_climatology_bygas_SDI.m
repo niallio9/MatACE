@@ -41,7 +41,7 @@ function [ ] = plot_ace_climatology_bygas_SDI( gas_in, year_in, do_log )
 % climdir = 'F:\ACE\climdata\';
 % climdir = '/net/deluge/pb_1/users/nryan/ACE/climdata/';
 % climdir = '/Users/niall/ACE/climdata_netcdf';
-climdir = 'C:\Users\ryann\ACE\ACE_climdata_netcdf_SDI_20190311';
+climdir = 'C:\Users\ryann\ACE\ACE_climdata_netcdf_SDI_20190409';
 % climdir = 'C:\Users\ryann\ACE\MAESTRO\climdata_netcdf';
 
 if ~isdir(climdir)
@@ -126,8 +126,8 @@ figure(figi), set(gcf,'Position', [97,49,852,630])
 suptitle(sprintf('%s zonal VMR, %i',gasname, yearin))
 hold on
 for i = 1:12
-%     subplot(4,3,i), plot_on_ace_SDI_latlev_contourf( vmrzon(:,:,i)', sprintf('%0.2i',months(i)), cgrid )
-    subplot(4,3,i), plot_on_ace_SDI_latlev_pcolor( vmrzon(:,:,i)', sprintf('%0.2i',months(i)) )
+    subplot(4,3,i), plot_on_ace_SDI_latlev_contourf( vmrzon(:,:,i)', sprintf('%0.2i',months(i)), cgrid )
+%     subplot(4,3,i), plot_on_ace_SDI_latlev_pcolor( vmrzon(:,:,i)', sprintf('%0.2i',months(i)) )
     ylim([10^0,10^3])
     caxis([cgrid(1),cgrid(end)])
     colormap(parula(length(cgrid) - 1))

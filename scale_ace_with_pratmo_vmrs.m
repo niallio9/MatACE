@@ -1,7 +1,9 @@
  function [ tanstruct_scaled, vmr_ratio ] = scale_ace_with_pratmo_vmrs( tanstruct_in, ratios_in, lst_in )
 %A function to scale ACE VMR profiles to a given local solar time using
 %VMRs calculated using a chemical box model (like PRATMO). PRATMO VMRs can
-%be calculated with 'make_ace_gas_vmrs_with_pratmo.m'.
+%be calculated with 'make_ace_gas_vmrs_with_pratmo.m'. When there are
+%occultations present in the ace structure and not in the pratmo structure
+%(and vice-versa), the vmr and error values are replaced with nans
 
 % *INPUT*
 %           tanstruct_in: STRUCTURE - contains the gas specific ACE data.
@@ -72,34 +74,34 @@ ratorbit(2,1:lrat) = rat.sr1ss0;
 [ygas, yrat] = ismember(gasorbit',ratorbit','rows'); % use this instead of above line so that repeated occultations can be used
 [ygas] = find(ygas);
 [~,~,yrat] = find(yrat);
-lygas = length(ygas);
+% lygas = length(ygas);
 % x = ratorbit;
 % y = gasorbit;
 % return
 
-vmr_lst_ace = nan(lzgas,lygas);
-vmr_lst_in = nan(lzgas,lygas);
-% vmr_scaled = nan(lzgas,lygas);
-% vmr_error_scaled = nan(lzgas,lygas);
+vmr_lst_ace = nan(lzgas,lgas);
+vmr_lst_in = nan(lzgas,lgas);
+% vmr_scaled = nan(lzgas,lgas);
+% vmr_error_scaled = nan(lzgas,lgas);
 
 %% set up new tanstruct
 out.source_file = gas.source_file;
-out.occultation = nan(1,lygas);
-out.sr1ss0 = nan(1,lygas);
-out.beta_angle = nan(1,lygas);
-out.date_mjd = nan(lzgas,lygas);
+out.occultation = nan(1,lgas);
+out.sr1ss0 = nan(1,lgas);
+out.beta_angle = nan(1,lgas);
+out.date_mjd = nan(lzgas,lgas);
 % out.date_mjd = rat.date_mjd(yrat); % change the time to the times of the ratios. This will be the same day but at the 'LST_in'
 out.gas = gasname;
 out.altitude_km = gas.altitude_km;
-out.vmr = nan(lzgas,lygas);
-out.vmr_error = nan(lzgas,lygas);
-out.lat_tangent = nan(1,lygas);
-out.lon_tangent = nan(1,lygas);
-out.quality_flags = nan(lzgas,lygas);
-out.pressure_hPa = nan(lzgas,lygas);
+out.vmr = nan(lzgas,lgas);
+out.vmr_error = nan(lzgas,lgas);
+out.lat_tangent = nan(1,lgas);
+out.lon_tangent = nan(1,lgas);
+out.quality_flags = nan(lzgas,lgas);
+out.pressure_hPa = nan(lzgas,lgas);
 if isfield(gas,'lon')
-    out.lon = nan(lzgas,lygas);
-    out.lat = nan(lzgas,lygas);
+    out.lon = nan(lzgas,lgas);
+    out.lat = nan(lzgas,lgas);
 end
 
 %% get the PRATMO profiles at lst_ace and lst_in and find the ratio by VMR@lst_in/VMR2lst_ace
@@ -107,82 +109,75 @@ disp('scaling data...')
 for i = 1:length(ygas)
 %         i
     inonan = ~isnan(rat.lst(:,yrat(i))); % get indices of where there are not nans in the pratmo LSTs
-    
     if sum(inonan) > 10 % only do if you have more than 10 profiles in pratmo for that day
         for j = 1:lzrat
-            %             j
-            %             inonan
-            %             j
-            %             yrat(i)
-            %             return
-%             ygas(i)
             ratlsti = rat.lst(inonan,yrat(i)); % inonan x 1
             ratvmri = rat.vmr(inonan,j,yrat(i)); % inonan x 1 x 1
             [ratlsti, Iratlsti] = unique(ratlsti); % remove repeating lst values for this profile
             ratvmri = ratvmri(Iratlsti); % remove the corresponding vmrs too
-            
-% % %             vmrlstace = interp1(ratlsti, ratvmri, lstgas(j, ygas(i)));
-% % %             vmrlstin = interp1(ratlsti, ratvmri, lstin(j, ygas(i)));
-            
-            vmr_lst_ace(j,i) = interp1(ratlsti, ratvmri, lstgas(j, ygas(i))); % lzgas x length(ygas)
-            vmr_lst_in(j,i) = interp1(ratlsti, ratvmri, lstin(j, ygas(i))); % lzgas x length(ygas)
-% % %             vmr_lst_ace(j,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,j,yrat(i)), lstgas(j, ygas(i))); % lzgas x length(ygas)
-% % %             vmr_lst_in(j,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,j,yrat(i)), lstin(j, ygas(i))); % lzgas x length(ygas)
-
-%             vmr_lst_ace(j,i)
-%             vmr_lst_in(j,i)
-%             ygas(i)
-%             lstgas(j, ygas(i))
-%             lstin(j, ygas(i))
+            vmr_lst_ace(j,ygas(i)) = interp1(ratlsti, ratvmri, lstgas(j, ygas(i))); % lzgas x lgas
+            vmr_lst_in(j,ygas(i)) = interp1(ratlsti, ratvmri, lstin(j, ygas(i))); % lzgas x lgas
         end
     end
 end 
 
-
-
-% % % for i = 1314:1314%1:length(ygas)
-% % % %     i
-% % %     inonan = ~isnan(rat.lst(:,yrat(i))); % get indices of where there are not nans in the pratmo LSTs
-% % %     if sum(inonan) > 10 % only do if you have more than 10 profiles in pratmo for that day
-% % %         vmr_lst_ace(1:lzrat,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,:,yrat(i)), lstgas(ygas(i))); % lzgas x length(ygas)
-% % %         vmr_lst_in(1:lzrat,i) = interp1(rat.lst(inonan,yrat(i)), rat.vmr(inonan,:,yrat(i)), lstin(ygas(i))); % lzgas x length(ygas)
-% % %     end
-% % % end
-
+%% scale and fill in the output data
 if ~isempty(ygas)
-%     vmr_ratio(:,ygas) = vmr_lst_in ./ vmr_lst_ace; % lzrat x length(ygas)
-    vmr_ratio = vmr_lst_in ./ vmr_lst_ace; % lzrat x length(ygas)
-    vmr_scaled = gas.vmr(:,ygas) .* vmr_ratio; % lzgas x length(ygas)
-    vmr_error_scaled = gas.vmr_error(:,ygas) .* vmr_ratio;
+    vmr_ratio = vmr_lst_in ./ vmr_lst_ace; % lzgas x lgas. has nans at occultations not in ygas
+    vmr_ace = gas.vmr; % lzgas x lgas
+    
+    ifound = find(vmr_ace < 0 & vmr_ratio > 1); % vmr < 0, pratmo > 1
+    if ~isempty(ifound)
+        %                         disp('making some negative vmrs positive for >1 scaling.')
+        %                         fprintf('n = %i. j = %i\n', n, j)
+        vmr_ace(ifound) = vmr_ace(ifound) * -1; % change the vmr from negative to positive here. this is the same as x + 2*abs(x)
+        vmr_ace(ifound) = ( (vmr_ratio(ifound) .* vmr_ace(ifound)) - 2*vmr_ace(ifound) ) ./ vmr_ratio(ifound);
+        % this line above gives:
+        % ((pratmo*vmr) - 2*vmr) / pratmo
+        % which, when multiplied by pratmo later on,
+        % will give (pratmo*vmr) - 2*vmr)
+    end
+    
+    
+    vmr_scaled = vmr_ace .* vmr_ratio; % lzgas x lgas. nans at occultations not in ygas
+    vmr_error_scaled = gas.vmr_error .* vmr_ratio; % lzgas x lgas. 
     % vmr_scaled(1:lzrat,:) = gas.vmr(1:lzrat,ygas) .* vmr_ratio;
     % vmr_error_scaled(1:lzrat,:) = gas.vmr_error(1:lzrat,ygas) .* vmr_ratio;
 else % otherwise give out nans the same length as the number of measurements
-    vmr_ratio = nan(lzgas,lygas);
+    warning('there are no matching occultations')
+    vmr_ratio = nan(lzgas,lgas);
+    vmr_scaled = vmr_ratio; % nans
+    vmr_error_scaled = vmr_ratio; % nans
 end
 %%output the new tanstruct
 out.source_file = gas.source_file;
-out.occultation = gas.occultation(ygas);
-out.sr1ss0 = gas.sr1ss0(ygas);
-out.beta_angle = gas.beta_angle(ygas);
+out.occultation = gas.occultation;
+out.sr1ss0 = gas.sr1ss0;
+out.beta_angle = gas.beta_angle;
 % whos
 % size(gas.date_mjd)
 if isvector(gas.date_mjd) && ismatrix(lstgas)
     gas.date_mjd = repmat(gas.date_mjd, length(lstgas(:,1)), 1); % to run on stupid fucking deluge
 end
 % length(ygas)
-out.date_mjd = gas.date_mjd(:,ygas) + (lstin(:,ygas) - lstgas(:,ygas))./24; % change the time to the same day but at the lst_in. Shift the original time by the number of hours between the original and new LST
+out.date_mjd = gas.date_mjd + (lstin - lstgas)./24; % change the time to the same day but at the lst_in. Shift the original time by the number of hours between the original and new LST
 % out.date_mjd = rat.date_mjd(yrat); % change the time to the times of the ratios. This will be the same day but at the 'LST_in'
 out.gas = gasname;
 out.altitude_km = gas.altitude_km;
 out.vmr = vmr_scaled;
 out.vmr_error = vmr_error_scaled;
-out.lat_tangent = gas.lat_tangent(ygas);
-out.lon_tangent = gas.lon_tangent(ygas);
+out.lat_tangent = gas.lat_tangent;
+out.lon_tangent = gas.lon_tangent;
 % out.quality_flags = gas.quality_flags(:,ygas);
-out.pressure_hPa = gas.pressure_hPa(:,ygas);
+out.pressure_hPa = gas.pressure_hPa;
+% if length(gas.pressure_hPa(1,:)) > 1
+%     out.pressure_hPa = gas.pressure_hPa(:,ygas);
+% else
+%     out.pressure_hPa = gas.pressure_hPa;
+% end
 if isfield(gas,'lon')
-    out.lon = gas.lon(:,ygas);
-    out.lat = gas.lat(:,ygas);
+    out.lon = gas.lon;
+    out.lat = gas.lat;
 end
 out.lst_ratio = vmr_ratio;
 out.ratio_applied = true;

@@ -38,6 +38,12 @@ monthnames = {'January', 'February', 'March', 'April', 'May', 'June', ...
 
 %% Define some things
 gas = tanstruct;
+if length(gas.date_mjd(:,1)) > 1 % if the dates are in an array rather than a vector
+    disp('the dates are in an array, so they will be averaged within each occultation...')
+    gas.date_mjd = nanmean(gas.date_mjd);
+    disp('done')
+end
+    
 climstruct = []; %#ok<NASGU>
 
 %% Only continue of the output directory exists

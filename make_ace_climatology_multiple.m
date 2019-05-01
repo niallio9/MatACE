@@ -44,7 +44,9 @@ home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 % matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
 % matdirectory = strcat(home_deluge,'ACE/','matdata/');
-matdirectory = 'C:\Users\ryann\ACE\matdata\';
+matdirectory = 'C:\Users\ryann\ACE\matdata\scaled_with_all_data/';
+% matdirectory = '/Users/niall/ACE/matdata/pratmo_scaled_data/';
+
 if ~isdir(matdirectory)
     fprintf('\nIt doesn''t look like ''%s'' exists...\n',matdirectory)
     error('The directory containing the .mat data couldn''t be found')
@@ -55,7 +57,8 @@ end
 % climdirectory = strcat(home_mac,'climdata/');
 % climdirectory = strcat(home_deluge,'ACE/','climdata/');
 % climdirectory = 'C:\Users\ryann\ACE\climdata_testing\time_matched_climatology\';
-climdirectory = 'C:\Users\ryann\ACE\climdata\';
+climdirectory = 'C:\Users\ryann\ACE\climdata\scaled_with_all_data/';
+% climdirectory = '/Users/niall/ACE/climdata_pratmo_scaled/';
 
 %%STANDARD
 filein_pre = 'ACE_v3p6_';

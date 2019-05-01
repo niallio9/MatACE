@@ -22,7 +22,7 @@ function [ ] = write_ace_climatology_to_netcdf_SDI( varargin )
 %USER DEFINED
 % climdir = '/Users/niall/Dropbox/climatology/nryan/climdata/'; % edit this to your directory that contains the ACE netcdf data
 % climdir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
-climdir = 'C:\Users\ryann\ACE\climdata';
+climdir = 'C:\Users\ryann\ACE\climdata\scaled_with_all_data';
 % climdir = 'F:\ACE\climdata\';
 % climdir = '/net/deluge/pb_1/users/nryan/ACE/climdata/';
 if ~isdir(climdir)
@@ -82,8 +82,7 @@ if isdir(ncdir)
         gasfolder = intersect(gasfolder, gas_in); 
     end
     
-    for i = 1:length(gasfolder) % loop through the gases
-        % check if the current gas is part of the input 
+    for i = 1:length(gasfolder) % loop through the gases 
         gasdir_i = fullfile(climdir,gasfolder{i}); % make the full path to the folder for a gas
         if exist(gasdir_i,'dir') ~=7
             error('there is no folder found called %s. Stopping.', gasdir_i)
@@ -119,7 +118,11 @@ if isdir(ncdir)
                     if exist(climfile_k,'file') == 2 % check if the file exists for that month
                         load(climfile_k); % loads a variable called climstruct
                         % reduce the climstruct to only include climatology points that are created by more then 5 observations
-                        climstruct = reduce_climstruct_data_by_obs_nr(climstruct, min_obs);
+                        if length(gasfolder{i}) > 2
+                            if ~strcmp(gasfolder{i}(1:3), 'NOy') || ~strcmp(gasfolder{i}(1:3), 'NOx')
+                            climstruct = reduce_climstruct_data_by_obs_nr(climstruct, min_obs);
+                            end
+                        end
                         %get the data you need for the netcdf file
                         vmr_out(:,:,k) = climstruct.vmr_zonal(levind,:)'; %36x48 array
                         vmr_std_out(:,:,k) = sqrt(climstruct.vmr_zonal_var(levind,:)'); % want the standard deviation here

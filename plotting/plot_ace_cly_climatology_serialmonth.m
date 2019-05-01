@@ -42,7 +42,7 @@ datasource = 'both';
 
 switch datasource
     case 'instrument'
-        clo = {'ClOmls_sap'};
+        clo = {'ClOmlsonly'};
         hocl = {'HOClmls_sap'};
         hcl = {'HCl'};
         clono2 = {'ClONO2_sap'};
@@ -54,10 +54,10 @@ switch datasource
         clono2 = {'ClONO2cmam'};
 %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlspratlatnegfixampmvortex_sap','ClOcmam'};
-        hocl = {'HOClmlspratlatnegfixampmvortex_sap','HOClcmam'};
+        clo = {'ClOmlsfrac10lim4ppb_sap','ClOcmam'};
+        hocl = {'HOClmlsfrac10lim4ppb_sap','HOClcmam'};
         hcl = {'HCl','HClcmam'};
-        clono2 = {'ClONO2','ClONO2cmam'};
+        clono2 = {'ClONO2_sap2','ClONO2cmam'};
 %         clo = {'ClOcmam','ClOmlsprat10_sap'};
 %         hocl = {'HOClcmam', 'HOClmls_sap'};
 %         hcl = {'HClcmam','HCl'};
@@ -209,12 +209,12 @@ for n = 1:length(clo)
     
     %% make Cly
     %decide which types of data to use in the sum
-    cly_clo = vmrzon_clo; % ignore missing data except for when there is no data in a profile at all
-    cly_hocl = vmrzon_hocl; % ignore missing data except for when there is no data in a profile at all
-    cly_hcl = vmrzon_hcl; % don't ignore missing data because it is always relevent
-    cly_clono2 = vmrzon_clono2; % ignore missing data except for when there is no data in a profile at all
+    cly_clo = vmrzon_clo; 
+    cly_hocl = vmrzon_hocl;
+    cly_hcl = vmrzon_hcl;
+    cly_clono2 = vmrzon_clono2;
     
-    cly_clo_edit = vmrzon_clo; % ignore missing data except for when there is no data in a profile at all
+    cly_clo_edit = vmrzon_clo;
     cly_hocl_edit = vmrzon_hocl_nan2zero; % ignore missing data except for when there is no data in a profile at all
     cly_hcl_edit = vmrzon_hcl; % don't ignore missing data because it is always relevent
     cly_clono2_edit = vmrzon_clono2_nan2zero; % ignore missing data except for when there is no data in a profile at all
@@ -227,8 +227,12 @@ for n = 1:length(clo)
     vmrzon_cly = cly_clo + cly_hocl + cly_hcl + cly_clono2;
     vmrzon_cly_error = cly_clo_error + cly_hocl_error + cly_hcl_error + cly_clono2_error;
     
-    vmrzon_cly_edit = cly_clo_edit + cly_hcl_edit + cly_clono2_edit;
+    vmrzon_cly_edit = cly_clo_edit + cly_hcl_edit + cly_clono2_edit + cly_hocl_edit;
     vmrzon_cly_error_edit = cly_clo_error + cly_hcl_error + cly_clono2_error;
+    
+    %%
+    vmrzon_hocl = vmrzon_hocl_nan2zero;
+    %%
     
     %% subset according to the chosen lat limits
     % average over some latitude bins if needed
@@ -266,7 +270,7 @@ for n = 1:length(clo)
     if yplot == 1
         % Do for the zonal vmr
         %     figi = randi(100);
-        figi = 19;
+        figi = 29;
         %     figure(figi), set(gcf,'Position', [5,12,1096,704])
         %     figure(figi), set(gcf,'Position', [358,61,722,532])
         figure(figi), set(gcf,'Position', [97,49,852,630])
@@ -353,7 +357,7 @@ for n = 1:length(clo)
             ylim1 = 10^-1;
             if n == 1
                 figure(figii),
-                fignames = {'ClO\_meas', 'HOCl\_meas', 'HCl\_meas', 'ClONO2\_meas', 'Cly\_meas', 'Cly\_meas (no HOCl, ClONO2 above 40 km)'};
+                fignames = {'ClO\_meas', 'HOCl\_meas', 'HCl\_meas', 'ClONO2\_meas', 'Cly\_meas', 'Cly\_meas (scaled ClONO2 and ignoring missing HOCl)'};
 %                                 fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (no HOCl, ClONO2 above 40 km)'};
                 disp('plotting instrument data')
                 i = 1; axx1(i) = subplot(ngas,1,i); hold(axx1(i),'on'), box on, title(fignames{i},'FontSize',fs_title)
@@ -361,7 +365,12 @@ for n = 1:length(clo)
                 set(gca, 'Ydir','reverse', 'YScale', 'log', 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
                 yticks(ytickspace); set(gca,'xticklabel',{[]}); ylim([ylim1 ylim2]); % colormap(parula(length(cgrid) - 1));
                 i = 2; axx1(i) = subplot(ngas,1,i); hold(axx1(i),'on'), box on, title(fignames{i},'FontSize',fs_title)
+                %%
+                whos vmrzon_hocl cly_hocl_edit
                 contourf(axx1(i), sdates, pace, vmrzon_hocl, cgrid ); caxis([cgrid(1),cgrid(end)])
+%                 contourf(axx1(i), sdates, pace, vmrzon_hocl_nan2zero, cgrid ); caxis([cgrid(1),cgrid(end)])
+                
+                %%
                 set(gca, 'Ydir','reverse', 'YScale', 'log', 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
                 yticks(ytickspace); set(gca,'xticklabel',{[]}); ylim([ylim1 ylim2]); % colormap(parula(length(cgrid) - 1));
                 i = 3; axx1(i) = subplot(ngas,1,i); hold(axx1(i),'on'), box on, title(fignames{i},'FontSize',fs_title)
@@ -388,7 +397,7 @@ for n = 1:length(clo)
                 dynamicDateTicks([],'x','mmyy')
             elseif n == 2
                 figure(figii + 1), set(gcf,'Position', [97,49,852,630])
-                fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (no HOCl, ClONO2 above 40 km)'};
+                fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (scaled ClONO2 and ignoring missing HOCl)'};
                 disp('plotting model data')
                 i = 1; axx2(i) = subplot(ngas,1,i); hold(axx2(i),'on'), box on, title(fignames{i},'FontSize',fs_title)
                 contourf(axx2(i), sdates, pace, vmrzon_clo, cgrid); caxis([cgrid(1),cgrid(end)])

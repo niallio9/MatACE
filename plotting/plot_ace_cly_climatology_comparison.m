@@ -29,7 +29,8 @@ file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 file_post = '_20042010.mat';
 
 % dataX = {clo, hocl, hcl, clono2, Cly}; the Cly name is a dummy for later
-gasnames1 = {'ClOmlspratlatfiltermeanpolenegfixkw2ampmvortex_sap','HOClmlspratlatnegfixkw2ampmvortex_sap','HCl','ClONO2'};
+% gasnames1 = {'ClOmlspratlatfiltermeanpolenegfixkw2ampmvortex_sap','HOClmlspratlatnegfixkw2ampmvortex_sap','HCl','ClONO2'};
+gasnames1 = {'ClOmlsfrac10lim4ppb_sap','HOClmlsfrac10lim4ppb_sap','HCl','ClONO2'};
 gasnames2 = {'ClOcmam','HOClcmam','HClcmam','ClONO2cmam'};
 
 %% define some things
@@ -52,7 +53,7 @@ vmrzon2 = nan(48,36,length(gasnames1) + 1);
 
 %% loop through the months and fill in the cells of arrays
 for i = 1:length(gasnames1)% for each gas
-    filei = strcat( clim_dir, gasnames1{i},'/', file_pre, gasnames1{i}, file_post);
+    filei = strcat( clim_dir, gasnames1{i},'/', file_pre, gasnames1{i}, file_post)
     if exist(filei,'file') ~= 2
         fprintf('There is no file for %i_%0.2i. Moving on...\n', yearin, months(i))
         vmrzon1(:,:,i) = nan(48,36); % this is hardcoded here, for now.

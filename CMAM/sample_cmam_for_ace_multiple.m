@@ -19,7 +19,7 @@ function [cmam_acesample] = sample_cmam_for_ace_multiple(tanstruct_in, gasname_i
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 07/18
 %% Define some things
-cmam_dir = 'F:\CMAM\CMAM30\';
+cmam_dir = 'D:\CMAM\';
 ace = tanstruct_in;
 gasname_cmam = gasname_in;
 % the files are named like:

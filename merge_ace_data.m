@@ -58,7 +58,7 @@ end
 
 %% merge the data
 if isfield(gas1,'source_file') && isfield(gas2,'source_file') % when there is DMP data included in the tanstruct
-    gasout.source_file = sstrcat(gas1.source_file, ', ', gas2.source_file);
+    gasout.source_file = strcat(gas1.source_file, ', ', gas2.source_file);
 else
     fprintf('the ''source_file'' fields were not merged because it is not present in both inputs\n')
 end
