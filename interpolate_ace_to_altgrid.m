@@ -96,6 +96,7 @@ for i = 1:lorbit
         zacei_s = zacei(lgood); % reduce the size as well
         %interpolate the fields in log-pressure space
         gasout.vmr(:,i) = interp1(zacei_s,vmri,zgridi,interptype,nan);
+%         i
         gasout.vmr_error(:,i) = interp1(zacei_s,vmr_errori,zgridi,interptype,nan);
     end
     %interpolating the pressure grid might get a bit messy...but it seems

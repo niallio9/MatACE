@@ -30,7 +30,7 @@ file_post = '_20042010.mat';
 
 % dataX = {clo, hocl, hcl, clono2, Cly}; the Cly name is a dummy for later
 % gasnames1 = {'ClOmlspratlatfiltermeanpolenegfixkw2ampmvortex_sap','HOClmlspratlatnegfixkw2ampmvortex_sap','HCl','ClONO2'};
-gasnames1 = {'ClOmlsfrac10lim4ppb_sap','HOClmlsfrac10lim4ppb_sap','HCl','ClONO2'};
+gasnames1 = {'ClOv4withmlssmiles_sap','HOClmlsfrac10lim4ppb_sap','HClv4','ClONO2v4'};
 gasnames2 = {'ClOcmam','HOClcmam','HClcmam','ClONO2cmam'};
 
 %% define some things
@@ -55,7 +55,7 @@ vmrzon2 = nan(48,36,length(gasnames1) + 1);
 for i = 1:length(gasnames1)% for each gas
     filei = strcat( clim_dir, gasnames1{i},'/', file_pre, gasnames1{i}, file_post)
     if exist(filei,'file') ~= 2
-        fprintf('There is no file for %i_%0.2i. Moving on...\n', yearin, months(i))
+        fprintf('There is no file for %s. Moving on...\n', gasnames1{i})
         vmrzon1(:,:,i) = nan(48,36); % this is hardcoded here, for now.
     else
         clim = load(filei); clim = clim.climstruct; % the variable is called climstruct in the new data
@@ -164,9 +164,9 @@ ytickspace = [10^-4 10^-2 1 10^2];
 % figpos = [-1262 41  353  893];
 % figpos = [-1156 40  300  893];
 % figpos = [97  -214   480   893];
-% figpos = [633    95   300   893];
+figpos = [633    95   300   893];
 % figpos = [542    42   300   640]; % dell laptop
-figpos = [542  -265   300   947]; % office monitor
+% figpos = [542  -265   300   947]; % office monitor
 
 
 

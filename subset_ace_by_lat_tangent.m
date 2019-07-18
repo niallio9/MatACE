@@ -1,4 +1,4 @@
-function [ tanstruct_out ] = subset_ace_by_date( tanstruct_in, start_lat, end_lat )
+function [ tanstruct_out ] = subset_ace_by_lat_tangent( tanstruct_in, start_lat, end_lat )
 %A function to subset ace data corresponding to a particular tangent
 %latitude range. Empty arrays are produced if there are no data for that
 %range.

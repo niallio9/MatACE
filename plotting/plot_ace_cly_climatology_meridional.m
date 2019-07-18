@@ -1,11 +1,11 @@
-function [ vmrzon_cly_error, vmrzon_hcl_error ] = plot_ace_cly_climatology_meridional( pressure_level, do_plot )
+function [ vmrzon_cly_error, vmrzon_hcl_error ] = plot_ace_cly_climatology_meridional( file_appendix, pressure_level, do_plot )
 %A funcion to compare the climatology made by Jaho, with the current
 %version of the climatology. The assumption is that the two versions are
 %made on the same latitude and altitude grid, and ar for the same gas.
 
 % *INPUT*
-%           gasname: STRING - the name of the gas for which you want to
-%           compare the climatologies.
+%           file_appendix: STRING - the appendix on the data that describes
+%           the type of climatology, e.g., DJF, ..., SON.
 %
 %           filename_oldclim: STRING - the netcdf file that contains the
 %           old version of the climatology data.
@@ -28,19 +28,24 @@ function [ vmrzon_cly_error, vmrzon_hcl_error ] = plot_ace_cly_climatology_merid
 % datasource = 'model';
 datasource = 'both';
 file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
-season = 'SON';
-file_post = sprintf('_%s.mat', season);
+% season = 'SON';
+file_post = sprintf('_%s.mat', file_appendix);
 % monthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 cgrey = 0.5; % for plotting in grey
 plev = pressure_level;
+newcolours = get(groot,'DefaultAxesColorOrder');
+blue = newcolours(1,:);
+red = newcolours(7, :);
+green = newcolours(5, :);
+purple = newcolours(4, :);
 
 switch datasource
     case 'instrument'
 %         clo = {'ClOmlspratlatnegfixampmvortex'};
         clo = {'ClOmlsonly'};
         hocl = {'HOClmls_sap'};
-        hcl = {'HCl'};
-        clono2 = {'ClONO2'};
+        hcl = {'HClv4'};
+        clono2 = {'ClONO2v4'};
         %         cly = 'ClOy';
     case 'model'
         clo = {'ClOcmam'};
@@ -49,12 +54,13 @@ switch datasource
         clono2 = {'ClONO2cmam'};
         %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlsfrac10lim4ppb_sap','ClOcmam'};
+        clo = {'ClOv4withmlssmiles_sap','ClOcmam'};
+%         clo = {'ClOmlsfrac10lim4ppb_sap','ClOcmam'};
         hocl = {'HOClmlsfrac10lim4ppb_sap','HOClcmam'};
-        hcl = {'HCl','HClcmam'};
-        clono2 = {'ClONO2_sap2','ClONO2cmam'};
+        hcl = {'HClv4','HClcmam'};
+        clono2 = {'ClONO2v4','ClONO2cmam'};
 end
-figi = 50;
+figi = randi(100);
 %% define some things
 home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
@@ -76,7 +82,7 @@ clim_dir = 'C:\Users\ryann\ACE\climdata_testing\time_matched_climatology\';
 % vmrzon_hcl = nan(48,36,12*lyears);
 % vmrzon_clono2 = nan(48,36,12*lyears);
 
-if nargin > 1
+if nargin > 2
     yplot = do_plot;
 else
     yplot = 1;
@@ -178,13 +184,13 @@ for n = 1:length(clo)
     cly_clo = vmrzon_clo; % ignore missing data except for when there is no data in a profile at all
     cly_hocl = vmrzon_hocl_nan2zero; % ignore missing data except for when there is no data in a profile at all
     cly_hcl = vmrzon_hcl; % don't ignore missing data because it is always relevent
-    cly_clono2 = vmrzon_clono2; % ignore missing data except for when there is no data in a profile at all
+    cly_clono2 = vmrzon_clono2_nan2zero; % ignore missing data except for when there is no data in a profile at all
     
     
     cly_clo_error = vmrzon_clo_error;
     cly_hocl_error = vmrzon_hocl_error_nan2zero;
     cly_hcl_error = vmrzon_hcl_error;
-    cly_clono2_error = vmrzon_clono2_error;
+    cly_clono2_error = vmrzon_clono2_error_nan2zero;
     
     vmrzon_cly = (cly_clo + cly_hocl + cly_hcl + cly_clono2);
     vmrzon_cly_error = sqrt(cly_clo_error.^2 + cly_hocl_error.^2 + cly_hcl_error.^2 + cly_clono2_error.^2);
@@ -218,15 +224,18 @@ for n = 1:length(clo)
     hcl_frac_error = vmrzon_hcl_error./vmrzon_cly;
     clono2_frac_error = vmrzon_clono2_error./vmrzon_cly;
     
+%     test = clim;
+%     return
     
     %% Make the plots if you want
     pace = clim.pressure_hPa;
-    iplev = find(pace == plev);
+    iplev = find(pace == plev)
     zace = clim.altitude_km_mean;
+    zlev = zace(iplev)
     lat_ace = clim.lat;
-    lw = 1;
+    lw = 2;
     ms = 5;
-    fs = 16;
+    fs = 14;
     % whos
     %% line plot of fractions and of absolute vmrs
     if yplot == 1
@@ -236,31 +245,37 @@ for n = 1:length(clo)
 %         figpos = [268   385   565   473];
 
 
-        figpos = [97,49,852,630];
+        figpos = [45          49        1194         642];
+%         figpos = [61   124   743   554];
+        
         % Do for the zonal vmr
         %     figi = randi(100);
 %         figi = 60;
         %     figure(figi), set(gcf,'Position', [5,12,1096,704])
         %     figure(figi), set(gcf,'Position', [358,61,722,532])
-        figure(figi), set(gcf,'Position', figpos), box on
+%         figure(figi), set(gcf,'Position', figpos), box on
         figii = figi+1;
         figure(figii), set(gcf,'Position', figpos), box on
 %         figiii = figi+2;
 %         figure(figiii), set(gcf,'Position', figpos), box on
         %     figure(figi), suptitle(sprintf('Cly family zonal VMR, %i-%i', yearsin(1), yearsin(end)))
         %     return
-        figure(figi), hold on
+        figure(figii), hold on
         if n == 1
             disp('plotting instrument data')
-            ax(1) = subplot(4, 1, 1); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on', 'YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-            title(sprintf('Cly family zonal VMR fraction at %0.0f hPa, %s', plev, season))
-            errorbar(ax(1), lat_ace, clo_frac(iplev,:), clo_frac_error(iplev,:), 'vertical', 'g^-', 'Linewidth', lw, 'MarkerSize', ms )
-            ax(2) = subplot(4, 1, 2); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-            errorbar(ax(2), lat_ace, hocl_frac(iplev,:), hocl_frac_error(iplev,:), 'vertical', 'bx-', 'Linewidth', lw, 'MarkerSize', ms )
-            ax(3) = subplot(4, 1, 3); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-            errorbar(ax(3), lat_ace, hcl_frac(iplev,:), hcl_frac_error(iplev,:), 'vertical', 'md-', 'Linewidth', lw, 'MarkerSize', ms )
-            ax(4) = subplot(4, 1, 4); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-            errorbar(ax(4), lat_ace, clono2_frac(iplev,:), clono2_frac_error(iplev,:), 'vertical', 'rs-', 'Linewidth', lw, 'MarkerSize', ms )
+            ax(1) = subplot(5, 2, 2); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on', 'YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize', fs);
+            title(sprintf('%0.0f hPa (~%0.1f km), %s', plev, zlev, file_appendix))
+            errorbar(ax(1), lat_ace, clo_frac(iplev,:), clo_frac_error(iplev,:), 'vertical', '^-', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+            text(60, max(clo_frac(iplev,:)), 'ClO', 'FontSize', fs); ylim([0, 1]); xlim([-90, 90])
+            ax(2) = subplot(5, 2, 4); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+            errorbar(ax(2), lat_ace, hocl_frac(iplev,:), hocl_frac_error(iplev,:), 'vertical', 'x-', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+            text(60, max(hocl_frac(iplev,:)), 'HOCl', 'FontSize', fs); ylim([0, 1]); xlim([-90, 90])
+            ax(3) = subplot(5, 2, 6); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+            errorbar(ax(3), lat_ace, hcl_frac(iplev,:), hcl_frac_error(iplev,:), 'vertical', 'd-', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+            text(60, max(hcl_frac(iplev,:)), 'HCl', 'FontSize', fs); ylim([0, 1]); xlim([-90, 90])
+            ax(4) = subplot(5, 2, 8); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+            errorbar(ax(4), lat_ace, clono2_frac(iplev,:), clono2_frac_error(iplev,:), 'vertical', 's-', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
+            text(60, max(clono2_frac(iplev,:)), sprintf('ClONO_2'), 'FontSize', fs ); ylim([0, 1]); xlim([-90, 90])
         elseif n == 2
             disp('plotting model data')
             %                 errorbar(clo_frac, pace, clo_frac_error, 'horizontal', 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
@@ -268,17 +283,17 @@ for n = 1:length(clo)
             %                 errorbar(hcl_frac, pace, hcl_frac_error, 'horizontal', 'md--', 'Linewidth', lw, 'MarkerSize', ms )
             %                 errorbar(clono2_frac, pace, clono2_frac_error, 'horizontal', 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
 %             subplot(4, 1, 1)
-            plot(ax(1), lat_ace, clo_frac(iplev,:), 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
+            plot(ax(1), lat_ace, clo_frac(iplev,:), '^--', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
 %             subplot(4, 1, 2)
-            plot(ax(2), lat_ace, hocl_frac(iplev,:), 'bx--', 'Linewidth', lw, 'MarkerSize', ms )
+            plot(ax(2), lat_ace, hocl_frac(iplev,:), 'x--', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
 %             subplot(4, 1, 3)
-            plot(ax(3), lat_ace, hcl_frac(iplev,:), 'md--', 'Linewidth', lw, 'MarkerSize', ms )
+            plot(ax(3), lat_ace, hcl_frac(iplev,:), 'd--', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
 %             subplot(4, 1, 4)
-            plot(ax(4), lat_ace, clono2_frac(iplev,:), 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
+            plot(ax(4), lat_ace, clono2_frac(iplev,:), 's--', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
         end
 %             set(gca, 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
             set(ax(1:3),'xticklabel',{[]})
-            xlabel('latitude [deg]')
+%             xlabel('latitude [deg]')
             ylabel('VMR fraction of Cly [ppbv/ppbv]')
             xlim([-90, 90])
             linkaxes(ax,'x')
@@ -339,17 +354,23 @@ for n = 1:length(clo)
             figure(figii)
             if n == 1
                 disp('plotting instrument data')
-                axx(1) = subplot(5, 1, 1); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on', 'YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-                title(sprintf('Cly family zonal VMR at %0.0f hPa, %s', plev, season))
-                errorbar(axx(1), lat_ace, vmrzon_clo(iplev,:), vmrzon_clo_error_neg(iplev,:), vmrzon_clo_error_pos(iplev,:), 'vertical', 'g^-', 'Linewidth', lw, 'MarkerSize', ms )
-                axx(2) = subplot(5, 1, 2); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-                errorbar(axx(2), lat_ace, vmrzon_hocl(iplev,:), vmrzon_hocl_error_neg(iplev,:), vmrzon_hocl_error_pos(iplev,:), 'vertical', 'bx-', 'Linewidth', lw, 'MarkerSize', ms )
-                axx(3) = subplot(5, 1, 3); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-                errorbar(axx(3), lat_ace, vmrzon_hcl(iplev,:), vmrzon_hcl_error_neg(iplev,:), vmrzon_hcl_error_pos(iplev,:), 'vertical', 'md-', 'Linewidth', lw, 'MarkerSize', ms )
-                axx(4) = subplot(5, 1, 4); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
-                errorbar(axx(4), lat_ace, vmrzon_clono2(iplev,:), vmrzon_clono2_error_neg(iplev,:), vmrzon_clono2_error_pos(iplev,:), 'vertical', 'rs-', 'Linewidth', lw, 'MarkerSize', ms )
-                axx(5) = subplot(5, 1, 5); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+                axx(1) = subplot(5, 2, 1); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on', 'YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+                title(sprintf('%0.0f hPa (~%0.1f km), %s', plev, zlev, file_appendix))
+                errorbar(axx(1), lat_ace, vmrzon_clo(iplev,:), vmrzon_clo_error_neg(iplev,:), vmrzon_clo_error_pos(iplev,:), 'vertical', '^-', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                text(60, max(vmrzon_clo(iplev,:)), 'ClO', 'FontSize', fs); ylim([0, 1.1 * max(vmrzon_clo(iplev, :))])
+                axx(2) = subplot(5, 2, 3); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+                errorbar(axx(2), lat_ace, vmrzon_hocl(iplev,:), vmrzon_hocl_error_neg(iplev,:), vmrzon_hocl_error_pos(iplev,:), 'vertical', 'x-', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                text(60, max(vmrzon_hocl(iplev,:)), 'HOCl', 'FontSize', fs);
+                axx(3) = subplot(5, 2, 5); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+                errorbar(axx(3), lat_ace, vmrzon_hcl(iplev,:), vmrzon_hcl_error_neg(iplev,:), vmrzon_hcl_error_pos(iplev,:), 'vertical', 'd-', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                text(60, max(vmrzon_hcl(iplev,:)), 'HCl', 'FontSize', fs);
+                axx(4) = subplot(5, 2, 7); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
+                errorbar(axx(4), lat_ace, vmrzon_clono2(iplev,:), vmrzon_clono2_error_neg(iplev,:), vmrzon_clono2_error_pos(iplev,:), 'vertical', 's-', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
+                text(60, max(vmrzon_clono2(iplev,:)), sprintf('ClONO_2'), 'FontSize', fs );
+                axx(5) = subplot(5, 2, 9); hold on, set(gca, 'YMinorTick','on', 'XMinorTick','on','YMinorGrid','OFF', 'XMinorGrid', 'ON', 'FontSize',fs);
                 errorbar(axx(5), lat_ace, vmrzon_cly(iplev,:), vmrzon_cly_error_pos(iplev,:), vmrzon_cly_error_neg(iplev,:), 'vertical', 'ko-', 'Linewidth', lw, 'MarkerSize', ms )
+                text(60, max(vmrzon_cly(iplev,:)), sprintf('Cl_y'), 'FontSize', fs );
+                text(40, max(vmrzon_cly(iplev,:)), sprintf('total Cl_y'), 'color', [1 1 1]*0.5, 'FontSize', fs );
             elseif n == 2
                 disp('plotting model data')
 %                 errorbar(vmrzon_clo, pace, vmrzon_clo_error_neg, vmrzon_clo_error_pos, 'horizontal', 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
@@ -360,13 +381,13 @@ for n = 1:length(clo)
 %                 errorbar(vmrzon_clytotcmam, pace, vmrzon_clytotcmam_error_neg, vmrzon_clytotcmam_error_pos, 'horizontal',  'color', [0 0 0]+cgrey , 'Linewidth', lw, 'MarkerSize', ms )
                 
 %                 subplot(5, 1, 1), hold on
-                plot(axx(1), lat_ace, vmrzon_clo(iplev,:), 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(axx(1), lat_ace, vmrzon_clo(iplev,:), '^--', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
 %                 subplot(5, 1, 2), hold on
-                plot(axx(2), lat_ace, vmrzon_hocl(iplev,:), 'bx--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(axx(2), lat_ace, vmrzon_hocl(iplev,:), 'x--', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
 %                 subplot(5, 1, 3)
-                plot(axx(3), lat_ace, vmrzon_hcl(iplev,:), 'md--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(axx(3), lat_ace, vmrzon_hcl(iplev,:), 'd--', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
 %                 subplot(5, 1, 4)
-                plot(axx(4), lat_ace, vmrzon_clono2(iplev,:), 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(axx(4), lat_ace, vmrzon_clono2(iplev,:), 's--', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
 %                 subplot(5, 1, 5)
                 plot(axx(5), lat_ace, vmrzon_cly(iplev,:), 'ko--', 'Linewidth', lw, 'MarkerSize', ms )
 %                 subplot(5, 1, 5), hold on
@@ -375,7 +396,7 @@ for n = 1:length(clo)
 % %             set(gca, 'Ydir','reverse', 'YScale', 'log', 'Xtick', cgrid, 'XTicklabel', c, 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
 %             set(gca, 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
             set(axx(1:4),'xticklabel',{[]})
-            xlabel('latitude [deg]')
+%             xlabel('latitude [deg]')
             ylabel('VMR [ppbv]')
             xlim([-90 90])
             linkaxes(axx,'x')

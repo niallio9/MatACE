@@ -28,7 +28,7 @@ mjdstart = date2mjd(start_date(1), start_date(2), start_date(3));
 mjdend = date2mjd(end_date(1), end_date(2), end_date(3));
 
 %% pick out the data that corresponds to the year
-idate = find(mjdace >= mjdstart & mjdace <= mjdend); % get the indices of the dates which lie within the chosen range
+idate = find(mjdace >= mjdstart & mjdace < mjdend); % get the indices of the dates which lie within the chosen range
 
 %Subset the data
 gasout = reduce_tanstruct_by_rowindex(gas,idate);

@@ -163,7 +163,7 @@ disp('removing duplicate occultations...')
 [~,igood] = unique(gasout.date_mjd(1,:)); % included an indexing here because the sampled MLS data has an 'alt x occ' array of times 
 % size(igood)
 gasout = reduce_tanstruct_by_rowindex(gasout, igood);
-disp(gasout)
+% disp(gasout)
 
 %%
 tanstruct_out = gasout;

@@ -81,12 +81,12 @@ else
     end
 end;
 
-b=file;
+b=file
 for i=1:3,
-    [a,b]=strtok(b, '_');
+    [a,b]=strtok(b, '_')
 end
 
-r=find(a=='-');
+r=find(a=='-')
 A.version=a(1:(r(end)-1));  %parse 'version' from the file name 
 A.l2cycle=a((r(end)+1):end);  %parse 'l2cycle' from the file name 
 

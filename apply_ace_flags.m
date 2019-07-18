@@ -55,6 +55,9 @@ end
 if isfield(out,'spv')
    out.spv(:,badj) = []; 
 end
+if isfield(out,'date_mjd_mls')
+   out.date_mjd_mls(:,badj) = []; 
+end
 
 %% Change any other values with flags > 1 to NaNs
 [badI] = find(out.quality_flags > 1);

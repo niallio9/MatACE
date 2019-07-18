@@ -91,6 +91,9 @@ end
 if isfield(gasout,'lst')
     gasout.lst = gasout.lst(:,ygas);
 end
+if isfield(gasout,'date_mjd_mls')
+    gasout.date_mjd_mls = gasout.date_mjd_mls(:,ygas);
+end
 
 tanstruct_out = gasout;
 

@@ -21,20 +21,15 @@ gasname = gasname_in;
 home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_windows = 'C:\Users\ryann\jaho\'; %#ok<NASGU>
-clim_dir = 'C:\Users\ryann\ACE\climdata\';
+clim_dir = 'C:\Users\ryann\ACE\climdata_testing\';
 % clim_dir = '/Volumes/Seagate Backup Plus Drive/ACE/climdata/';
 % clim_dir = '/Users/niall/Dropbox/'; %#ok<NASGU>
-
-
 yearsin = years_in;
 lyears = length(yearsin);
 % months = [3,4,8,9];
 months = 1:12;
 % lmonths = length(months);
 sdates = nan(1,12*lyears);
-
-vmrzon = nan(48, 36, 12*lyears);
-vmrzon_error = nan(48, 36, 12*lyears);
 
 if nargin > 3
     yplot = do_plot;
@@ -78,8 +73,14 @@ for j = 1:lyears
         end
     end
 end
-% notempty = find(~cellfun('isempty', fileout));
-climstruct = merge_ace_clim_data_by_filenames(fileout(~cellfun('isempty', fileout)));
+notempty = find(~cellfun('isempty', fileout));
+if ~isempty(notempty)
+    climstruct = merge_ace_clim_data_by_filenames(fileout(~cellfun('isempty', fileout)));
+else
+    climstruct = [];
+    disp('There are no files found for this gas')
+    return
+end
 sdates = sdates(~cellfun('isempty', fileout));
 % vmrzon = climstruct.vmr_zonal;
 % vmrzon_error = climstruct.vmr_zonal_error;

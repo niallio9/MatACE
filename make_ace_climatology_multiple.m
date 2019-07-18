@@ -44,7 +44,7 @@ home_deluge = '/net/deluge/pb_1/users/nryan/'; %#ok<NASGU>
 % matdirectory = 'F:\ACE\matdata\';
 % matdirectory = strcat(home_mac,'matdata/');
 % matdirectory = strcat(home_deluge,'ACE/','matdata/');
-matdirectory = 'C:\Users\ryann\ACE\matdata\scaled_with_all_data/';
+matdirectory = 'C:\Users\ryann\ACE\matdata/';
 % matdirectory = '/Users/niall/ACE/matdata/pratmo_scaled_data/';
 
 if ~isdir(matdirectory)
@@ -56,8 +56,9 @@ end
 % climdirectory = 'F:\ACE\climdata\';
 % climdirectory = strcat(home_mac,'climdata/');
 % climdirectory = strcat(home_deluge,'ACE/','climdata/');
+climdirectory = 'C:\Users\ryann\ACE\climdata_testing\';
 % climdirectory = 'C:\Users\ryann\ACE\climdata_testing\time_matched_climatology\';
-climdirectory = 'C:\Users\ryann\ACE\climdata\scaled_with_all_data/';
+% climdirectory = 'C:\Users\ryann\ACE\climdata\scaled_with_all_data/';
 % climdirectory = '/Users/niall/ACE/climdata_pratmo_scaled/';
 
 %%STANDARD

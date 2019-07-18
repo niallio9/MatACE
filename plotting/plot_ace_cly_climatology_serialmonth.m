@@ -54,10 +54,10 @@ switch datasource
         clono2 = {'ClONO2cmam'};
 %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlsfrac10lim4ppb_sap','ClOcmam'};
+        clo = {'ClOv4withmlssmiles_sap','ClOcmam'};
         hocl = {'HOClmlsfrac10lim4ppb_sap','HOClcmam'};
-        hcl = {'HCl','HClcmam'};
-        clono2 = {'ClONO2_sap2','ClONO2cmam'};
+        hcl = {'HClv4','HClcmam'};
+        clono2 = {'ClONO2v4','ClONO2cmam'};
 %         clo = {'ClOcmam','ClOmlsprat10_sap'};
 %         hocl = {'HOClcmam', 'HOClmls_sap'};
 %         hcl = {'HClcmam','HCl'};
@@ -103,7 +103,7 @@ file_post = '.mat';
 % newmonthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 months = 1:12;
 sdates = nan(1,12*lyears);
-
+figi = randi(100);
 %% loop through the years and months and fill in the cells of arrays
 for n = 1:length(clo)
     vmrzon_clo = nan(48,36,12*lyears);
@@ -186,26 +186,34 @@ for n = 1:length(clo)
     % get locations of all-nan profiles
     vmrzon_hocl_nan2zero = vmrzon_hocl;
     vmrzon_clono2_nan2zero = vmrzon_clono2;
+    vmrzon_hocl_error_nan2zero = vmrzon_hocl_error;
+    vmrzon_clono2_error_nan2zero = vmrzon_clono2_error;
     [Jnanprofile_hocl, Knanprofile_hocl] = find(squeeze(nansum(vmrzon_hocl_nan2zero,1) == 0));
     for i = 1:length(Jnanprofile_hocl)
        vmrzon_hocl_nan2zero(:,Jnanprofile_hocl(i),Knanprofile_hocl(i)) = 999; % change all-nan profiles to all-999 profiles 
+       vmrzon_hocl_error_nan2zero(:,Jnanprofile_hocl(i),Knanprofile_hocl(i)) = 999; % change all-nan profiles to all-999 profiles
     end
     [Jnanprofile_clono2, Knanprofile_clono2] = find(squeeze(nansum(vmrzon_clono2_nan2zero,1) == 0));
     for i = 1:length(Jnanprofile_clono2)
        vmrzon_clono2_nan2zero(:,Jnanprofile_clono2(i),Knanprofile_clono2(i)) = 999; % change all-nan profiles to all-999 profiles 
+       vmrzon_clono2_error_nan2zero(:,Jnanprofile_clono2(i),Knanprofile_clono2(i)) = 999; % change all-nan profiles to all-999 profiles
     end
     %hocl: assume missing values values are negligible
     vmrzon_hocl_nan2zero(isnan(vmrzon_hocl_nan2zero)) = 0;
-    vmrzon_hocl_error_nan2zero = vmrzon_hocl_error;
     vmrzon_hocl_error_nan2zero(isnan(vmrzon_hocl_error_nan2zero)) = 0;
     %clono2: upper scaled a priori sucks so we cant use it. assume missing
     %values above 30km are negligible.
     dummy = vmrzon_clono2_nan2zero(izace_30up,:,:);
     dummy(isnan(dummy)) = 0;
     vmrzon_clono2_nan2zero(izace_30up,:,:) = dummy;
+    dummy = vmrzon_clono2_error_nan2zero(izace_30up,:,:);
+    dummy(isnan(dummy)) = 0;
+    vmrzon_clono2_error_nan2zero(izace_30up,:,:) = dummy;
     % restore the 999 values to nans.
     vmrzon_hocl_nan2zero(vmrzon_hocl_nan2zero == 999) = nan;
     vmrzon_clono2_nan2zero(vmrzon_clono2_nan2zero == 999) = nan;
+    vmrzon_hocl_error_nan2zero(vmrzon_hocl_error_nan2zero == 999) = nan;
+    vmrzon_clono2_error_nan2zero(vmrzon_clono2_error_nan2zero == 999) = nan;
     
     %% make Cly
     %decide which types of data to use in the sum
@@ -219,19 +227,24 @@ for n = 1:length(clo)
     cly_hcl_edit = vmrzon_hcl; % don't ignore missing data because it is always relevent
     cly_clono2_edit = vmrzon_clono2_nan2zero; % ignore missing data except for when there is no data in a profile at all
     
+    cly_clo_error_edit = vmrzon_clo_error;
+    cly_hocl_error_edit = vmrzon_hocl_error_nan2zero; % ignore missing data except for when there is no data in a profile at all
+    cly_hcl_error_edit = vmrzon_hcl_error; % don't ignore missing data because it is always relevent
+    cly_clono2_error_edit = vmrzon_clono2_error_nan2zero; % ignore missing data except for when there is no data in a profile at all
+    
     cly_clo_error = vmrzon_clo_error;
     cly_hocl_error = vmrzon_hocl;
     cly_hcl_error = vmrzon_hcl_error;
-    cly_clono2_error = vmrzon_clono2;
+    cly_clono2_error = vmrzon_clono2_error;
     
     vmrzon_cly = cly_clo + cly_hocl + cly_hcl + cly_clono2;
-    vmrzon_cly_error = cly_clo_error + cly_hocl_error + cly_hcl_error + cly_clono2_error;
+    vmrzon_cly_error = sqrt(cly_clo_error.^2 + cly_hocl_error.^2 + cly_hcl_error.^2 + cly_clono2_error.^2);
     
     vmrzon_cly_edit = cly_clo_edit + cly_hcl_edit + cly_clono2_edit + cly_hocl_edit;
-    vmrzon_cly_error_edit = cly_clo_error + cly_hcl_error + cly_clono2_error;
+    vmrzon_cly_error_edit = sqrt(cly_clo_error_edit.^2 + cly_hcl_error_edit.^2 + cly_clono2_error_edit.^2 + cly_hocl_error_edit.^2);
     
     %%
-    vmrzon_hocl = vmrzon_hocl_nan2zero;
+%     vmrzon_hocl = vmrzon_hocl_nan2zero;
     %%
     
     %% subset according to the chosen lat limits
@@ -269,14 +282,15 @@ for n = 1:length(clo)
     ytext = 4.4; % the position for the text in the plots, in ppbv
     if yplot == 1
         % Do for the zonal vmr
-        %     figi = randi(100);
-        figi = 29;
+%             figi = randi(100);
+%         figi = 29;
         %     figure(figi), set(gcf,'Position', [5,12,1096,704])
         %     figure(figi), set(gcf,'Position', [358,61,722,532])
         figure(figi), set(gcf,'Position', [97,49,852,630])
         %     figure(figi), suptitle(sprintf('Cly family zonal VMR, %i-%i', yearsin(1), yearsin(end)))
         %     return
         axx = nan(nalt,1);
+        axxx = nan(nalt,1);
         axx1 = nan(nalt,1);
         axx2 = nan(nalt,1);
         for i = 1:nalt
@@ -287,7 +301,7 @@ for n = 1:length(clo)
                     errorbar(axx(i),sdates, vmrzon_hocl(ipplot(i),:), vmrzon_hocl_error(ipplot(i),:), 'bo-', 'Linewidth', lw, 'MarkerSize', ms )
                     errorbar(axx(i),sdates, vmrzon_hcl(ipplot(i),:), vmrzon_hcl_error(ipplot(i),:), 'mo-', 'Linewidth', lw, 'MarkerSize', ms )
                     errorbar(axx(i),sdates, vmrzon_clono2(ipplot(i),:), vmrzon_clono2_error(ipplot(i),:), 'ro-', 'Linewidth', lw, 'MarkerSize', ms )
-                    errorbar(axx(i),sdates, vmrzon_cly(ipplot(i),:), vmrzon_cly_error(ipplot(i),:), 'ko-', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axx(i),sdates, vmrzon_cly_edit(ipplot(i),:), vmrzon_cly_error_edit(ipplot(i),:), 'ko-', 'Linewidth', lw, 'MarkerSize', ms )
             elseif n == 2
                     disp('plotting model data')
                     errorbar(axx(i),sdates, vmrzon_clo(ipplot(i),:), vmrzon_clo_error(ipplot(i),:),'g^--', 'Linewidth', lw, 'MarkerSize', ms )
@@ -297,9 +311,10 @@ for n = 1:length(clo)
                     errorbar(axx(i),sdates, vmrzon_cly(ipplot(i),:), vmrzon_cly_error(ipplot(i),:), 'k^--', 'Linewidth', lw, 'MarkerSize', ms )
             end
             
-            ylim([0,4.0])
+            ylim([0, 4.0])
+            xlim([sdates(1), sdates(end)])
             text(sdates(1), ytext, sprintf('%0.1f hPa (~%0.1f km)', pace(ipplot(i)), zace(ipplot(i)) ));
-            ylabel('pressure [hPa]')
+            ylabel('VMR [ppb]')
             if i == 1
                 title(sprintf('Cly family zonal VMR, %i-%i%c latitude', latmin, latmax, char(176)))
                 %             legend('ClO', 'HOCl', 'HCl', 'ClONO2', 'Cly', 'Location', 'eastoutside' )
@@ -310,6 +325,42 @@ for n = 1:length(clo)
 %                 dynamicDateTicks
                 xlabel('year')
                 linkaxes(axx,'xy')
+            else
+%                 datetick('x','mmyy')
+                set(gca,'xticklabel',{[]})
+            end
+            
+            figure(figi + 1), set(gcf,'Position', [97,49,852,630]), axxx(i) = subplot(nalt,1,i); hold(axxx(i),'on')
+            if n == 1
+                    disp('plotting instrument data')
+                    errorbar(axxx(i),sdates, vmrzon_clo(ipplot(i),:), vmrzon_clo_error(ipplot(i),:),'go-', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_hocl(ipplot(i),:), vmrzon_hocl_error(ipplot(i),:), 'bo-', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_hcl(ipplot(i),:), vmrzon_hcl_error(ipplot(i),:), 'mo-', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_clono2(ipplot(i),:), vmrzon_clono2_error(ipplot(i),:), 'ro-', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_cly_edit(ipplot(i),:), vmrzon_cly_error_edit(ipplot(i),:), 'ko-', 'Linewidth', lw, 'MarkerSize', ms )
+            elseif n == 2
+                    disp('plotting model data')
+                    errorbar(axxx(i),sdates, vmrzon_clo(ipplot(i),:), vmrzon_clo_error(ipplot(i),:),'g^--', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_hocl(ipplot(i),:), vmrzon_hocl_error(ipplot(i),:), 'b^--', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_hcl(ipplot(i),:), vmrzon_hcl_error(ipplot(i),:), 'm^--', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_clono2(ipplot(i),:), vmrzon_clono2_error(ipplot(i),:), 'r^--', 'Linewidth', lw, 'MarkerSize', ms )
+                    errorbar(axxx(i),sdates, vmrzon_cly_edit(ipplot(i),:), vmrzon_cly_error_edit(ipplot(i),:), 'k^--', 'Linewidth', lw, 'MarkerSize', ms )
+            end
+            
+            ylim([0, 4.0])
+            xlim([sdates(1), sdates(end)])
+            text(sdates(1), ytext, sprintf('%0.1f hPa (~%0.1f km)', pace(ipplot(i)), zace(ipplot(i)) ));
+            ylabel('VMR [ppb]')
+            if i == 1
+                title(sprintf('Cly(edited meas) family zonal VMR, %i-%i%c latitude', latmin, latmax, char(176)))
+                %             legend('ClO', 'HOCl', 'HCl', 'ClONO2', 'Cly', 'Location', 'eastoutside' )
+            end
+            if i == 4 && n == 2
+%                 n
+                dynamicDateTicks([],'x','mm')
+%                 dynamicDateTicks
+                xlabel('year')
+                linkaxes(axxx,'xy')
             else
 %                 datetick('x','mmyy')
                 set(gca,'xticklabel',{[]})
@@ -357,8 +408,8 @@ for n = 1:length(clo)
             ylim1 = 10^-1;
             if n == 1
                 figure(figii),
-                fignames = {'ClO\_meas', 'HOCl\_meas', 'HCl\_meas', 'ClONO2\_meas', 'Cly\_meas', 'Cly\_meas (scaled ClONO2 and ignoring missing HOCl)'};
-%                                 fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (no HOCl, ClONO2 above 40 km)'};
+%                 fignames = {'ClO\_meas', 'HOCl\_meas', 'HCl\_meas', 'ClONO2\_meas', 'Cly\_meas', 'Cly\_meas (scaled ClONO2 and ignoring missing HOCl)'};
+                fignames = {'ClO\_meas', 'HOCl\_meas', 'HCl\_meas', 'ClONO2\_meas', 'Cly\_meas', 'Cly\_cmam (no HOCl, ClONO2 above 40 km)'};
                 disp('plotting instrument data')
                 i = 1; axx1(i) = subplot(ngas,1,i); hold(axx1(i),'on'), box on, title(fignames{i},'FontSize',fs_title)
                 contourf(axx1(i), sdates, pace, vmrzon_clo, cgrid); caxis([cgrid(1),cgrid(end)])
@@ -397,7 +448,8 @@ for n = 1:length(clo)
                 dynamicDateTicks([],'x','mmyy')
             elseif n == 2
                 figure(figii + 1), set(gcf,'Position', [97,49,852,630])
-                fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (scaled ClONO2 and ignoring missing HOCl)'};
+                fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (no HOCl, ClONO2 above 40 km)'};
+% %                 fignames = {'ClO\_cmam', 'HOCl\_cmam', 'HCl\_cmam', 'ClONO2\_cmam', 'Cly\_cmam', 'Cly\_cmam (scaled ClONO2 and ignoring missing HOCl)'};
                 disp('plotting model data')
                 i = 1; axx2(i) = subplot(ngas,1,i); hold(axx2(i),'on'), box on, title(fignames{i},'FontSize',fs_title)
                 contourf(axx2(i), sdates, pace, vmrzon_clo, cgrid); caxis([cgrid(1),cgrid(end)])

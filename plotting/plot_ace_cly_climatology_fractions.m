@@ -32,14 +32,19 @@ file_pre = 'ACEFTS_CLIM_v3_lat_'; % ACEFTS_CLIM_v3_lat_O3_DJF.mat
 file_post = '_JJA.mat';
 % monthnames = {'DJF', 'MAM', 'JJA', 'SON'};
 cgrey = 0.5; % for plotting in grey
+newcolours = get(groot,'DefaultAxesColorOrder');
+blue = newcolours(1,:);
+red = newcolours(7, :);
+green = newcolours(5, :);
+purple = newcolours(4, :);
 
 switch datasource
     case 'instrument'
 %         clo = {'ClOmlspratlatnegfixampmvortex'};
         clo = {'ClOmlsonly'};
         hocl = {'HOClmls_sap'};
-        hcl = {'HCl'};
-        clono2 = {'ClONO2'};
+        hcl = {'HClv4'};
+        clono2 = {'ClONO2v4'};
         %         cly = 'ClOy';
     case 'model'
         clo = {'ClOcmam'};
@@ -48,12 +53,12 @@ switch datasource
         clono2 = {'ClONO2cmam'};
         %         cly = 'Clycmam' % uses more than the 4 gases listed above
     case 'both'
-        clo = {'ClOmlsfrac10lim4ppb_sap','ClOcmam'};
+        clo = {'ClOv4withmlssmiles_sap','ClOcmam'};
         hocl = {'HOClmlsfrac10lim4ppb_sap','HOClcmam'};
-        hcl = {'HCl','HClcmam'};
-        clono2 = {'ClONO2_sap2','ClONO2cmam'};
+        hcl = {'HClv4','HClcmam'};
+        clono2 = {'ClONO2v4','ClONO2cmam'};
 end
-figi = 60;
+figi = randi(100);
 %% define some things
 home_linux = '/home/niall/Dropbox/climatology/'; %#ok<NASGU>
 home_mac = '/Users/niall/Dropbox/climatology/'; %#ok<NASGU>
@@ -182,13 +187,13 @@ for n = 1:length(clo)
     cly_clo = vmrzon_clo; % ignore missing data except for when there is no data in a profile at all
     cly_hocl = vmrzon_hocl_nan2zero; % ignore missing data except for when there is no data in a profile at all
     cly_hcl = vmrzon_hcl; % don't ignore missing data because it is always relevent
-    cly_clono2 = vmrzon_clono2; % ignore missing data except for when there is no data in a profile at all
+    cly_clono2 = vmrzon_clono2_nan2zero; % ignore missing data except for when there is no data in a profile at all
     
     
     cly_clo_error = vmrzon_clo_error;
     cly_hocl_error = vmrzon_hocl_error_nan2zero;
     cly_hcl_error = vmrzon_hcl_error;
-    cly_clono2_error = vmrzon_clono2_error;
+    cly_clono2_error = vmrzon_clono2_error_nan2zero;
     
     vmrzon_cly = cly_clo + cly_hocl + cly_hcl + cly_clono2;
     vmrzon_cly_error = sqrt(cly_clo_error.^2 + cly_hocl_error.^2 + cly_hcl_error.^2 + cly_clono2_error.^2);
@@ -271,7 +276,7 @@ for n = 1:length(clo)
     %% Make the plots if you want
     pace = clim.pressure_hPa;
     zace = clim.altitude_km_mean;
-    lw = 1;
+    lw = 2;
     ms = 5;
     fs = 16;
 %     ytickspace = [10^-4 10^-2 1 10^2];
@@ -286,7 +291,7 @@ for n = 1:length(clo)
     if yplot == 1
 %         figpos = [-1227 367 655 544];
 %         figpos = [-1227 438 565 473];
-        figpos = [332   30   565   473]; % office monitor
+        figpos = [3         380        1855         465]; % office monitor
 %         figpos = [268   385   565   473];
 
 
@@ -297,20 +302,20 @@ for n = 1:length(clo)
         %     figure(figi), set(gcf,'Position', [5,12,1096,704])
         %     figure(figi), set(gcf,'Position', [358,61,722,532])
         figure(figi), set(gcf,'Position', figpos), box on
-        figii = figi+1;
-        figure(figii), set(gcf,'Position', figpos), box on
-        figiii = figi+2;
-        figure(figiii), set(gcf,'Position', figpos), box on
+% %         figii = figi+1;
+% %         figure(figii), set(gcf,'Position', figpos), box on
+% %         figiii = figi+2;
+% %         figure(figiii), set(gcf,'Position', figpos), box on
         %     figure(figi), suptitle(sprintf('Cly family zonal VMR, %i-%i', yearsin(1), yearsin(end)))
         %     return
-            figure(figi), hold on;
+            figure(figi), subplot(1, 3, 3), box on, hold on;
             if n == 1
                 disp('plotting instrument data')
                 yyaxis left
-                errorbar(clo_frac, pace, clo_frac_error, 'horizontal', 'g^-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(hocl_frac, pace, hocl_frac_error, 'horizontal', 'bx-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(hcl_frac, pace, hcl_frac_error, 'horizontal', 'md-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(clono2_frac, pace, clono2_frac_error, 'horizontal', 'rs-', 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(clo_frac, pace, clo_frac_error, 'horizontal', '^-', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(hocl_frac, pace, hocl_frac_error, 'horizontal', 'x-', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(hcl_frac, pace, hcl_frac_error, 'horizontal', 'd-', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(clono2_frac, pace, clono2_frac_error, 'horizontal', 's-', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
             elseif n == 2
                 disp('plotting model data')
                 yyaxis left
@@ -319,19 +324,20 @@ for n = 1:length(clo)
 %                 errorbar(hcl_frac, pace, hcl_frac_error, 'horizontal', 'md--', 'Linewidth', lw, 'MarkerSize', ms )
 %                 errorbar(clono2_frac, pace, clono2_frac_error, 'horizontal', 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
                 
-                plot(clo_frac, pace, 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(hocl_frac, pace, 'bx--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(hcl_frac, pace, 'md--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(clono2_frac, pace, 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(clo_frac, pace, 'g^--', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(hocl_frac, pace, 'x--', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(hcl_frac, pace, 'd--', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(clono2_frac, pace, 's--', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
                 
                 yyaxis right
                 dummy = errorbar(clono2_frac, zace, clono2_frac_error, 'horizontal', 'r--', 'Linewidth', lw, 'MarkerSize', ms );
                 delete(dummy)
             end
-            title(sprintf('Cly family zonal VMR fraction, %i-%i%c latitude', latmin, latmax, char(176)))
+%             title(sprintf('Cly family zonal VMR fraction, %i-%i%c latitude', latmin, latmax, char(176)))
             yyaxis left
+            yticklabels([])
             set(gca, 'Ydir','reverse', 'YScale', 'log', 'XScale', 'linear', 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
-            ylabel('pressure [hPa]')
+%             ylabel('pressure [hPa]')
             ylim([plim1 plim2]);
             yyaxis right
             ylim([zlim1 zlim2]);
@@ -392,14 +398,15 @@ for n = 1:length(clo)
 %             vmrzon_clono2_error = log(vmrzon_clono2_error);
 %             vmrzon_cly_error = log(vmrzon_cly_error);
             
-            figure(figii), hold on;
+%             figure(figii), hold on;
+            figure(figi), subplot(1, 3, 1), box on, hold on;
             if n == 1
                 disp('plotting instrument data')
                 yyaxis left
-                errorbar(vmrzon_clo, pace, vmrzon_clo_error_neg, vmrzon_clo_error_pos, 'horizontal', 'g^-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(vmrzon_hocl, pace, vmrzon_hocl_error_neg, vmrzon_hocl_error_pos, 'horizontal', 'bx-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(vmrzon_hcl, pace, vmrzon_hcl_error_neg, vmrzon_hcl_error_pos, 'horizontal', 'md-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(vmrzon_clono2, pace, vmrzon_clono2_error_neg, vmrzon_clono2_error_pos, 'horizontal', 'rs-', 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_clo, pace, vmrzon_clo_error_neg, vmrzon_clo_error_pos, 'horizontal', '^-', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_hocl, pace, vmrzon_hocl_error_neg, vmrzon_hocl_error_pos, 'horizontal', 'x-', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_hcl, pace, vmrzon_hcl_error_neg, vmrzon_hcl_error_pos, 'horizontal', 'd-', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_clono2, pace, vmrzon_clono2_error_neg, vmrzon_clono2_error_pos, 'horizontal', 's-', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
                 errorbar( vmrzon_cly, pace, vmrzon_cly_error_pos,vmrzon_cly_error_neg, 'horizontal', 'ko-', 'Linewidth', lw, 'MarkerSize', ms )
             elseif n == 2
                 disp('plotting model data')
@@ -412,18 +419,18 @@ for n = 1:length(clo)
 %                 errorbar(vmrzon_clytotcmam, pace, vmrzon_clytotcmam_error_neg, vmrzon_clytotcmam_error_pos, 'horizontal',  'color', [0 0 0]+cgrey , 'Linewidth', lw, 'MarkerSize', ms )
                 
                 
-                plot(vmrzon_clo, pace, 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(vmrzon_hocl, pace, 'bx--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(vmrzon_hcl, pace, 'md--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(vmrzon_clono2, pace, 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_clo, pace, '^--', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_hocl, pace, 'x--', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_hcl, pace, 'd--', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_clono2, pace, 's--', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
                 plot(vmrzon_cly, pace, 'ko--', 'Linewidth', lw, 'MarkerSize', ms )
                 plot(vmrzon_clytotcmam, pace, '--', 'color', [0 0 0]+cgrey , 'Linewidth', lw, 'MarkerSize', ms )
                 
-                yyaxis right
-                dummy = errorbar(vmrzon_cly, zace, vmrzon_cly_error, 'horizontal', 'k^--', 'Linewidth', lw, 'MarkerSize', ms );
-                delete(dummy)
+%                 yyaxis right
+%                 dummy = errorbar(vmrzon_cly, zace, vmrzon_cly_error, 'horizontal', 'k^--', 'Linewidth', lw, 'MarkerSize', ms );
+%                 delete(dummy)
             end
-            title(sprintf('Cly family zonal VMR, %i-%i%c latitude', latmin, latmax, char(176)))
+%             title(sprintf('Cly family zonal VMR, %i-%i%c latitude', latmin, latmax, char(176)))
             yyaxis left
 % %             set(gca, 'Ydir','reverse', 'YScale', 'log', 'Xtick', cgrid, 'XTicklabel', c, 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
             set(gca, 'Ydir','reverse', 'YScale', 'log', 'XScale', 'linear', 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
@@ -431,8 +438,9 @@ for n = 1:length(clo)
             ylabel('pressure [hPa]')
             ylim([plim1 plim2]);
             yyaxis right
-            ylim([zlim1 zlim2]);
-            ylabel('altitude [km]')
+            yticklabels([])
+%             ylim([zlim1 zlim2]);
+%             ylabel('altitude [km]')
             xlabel('VMR [ppbv]')
             xlim([0.001 4])
             
@@ -481,15 +489,15 @@ for n = 1:length(clo)
                     vmrzon_clytotcmam_error_neg = vmrzon_clytotcmam_error;
                 end
             end
-            figure(figiii), hold on;
-            
+%             figure(figiii), hold on;
+            figure(figi), subplot(1, 3, 2), box on, hold on;
             if n == 1
                 disp('plotting instrument data')
                 yyaxis left
-                errorbar(vmrzon_clo, pace, vmrzon_clo_error_neg, vmrzon_clo_error_pos, 'horizontal', 'g^-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(vmrzon_hocl, pace, vmrzon_hocl_error_neg, vmrzon_hocl_error_pos, 'horizontal', 'bx-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(vmrzon_hcl, pace, vmrzon_hcl_error_neg, vmrzon_hcl_error_pos, 'horizontal', 'md-', 'Linewidth', lw, 'MarkerSize', ms )
-                errorbar(vmrzon_clono2, pace, vmrzon_clono2_error_neg, vmrzon_clono2_error_pos, 'horizontal', 'rs-', 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_clo, pace, vmrzon_clo_error_neg, vmrzon_clo_error_pos, 'horizontal', '^-', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_hocl, pace, vmrzon_hocl_error_neg, vmrzon_hocl_error_pos, 'horizontal', 'x-', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_hcl, pace, vmrzon_hcl_error_neg, vmrzon_hcl_error_pos, 'horizontal', 'd-', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                errorbar(vmrzon_clono2, pace, vmrzon_clono2_error_neg, vmrzon_clono2_error_pos, 'horizontal', 's-', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
                 errorbar( vmrzon_cly, pace, vmrzon_cly_error_pos,vmrzon_cly_error_neg, 'horizontal', 'ko-', 'Linewidth', lw, 'MarkerSize', ms )
             elseif n == 2
                 disp('plotting model data')
@@ -501,28 +509,30 @@ for n = 1:length(clo)
 %                 errorbar(vmrzon_cly, pace, vmrzon_cly_error_neg, vmrzon_cly_error_pos, 'horizontal', 'k^--', 'Linewidth', lw, 'MarkerSize', ms )
 %                 errorbar(vmrzon_clytotcmam, pace, vmrzon_clytotcmam_error_neg, vmrzon_clytotcmam_error_pos, 'horizontal', 'color', [0 0 0]+cgrey , 'Linewidth', lw, 'MarkerSize', ms )
                 
-                plot(vmrzon_clo, pace, 'g^--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(vmrzon_hocl, pace, 'bx--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(vmrzon_hcl, pace, 'md--', 'Linewidth', lw, 'MarkerSize', ms )
-                plot(vmrzon_clono2, pace, 'rs--', 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_clo, pace, '^--', 'color', green, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_hocl, pace, 'x--', 'color', blue, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_hcl, pace, 'd--', 'color', purple, 'Linewidth', lw, 'MarkerSize', ms )
+                plot(vmrzon_clono2, pace, 's--', 'color', red, 'Linewidth', lw, 'MarkerSize', ms )
                 plot(vmrzon_cly, pace, 'ko--', 'Linewidth', lw, 'MarkerSize', ms )
                 plot(vmrzon_clytotcmam, pace, '--', 'color', [0 0 0]+cgrey , 'Linewidth', lw, 'MarkerSize', ms )
                 
                 
-                yyaxis right
-                dummy = errorbar(vmrzon_cly, zace, vmrzon_cly_error, 'horizontal', 'k^--', 'Linewidth', lw, 'MarkerSize', ms );
-                delete(dummy)
+%                 yyaxis right
+%                 dummy = errorbar(vmrzon_cly, zace, vmrzon_cly_error, 'horizontal', 'k^--', 'Linewidth', lw, 'MarkerSize', ms );
+%                 delete(dummy)
             end
             title(sprintf('Cly family zonal VMR, %i-%i%c latitude', latmin, latmax, char(176)))
             yyaxis left
+            yticklabels([])
 % %             set(gca, 'Ydir','reverse', 'YScale', 'log', 'Xtick', cgrid, 'XTicklabel', c, 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
             set(gca, 'Ydir','reverse', 'YScale', 'log', 'XScale', 'log', 'YMinorTick','on','YMinorGrid','OFF', 'XGrid', 'ON', 'FontSize',fs);
             
-            ylabel('pressure [hPa]')
+%             ylabel('pressure [hPa]')
             ylim([plim1 plim2]);
             yyaxis right
-            ylim([zlim1 zlim2]);
-            ylabel('altitude [km]')
+            yticklabels([])
+%             ylim([zlim1 zlim2]);
+%             ylabel('altitude [km]')
             xlabel('VMR [ppbv]')
             xlim([0.001 4])
             set(gca,'Xtick',[1e-3,1e-2,1e-1,1e0],'XTickLabel',[0.001, 0.01, 0.1, 1])

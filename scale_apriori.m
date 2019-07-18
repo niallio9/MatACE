@@ -34,7 +34,8 @@ prior = apriori_in;
 gas = tanstruct_in;
 norbit = length(gas.occultation);
 prior_out = nan(size(gas.vmr));
-factor_limit = Inf;
+factor_limit = 10;
+index_limit = 0; 
 failure_low = 0;
 failure_high = 0;
 for n = 1 : norbit
@@ -42,7 +43,10 @@ for n = 1 : norbit
     inonan = find(~isnan(gas.vmr(:,n)) & gas.vmr(:,n) ~=0); %the indices of vmr values that are not nans
     if ~isempty(inonan)
         %         whos
-        factor_low = gas.vmr(inonan(1),n) ./ prior(inonan(1));
+        factor_low = abs(gas.vmr(inonan(1),n) ./ prior(inonan(1))); % we won't use negative vlaues for the scaled a priori
+%         if sign(factor_low) == -1
+%             factor_low = 1;
+%         end
         if abs(factor_low) < factor_limit
             prior_out(1:inonan(1)-1, n) = prior(1:inonan(1)-1) * factor_low; % the scaled apriori values for the lower altitudes
         else
@@ -51,18 +55,22 @@ for n = 1 : norbit
 %             diff_low = gas.vmr(inonan(end),n) - prior(inonan(end))
 %             prior_out(1:inonan(1)-1, n) = prior(1:inonan(1)-1) + diff_low;
         end
-        factor_high = gas.vmr(inonan(end),n) ./ prior(inonan(end));
-        if abs(factor_high) < factor_limit
-            prior_out(inonan(end)+1:end, n) = prior(inonan(end)+1:end) * factor_high; % the same for the higher altitudes
+        if inonan(end) >= index_limit
+            factor_high = abs(gas.vmr(inonan(end),n) ./ prior(inonan(end))); % we won't use negative vlaues for the scaled a priori
+            if abs(factor_high) < factor_limit
+                prior_out(inonan(end)+1:end, n) = prior(inonan(end)+1:end) * factor_high; % the same for the higher altitudes
+            else
+                fprintf('\nhigh altitude factor is > %0.2f. norbit = %i\n', factor_limit, n)
+                failure_high = failure_high + 1;
+                %             diff_high = gas.vmr(inonan(end),n) - prior(inonan(end))
+                %             prior_out(inonan(end)+1:end, n) = prior(inonan(end)+1:end) + diff_high;
+            end
         else
-            fprintf('\nhigh altitude factor is > %0.2f. norbit = %i\n', factor_limit, n)
-            failure_high = failure_high + 1;
-%             diff_high = gas.vmr(inonan(end),n) - prior(inonan(end))
-%             prior_out(inonan(end)+1:end, n) = prior(inonan(end)+1:end) + diff_high;
+            fprintf('\nhighest index of available data (%i) is lower than index limit of %i. norbit = %i\n', inonan(end), index_limit, n)
         end
     else
-        % the prior stays as nans for this occultation 
-    end  
+        % the prior stays as nans for this occultation
+    end
 end
 
 %% if there are pressure limits entered

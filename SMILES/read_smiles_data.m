@@ -13,7 +13,7 @@ function [ smiles_out ] = read_smiles_data( smiles_list, swath )
 %           corresponds
 %
 % *OUTPUT*
-%           mls_out: CELL ARRAY - each cell corresponds to one .he5 file. 
+%           smiles_out: CELL ARRAY - each cell corresponds to one .he5 file. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   NJR - 06/18
 
