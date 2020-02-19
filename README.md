@@ -12,11 +12,10 @@ All required tools should be found in within the project folder, or be included 
 
 ACE Level 2 data is currently available from https://databace.scisat.ca/level2/. You will need to make an account to access ACE-FTS data. It is recommended to download and use the netCDF version of the data, as opposed to the ASCII version.
 
-It is also recommended to use the ACE-FTS that has flag information with the file. These files are available for v3.6/3.6 of the data, but not currently for v4.0.
+It is also recommended to use the ACE-FTS data that has flag information with the file. These files are available for v3.6/3.6 of the data, but not currently for v4.0.
 
-```
+
 ACE-FTS data is grouped by gas species. For example, the file for 'ozone' Level 2 data is called: 'ACEFTS_L2_v3p6_O3.nc'.
-```
 
 ### Installing
 
